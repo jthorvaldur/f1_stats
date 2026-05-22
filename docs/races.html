@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Race Results</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+
+  .race-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .race-round { color: #8b949e; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; background: #21262d; padding: 3px 8px; border-radius: 4px; }
+  .race-name { color: #f0f6fc; font-size: 16px; font-weight: 700; }
+  .race-meta { color: #8b949e; font-size: 11px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 8px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .pos-1 { color: #ffd700; font-weight: 700; }
+  .pos-2 { color: #c0c0c0; font-weight: 600; }
+  .pos-3 { color: #cd7f32; font-weight: 600; }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
+  .team-mclaren { color: #ff8700; }
+  .team-redbull { color: #3671C6; }
+  .team-alpine { color: #0090ff; }
+  .team-haas { color: #b6babd; }
+  .team-rb { color: #6692ff; }
+  .team-williams { color: #64c4ff; }
+  .team-audi { color: #00e701; }
+  .team-cadillac { color: #c0c0c0; }
+  .team-aston { color: #006f62; }
+  .retired { color: #f85149; font-style: italic; }
+  .dns { color: #d29922; font-style: italic; }
+  .lapped { color: #8b949e; font-style: italic; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+
+  @media (max-width: 768px) {
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .race-header { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Race Results</h1>
+  <div class="tagline">Complete finishing orders for each Grand Prix of the 2026 season. Points awarded: 25-18-15-12-10-8-6-4-2-1.</div>
+</div>
+
+<!-- Round 1 -->
+<div class="section">
+  <div class="race-header">
+    <span class="race-round">Round 1</span>
+    <span class="race-name">Australian Grand Prix</span>
+    <span class="race-meta">March 8, 2026 &middot; Albert Park, Melbourne</span>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Pts</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="pos-1">1</td><td class="driver-name">George Russell</td><td class="team-mercedes">Mercedes</td><td>25</td><td class="badge badge-green">Winner</td></tr>
+        <tr><td class="pos-2">2</td><td class="driver-name">Andrea Kimi Antonelli</td><td class="team-mercedes">Mercedes</td><td>18</td><td></td></tr>
+        <tr><td class="pos-3">3</td><td class="driver-name">Charles Leclerc</td><td class="team-ferrari">Ferrari</td><td>15</td><td></td></tr>
+        <tr><td>4</td><td class="driver-name">Lewis Hamilton</td><td class="team-ferrari">Ferrari</td><td>12</td><td></td></tr>
+        <tr><td>5</td><td class="driver-name">Lando Norris</td><td class="team-mclaren">McLaren</td><td>10</td><td></td></tr>
+        <tr><td>6</td><td class="driver-name">Max Verstappen</td><td class="team-redbull">Red Bull</td><td>8</td><td></td></tr>
+        <tr><td>7</td><td class="driver-name">Oliver Bearman</td><td class="team-haas">Haas</td><td>6</td><td></td></tr>
+        <tr><td>8</td><td class="driver-name">Arvid Lindblad</td><td class="team-rb">RB</td><td>4</td><td></td></tr>
+        <tr><td>9</td><td class="driver-name">Gabriel Bortoleto</td><td class="team-audi">Audi</td><td>2</td><td></td></tr>
+        <tr><td>10</td><td class="driver-name">Pierre Gasly</td><td class="team-alpine">Alpine</td><td>1</td><td></td></tr>
+        <tr><td>11</td><td class="driver-name">Esteban Ocon</td><td class="team-haas">Haas</td><td>0</td><td></td></tr>
+        <tr><td>12</td><td class="driver-name">Alexander Albon</td><td class="team-williams">Williams</td><td>0</td><td></td></tr>
+        <tr><td>13</td><td class="driver-name">Liam Lawson</td><td class="team-rb">RB</td><td>0</td><td></td></tr>
+        <tr><td>14</td><td class="driver-name">Franco Colapinto</td><td class="team-alpine">Alpine</td><td>0</td><td></td></tr>
+        <tr><td>15</td><td class="driver-name">Carlos Sainz</td><td class="team-williams">Williams</td><td>0</td><td></td></tr>
+        <tr><td>16</td><td class="driver-name">Sergio Perez</td><td class="team-cadillac">Cadillac</td><td>0</td><td></td></tr>
+        <tr><td>17</td><td class="driver-name">Lance Stroll</td><td class="team-aston">Aston Martin</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>18</td><td class="driver-name">Fernando Alonso</td><td class="team-aston">Aston Martin</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>19</td><td class="driver-name">Valtteri Bottas</td><td class="team-cadillac">Cadillac</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>20</td><td class="driver-name">Isack Hadjar</td><td class="team-redbull">Red Bull</td><td>—</td><td class="retired">Retired</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Round 2 -->
+<div class="section section-divider">
+  <div class="race-header">
+    <span class="race-round">Round 2</span>
+    <span class="race-name">Chinese Grand Prix</span>
+    <span class="race-meta">March 15, 2026 &middot; Shanghai International Circuit</span>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Pts</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="pos-1">1</td><td class="driver-name">Andrea Kimi Antonelli</td><td class="team-mercedes">Mercedes</td><td>25</td><td class="badge badge-green">Winner</td></tr>
+        <tr><td class="pos-2">2</td><td class="driver-name">George Russell</td><td class="team-mercedes">Mercedes</td><td>18</td><td></td></tr>
+        <tr><td class="pos-3">3</td><td class="driver-name">Lewis Hamilton</td><td class="team-ferrari">Ferrari</td><td>15</td><td></td></tr>
+        <tr><td>4</td><td class="driver-name">Charles Leclerc</td><td class="team-ferrari">Ferrari</td><td>12</td><td></td></tr>
+        <tr><td>5</td><td class="driver-name">Oliver Bearman</td><td class="team-haas">Haas</td><td>10</td><td></td></tr>
+        <tr><td>6</td><td class="driver-name">Pierre Gasly</td><td class="team-alpine">Alpine</td><td>8</td><td></td></tr>
+        <tr><td>7</td><td class="driver-name">Liam Lawson</td><td class="team-rb">RB</td><td>6</td><td></td></tr>
+        <tr><td>8</td><td class="driver-name">Isack Hadjar</td><td class="team-redbull">Red Bull</td><td>4</td><td></td></tr>
+        <tr><td>9</td><td class="driver-name">Carlos Sainz</td><td class="team-williams">Williams</td><td>2</td><td></td></tr>
+        <tr><td>10</td><td class="driver-name">Franco Colapinto</td><td class="team-alpine">Alpine</td><td>1</td><td></td></tr>
+        <tr><td>11</td><td class="driver-name">Nico Hulkenberg</td><td class="team-audi">Audi</td><td>0</td><td></td></tr>
+        <tr><td>12</td><td class="driver-name">Arvid Lindblad</td><td class="team-rb">RB</td><td>0</td><td></td></tr>
+        <tr><td>13</td><td class="driver-name">Valtteri Bottas</td><td class="team-cadillac">Cadillac</td><td>0</td><td></td></tr>
+        <tr><td>14</td><td class="driver-name">Esteban Ocon</td><td class="team-haas">Haas</td><td>0</td><td></td></tr>
+        <tr><td>15</td><td class="driver-name">Sergio Perez</td><td class="team-cadillac">Cadillac</td><td>0</td><td></td></tr>
+        <tr><td>16</td><td class="driver-name">Max Verstappen</td><td class="team-redbull">Red Bull</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>17</td><td class="driver-name">Fernando Alonso</td><td class="team-aston">Aston Martin</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>18</td><td class="driver-name">Lance Stroll</td><td class="team-aston">Aston Martin</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>—</td><td class="driver-name">Oscar Piastri</td><td class="team-mclaren">McLaren</td><td>—</td><td class="dns">DNS</td></tr>
+        <tr><td>—</td><td class="driver-name">Lando Norris</td><td class="team-mclaren">McLaren</td><td>—</td><td class="dns">DNS</td></tr>
+        <tr><td>—</td><td class="driver-name">Gabriel Bortoleto</td><td class="team-audi">Audi</td><td>—</td><td class="dns">DNS</td></tr>
+        <tr><td>—</td><td class="driver-name">Alexander Albon</td><td class="team-williams">Williams</td><td>—</td><td class="dns">DNS</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Round 3 -->
+<div class="section section-divider">
+  <div class="race-header">
+    <span class="race-round">Round 3</span>
+    <span class="race-name">Japanese Grand Prix</span>
+    <span class="race-meta">March 29, 2026 &middot; Suzuka Circuit</span>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Pts</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="pos-1">1</td><td class="driver-name">Andrea Kimi Antonelli</td><td class="team-mercedes">Mercedes</td><td>25</td><td class="badge badge-green">Winner</td></tr>
+        <tr><td class="pos-2">2</td><td class="driver-name">Oscar Piastri</td><td class="team-mclaren">McLaren</td><td>18</td><td></td></tr>
+        <tr><td class="pos-3">3</td><td class="driver-name">Charles Leclerc</td><td class="team-ferrari">Ferrari</td><td>15</td><td></td></tr>
+        <tr><td>4</td><td class="driver-name">George Russell</td><td class="team-mercedes">Mercedes</td><td>12</td><td></td></tr>
+        <tr><td>5</td><td class="driver-name">Lando Norris</td><td class="team-mclaren">McLaren</td><td>10</td><td></td></tr>
+        <tr><td>6</td><td class="driver-name">Lewis Hamilton</td><td class="team-ferrari">Ferrari</td><td>8</td><td></td></tr>
+        <tr><td>7</td><td class="driver-name">Pierre Gasly</td><td class="team-alpine">Alpine</td><td>6</td><td></td></tr>
+        <tr><td>8</td><td class="driver-name">Max Verstappen</td><td class="team-redbull">Red Bull</td><td>4</td><td></td></tr>
+        <tr><td>9</td><td class="driver-name">Liam Lawson</td><td class="team-rb">RB</td><td>2</td><td></td></tr>
+        <tr><td>10</td><td class="driver-name">Esteban Ocon</td><td class="team-haas">Haas</td><td>1</td><td></td></tr>
+        <tr><td>11</td><td class="driver-name">Nico Hulkenberg</td><td class="team-audi">Audi</td><td>0</td><td></td></tr>
+        <tr><td>12</td><td class="driver-name">Isack Hadjar</td><td class="team-redbull">Red Bull</td><td>0</td><td></td></tr>
+        <tr><td>13</td><td class="driver-name">Gabriel Bortoleto</td><td class="team-audi">Audi</td><td>0</td><td></td></tr>
+        <tr><td>14</td><td class="driver-name">Arvid Lindblad</td><td class="team-rb">RB</td><td>0</td><td></td></tr>
+        <tr><td>15</td><td class="driver-name">Carlos Sainz</td><td class="team-williams">Williams</td><td>0</td><td></td></tr>
+        <tr><td>16</td><td class="driver-name">Franco Colapinto</td><td class="team-alpine">Alpine</td><td>0</td><td></td></tr>
+        <tr><td>17</td><td class="driver-name">Sergio Perez</td><td class="team-cadillac">Cadillac</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>18</td><td class="driver-name">Fernando Alonso</td><td class="team-aston">Aston Martin</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>19</td><td class="driver-name">Valtteri Bottas</td><td class="team-cadillac">Cadillac</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>20</td><td class="driver-name">Alexander Albon</td><td class="team-williams">Williams</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>—</td><td class="driver-name">Lance Stroll</td><td class="team-aston">Aston Martin</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>—</td><td class="driver-name">Oliver Bearman</td><td class="team-haas">Haas</td><td>—</td><td class="retired">Retired</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Round 4 -->
+<div class="section section-divider">
+  <div class="race-header">
+    <span class="race-round">Round 4</span>
+    <span class="race-name">Miami Grand Prix</span>
+    <span class="race-meta">May 3, 2026 &middot; Miami International Autodrome</span>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Pts</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="pos-1">1</td><td class="driver-name">Andrea Kimi Antonelli</td><td class="team-mercedes">Mercedes</td><td>25</td><td class="badge badge-green">Winner</td></tr>
+        <tr><td class="pos-2">2</td><td class="driver-name">Lando Norris</td><td class="team-mclaren">McLaren</td><td>18</td><td></td></tr>
+        <tr><td class="pos-3">3</td><td class="driver-name">Oscar Piastri</td><td class="team-mclaren">McLaren</td><td>15</td><td></td></tr>
+        <tr><td>4</td><td class="driver-name">George Russell</td><td class="team-mercedes">Mercedes</td><td>12</td><td></td></tr>
+        <tr><td>5</td><td class="driver-name">Max Verstappen</td><td class="team-redbull">Red Bull</td><td>10</td><td></td></tr>
+        <tr><td>6</td><td class="driver-name">Lewis Hamilton</td><td class="team-ferrari">Ferrari</td><td>8</td><td></td></tr>
+        <tr><td>7</td><td class="driver-name">Franco Colapinto</td><td class="team-alpine">Alpine</td><td>6</td><td></td></tr>
+        <tr><td>8</td><td class="driver-name">Charles Leclerc</td><td class="team-ferrari">Ferrari</td><td>4</td><td></td></tr>
+        <tr><td>9</td><td class="driver-name">Carlos Sainz</td><td class="team-williams">Williams</td><td>2</td><td></td></tr>
+        <tr><td>10</td><td class="driver-name">Alexander Albon</td><td class="team-williams">Williams</td><td>1</td><td></td></tr>
+        <tr><td>11</td><td class="driver-name">Oliver Bearman</td><td class="team-haas">Haas</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>12</td><td class="driver-name">Gabriel Bortoleto</td><td class="team-audi">Audi</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>13</td><td class="driver-name">Esteban Ocon</td><td class="team-haas">Haas</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>14</td><td class="driver-name">Arvid Lindblad</td><td class="team-rb">RB</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>15</td><td class="driver-name">Fernando Alonso</td><td class="team-aston">Aston Martin</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>16</td><td class="driver-name">Sergio Perez</td><td class="team-cadillac">Cadillac</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>17</td><td class="driver-name">Lance Stroll</td><td class="team-aston">Aston Martin</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>18</td><td class="driver-name">Valtteri Bottas</td><td class="team-cadillac">Cadillac</td><td>0</td><td class="lapped">+1 Lap</td></tr>
+        <tr><td>—</td><td class="driver-name">Nico Hulkenberg</td><td class="team-audi">Audi</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>—</td><td class="driver-name">Liam Lawson</td><td class="team-rb">RB</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>—</td><td class="driver-name">Pierre Gasly</td><td class="team-alpine">Alpine</td><td>—</td><td class="retired">Retired</td></tr>
+        <tr><td>—</td><td class="driver-name">Isack Hadjar</td><td class="team-redbull">Red Bull</td><td>—</td><td class="retired">Retired</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+</body>
+</html>

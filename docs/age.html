@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Driver Age Distribution</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
+  .team-mclaren { color: #ff8700; }
+  .team-redbull { color: #3671C6; }
+  .team-alpine { color: #0090ff; }
+  .team-haas { color: #b6babd; }
+  .team-rb { color: #6692ff; }
+  .team-williams { color: #64c4ff; }
+  .team-audi { color: #00e701; }
+  .team-cadillac { color: #c0c0c0; }
+  .team-aston { color: #006f62; }
+
+  .chart-container { position: relative; width: 100%; height: 320px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+
+  .gen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .gen-card {
+    background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 16px;
+    border-left: 3px solid;
+  }
+  .gen-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .gen-drivers { font-size: 11px; color: #8b949e; line-height: 1.6; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Driver Age Distribution</h1>
+  <div class="tagline">Age analysis of the 2026 F1 grid. Ages calculated at season start (Round 1, March 8 2026). Includes debut age analysis showing how old each driver was when they first raced in F1.</div>
+</div>
+
+<div class="section">
+  <h2>Grid Statistics</h2>
+  <p class="section-sub">Summary metrics for the 22-driver 2026 grid</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Mean Age</div>
+      <div class="stat">28.2</div>
+      <div class="stat-label">years at season start</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Median Age</div>
+      <div class="stat">28</div>
+      <div class="stat-label">years (11th/12th values)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Youngest</div>
+      <div class="stat-sm" style="color:#bb9af7;">Lindblad</div>
+      <div class="stat-label">18 years old (b. 2007)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Oldest</div>
+      <div class="stat-sm" style="color:#d29922;">Alonso</div>
+      <div class="stat-label">44 years old (b. 1981)</div>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Age Distribution Chart</h2>
+  <p class="section-sub">Driver count by age bracket at season start (March 2026)</p>
+  <div class="card">
+    <div class="chart-container">
+      <canvas id="ageChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Generational Breakdown</h2>
+  <p class="section-sub">Drivers grouped by career stage</p>
+  <div class="gen-grid">
+    <div class="gen-card" style="border-left-color:#bb9af7;">
+      <div class="gen-title" style="color:#bb9af7;">Gen Next (18-20) — 3 drivers</div>
+      <div class="gen-drivers">Lindblad (18), Antonelli (19), Bearman (20)</div>
+    </div>
+    <div class="gen-card" style="border-left-color:#58a6ff;">
+      <div class="gen-title" style="color:#58a6ff;">Young Guns (21-25) — 5 drivers</div>
+      <div class="gen-drivers">Bortoleto (21), Hadjar (21), Colapinto (22), Lawson (24), Piastri (24)</div>
+    </div>
+    <div class="gen-card" style="border-left-color:#3fb950;">
+      <div class="gen-title" style="color:#3fb950;">Prime (26-30) — 8 drivers</div>
+      <div class="gen-drivers">Norris (26), Stroll (27), Leclerc (28), Russell (28), Verstappen (28), Albon (29), Ocon (29), Gasly (30)</div>
+    </div>
+    <div class="gen-card" style="border-left-color:#d29922;">
+      <div class="gen-title" style="color:#d29922;">Veterans (31-40) — 4 drivers</div>
+      <div class="gen-drivers">Sainz (31), Bottas (36), Perez (36), Hulkenberg (38)</div>
+    </div>
+    <div class="gen-card" style="border-left-color:#f85149;">
+      <div class="gen-title" style="color:#f85149;">Legends (40+) — 2 drivers</div>
+      <div class="gen-drivers">Hamilton (41), Alonso (44)</div>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Debut Age Analysis</h2>
+  <p class="section-sub">Age at which each current driver first raced in Formula 1</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Driver</th><th>Team</th><th>DOB</th><th>Current Age</th><th>Debut Year</th><th>Debut Age</th><th>F1 Seasons</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="driver-name">Max Verstappen</td><td class="team-redbull">Red Bull</td><td>1997-09-30</td><td>28</td><td>2015</td><td style="color:#bb9af7;font-weight:700;">17</td><td>12</td></tr>
+        <tr><td class="driver-name">Lance Stroll</td><td class="team-aston">Aston Martin</td><td>1998-10-29</td><td>27</td><td>2017</td><td style="color:#bb9af7;font-weight:700;">18</td><td>10</td></tr>
+        <tr><td class="driver-name">Arvid Lindblad</td><td class="team-rb">RB</td><td>2007-08-08</td><td>18</td><td>2026</td><td style="color:#bb9af7;font-weight:700;">18</td><td>1</td></tr>
+        <tr><td class="driver-name">Andrea Kimi Antonelli</td><td class="team-mercedes">Mercedes</td><td>2006-08-25</td><td>19</td><td>2025</td><td style="color:#bb9af7;font-weight:700;">18</td><td>2</td></tr>
+        <tr><td class="driver-name">Lando Norris</td><td class="team-mclaren">McLaren</td><td>1999-11-13</td><td>26</td><td>2019</td><td>19</td><td>8</td></tr>
+        <tr><td class="driver-name">Fernando Alonso</td><td class="team-aston">Aston Martin</td><td>1981-07-29</td><td>44</td><td>2001</td><td>19</td><td>23</td></tr>
+        <tr><td class="driver-name">Oliver Bearman</td><td class="team-haas">Haas</td><td>2005-05-08</td><td>20</td><td>2024</td><td>19</td><td>3</td></tr>
+        <tr><td class="driver-name">Charles Leclerc</td><td class="team-ferrari">Ferrari</td><td>1997-10-16</td><td>28</td><td>2018</td><td>20</td><td>9</td></tr>
+        <tr><td class="driver-name">Esteban Ocon</td><td class="team-haas">Haas</td><td>1996-09-17</td><td>29</td><td>2016</td><td>20</td><td>10</td></tr>
+        <tr><td class="driver-name">Carlos Sainz</td><td class="team-williams">Williams</td><td>1994-09-01</td><td>31</td><td>2015</td><td>20</td><td>12</td></tr>
+        <tr><td class="driver-name">Isack Hadjar</td><td class="team-redbull">Red Bull</td><td>2004-09-28</td><td>21</td><td>2025</td><td>20</td><td>2</td></tr>
+        <tr><td class="driver-name">Gabriel Bortoleto</td><td class="team-audi">Audi</td><td>2004-10-14</td><td>21</td><td>2025</td><td>20</td><td>2</td></tr>
+        <tr><td class="driver-name">George Russell</td><td class="team-mercedes">Mercedes</td><td>1998-02-15</td><td>28</td><td>2019</td><td>21</td><td>8</td></tr>
+        <tr><td class="driver-name">Oscar Piastri</td><td class="team-mclaren">McLaren</td><td>2001-04-06</td><td>24</td><td>2023</td><td>21</td><td>4</td></tr>
+        <tr><td class="driver-name">Sergio Perez</td><td class="team-cadillac">Cadillac</td><td>1990-01-26</td><td>36</td><td>2011</td><td>21</td><td>16</td></tr>
+        <tr><td class="driver-name">Pierre Gasly</td><td class="team-alpine">Alpine</td><td>1996-02-07</td><td>30</td><td>2017</td><td>21</td><td>10</td></tr>
+        <tr><td class="driver-name">Franco Colapinto</td><td class="team-alpine">Alpine</td><td>2003-05-27</td><td>22</td><td>2024</td><td>21</td><td>3</td></tr>
+        <tr><td class="driver-name">Liam Lawson</td><td class="team-rb">RB</td><td>2002-02-11</td><td>24</td><td>2023</td><td>21</td><td>4</td></tr>
+        <tr><td class="driver-name">Lewis Hamilton</td><td class="team-ferrari">Ferrari</td><td>1985-01-07</td><td>41</td><td>2007</td><td>22</td><td>20</td></tr>
+        <tr><td class="driver-name">Nico Hulkenberg</td><td class="team-audi">Audi</td><td>1987-08-19</td><td>38</td><td>2010</td><td>22</td><td>14</td></tr>
+        <tr><td class="driver-name">Alexander Albon</td><td class="team-williams">Williams</td><td>1996-03-23</td><td>29</td><td>2019</td><td>23</td><td>6</td></tr>
+        <tr><td class="driver-name">Valtteri Bottas</td><td class="team-cadillac">Cadillac</td><td>1989-08-28</td><td>36</td><td>2013</td><td>23</td><td>14</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Debut Age Distribution</h2>
+  <p class="section-sub">How old were current 2026 drivers when they entered F1?</p>
+  <div class="card">
+    <div class="chart-container">
+      <canvas id="debutChart"></canvas>
+    </div>
+  </div>
+  <div class="grid grid-3" style="margin-top:16px;">
+    <div class="card">
+      <div class="card-title">Mean Debut Age</div>
+      <div class="stat">20.3</div>
+      <div class="stat-label">years old at first race</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Youngest Debutant</div>
+      <div class="stat-sm" style="color:#bb9af7;">Verstappen</div>
+      <div class="stat-label">17 years old (2015, Toro Rosso)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Most Experienced</div>
+      <div class="stat-sm" style="color:#d29922;">Alonso</div>
+      <div class="stat-label">23 seasons in F1 (2001-2026)</div>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Key Observations</h2>
+  <p class="section-sub">Notable patterns in the 2026 grid composition</p>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Generational Shift</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        The 2026 grid features the widest age span in modern F1 history: 26 years between Lindblad (18) and Alonso (44). Three teenagers/20-year-olds (Lindblad, Antonelli, Bearman) race alongside two drivers over 40 — a generational overlap not seen since the early 2000s.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Youth Dominance</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        Antonelli (19) leads the championship with 3 wins from 4 races — the youngest championship leader since Verstappen in 2015. The under-25 cohort (8 drivers, 36% of grid) has collectively scored 183 points vs 0 for the over-40 group. Peak performance clusters around age 26-28.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">New Entrants</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        2026 features two new teams: Cadillac F1 (GM/Andretti entry) and Audi (Sauber rebrand). Both field experienced veterans (Bottas/Perez, Hulkenberg/Bortoleto) but have yet to score meaningful points through 4 rounds. The Cadillac entry marks the first new American constructor since Haas (2016).
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Debut Trends</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        The average debut age for current drivers is 20.3 years — consistent with the post-2015 trend of younger entries driven by Red Bull's junior program model. 9 of 22 drivers (41%) debuted at age 20 or younger. Only 2 drivers (Albon, Bottas) debuted at 23 or older.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  // Current age distribution
+  const ageData = [
+    {age:18,count:1,drivers:['Lindblad']},
+    {age:19,count:1,drivers:['Antonelli']},
+    {age:20,count:1,drivers:['Bearman']},
+    {age:21,count:2,drivers:['Bortoleto','Hadjar']},
+    {age:22,count:1,drivers:['Colapinto']},
+    {age:24,count:2,drivers:['Lawson','Piastri']},
+    {age:26,count:1,drivers:['Norris']},
+    {age:27,count:1,drivers:['Stroll']},
+    {age:28,count:3,drivers:['Leclerc','Russell','Verstappen']},
+    {age:29,count:2,drivers:['Albon','Ocon']},
+    {age:30,count:1,drivers:['Gasly']},
+    {age:31,count:1,drivers:['Sainz']},
+    {age:36,count:2,drivers:['Bottas','Perez']},
+    {age:38,count:1,drivers:['Hulkenberg']},
+    {age:41,count:1,drivers:['Hamilton']},
+    {age:44,count:1,drivers:['Alonso']}
+  ];
+
+  function drawAgeChart() {
+    const canvas = document.getElementById('ageChart');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+    const pad = {top:30, right:20, bottom:50, left:40};
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const maxCount = 3;
+    const barWidth = Math.min(chartW / ageData.length - 4, 36);
+    const gap = (chartW - barWidth * ageData.length) / (ageData.length + 1);
+
+    // Y-axis gridlines
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#8b949e';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= maxCount; i++) {
+      const y = pad.top + chartH - (i / maxCount) * chartH;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(w - pad.right, y);
+      ctx.stroke();
+      ctx.fillText(i.toString(), pad.left - 8, y + 4);
+    }
+
+    // Bars
+    const colors = {
+      'Gen Next': '#bb9af7',
+      'Young': '#58a6ff',
+      'Prime': '#3fb950',
+      'Veteran': '#d29922',
+      'Legend': '#f85149'
+    };
+
+    ageData.forEach((d, i) => {
+      const x = pad.left + gap + i * (barWidth + gap);
+      const barH = (d.count / maxCount) * chartH;
+      const y = pad.top + chartH - barH;
+
+      let color;
+      if (d.age <= 20) color = colors['Gen Next'];
+      else if (d.age <= 25) color = colors['Young'];
+      else if (d.age <= 30) color = colors['Prime'];
+      else if (d.age <= 40) color = colors['Veteran'];
+      else color = colors['Legend'];
+
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      ctx.roundRect(x, y, barWidth, barH, 3);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Age label
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(d.age.toString(), x + barWidth/2, pad.top + chartH + 16);
+
+      // Count label
+      ctx.fillStyle = '#f0f6fc';
+      ctx.font = '10px monospace';
+      ctx.fillText(d.count.toString(), x + barWidth/2, y - 6);
+    });
+
+    // X-axis label
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Age at Season Start (March 2026)', w/2, h - 8);
+  }
+
+  // Debut age distribution
+  const debutData = [
+    {age:17,count:1,drivers:['Verstappen']},
+    {age:18,count:3,drivers:['Stroll','Lindblad','Antonelli']},
+    {age:19,count:3,drivers:['Norris','Alonso','Bearman']},
+    {age:20,count:5,drivers:['Leclerc','Ocon','Sainz','Hadjar','Bortoleto']},
+    {age:21,count:6,drivers:['Russell','Piastri','Perez','Gasly','Colapinto','Lawson']},
+    {age:22,count:2,drivers:['Hamilton','Hulkenberg']},
+    {age:23,count:2,drivers:['Albon','Bottas']}
+  ];
+
+  function drawDebutChart() {
+    const canvas = document.getElementById('debutChart');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+    const pad = {top:30, right:20, bottom:50, left:40};
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const maxCount = 6;
+    const barWidth = Math.min(chartW / debutData.length - 8, 60);
+    const gap = (chartW - barWidth * debutData.length) / (debutData.length + 1);
+
+    // Y-axis gridlines
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#8b949e';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= maxCount; i++) {
+      const y = pad.top + chartH - (i / maxCount) * chartH;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(w - pad.right, y);
+      ctx.stroke();
+      ctx.fillText(i.toString(), pad.left - 8, y + 4);
+    }
+
+    // Bars
+    debutData.forEach((d, i) => {
+      const x = pad.left + gap + i * (barWidth + gap);
+      const barH = (d.count / maxCount) * chartH;
+      const y = pad.top + chartH - barH;
+
+      const gradient = ctx.createLinearGradient(x, y, x, y + barH);
+      gradient.addColorStop(0, '#58a6ff');
+      gradient.addColorStop(1, '#1b2d4a');
+      ctx.fillStyle = gradient;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.roundRect(x, y, barWidth, barH, 3);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Age label
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(d.age.toString(), x + barWidth/2, pad.top + chartH + 16);
+
+      // Count label
+      ctx.fillStyle = '#f0f6fc';
+      ctx.font = '11px monospace';
+      ctx.fillText(d.count.toString(), x + barWidth/2, y - 6);
+
+      // Driver names (small, below bar)
+      ctx.fillStyle = '#484f58';
+      ctx.font = '8px monospace';
+      const names = d.drivers.join(', ');
+      if (names.length < 30) {
+        ctx.fillText(names, x + barWidth/2, pad.top + chartH + 30);
+      }
+    });
+
+    // X-axis label
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Age at F1 Debut', w/2, h - 8);
+  }
+
+  drawAgeChart();
+  drawDebutChart();
+  window.addEventListener('resize', () => { drawAgeChart(); drawDebutChart(); });
+})();
+</script>
+
+</body>
+</html>
