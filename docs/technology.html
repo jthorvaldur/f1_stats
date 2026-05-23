@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — The Technology</title>
+<meta name="description" content="Deep technical dive into 2026 F1 engineering: power unit architecture, active aerodynamics, materials science, electronics, tire technology, and race strategy computation.">
+<meta property="og:title" content="F1 2026 — The Technology">
+<meta property="og:description" content="Inside the most complex racing machines ever built. 2026 power unit architecture, active aerodynamics, carbon fiber composites, sensor networks, and computational race strategy.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/technology.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — The Technology">
+<meta name="twitter:description" content="Inside the most complex racing machines ever built. 2026 power unit architecture, active aerodynamics, carbon fiber composites, sensor networks, and computational race strategy.">
+<meta name="keywords" content="F1 2026 technology, Formula 1 power unit, MGU-K, active aerodynamics, carbon fiber monocoque, F1 telemetry, race strategy, CFD, sustainable fuel, Pirelli tires">
+<link rel="canonical" href="https://jthorvaldur.github.io/f1_stats/technology.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+  .badge-cyan { background: #0a1f2e; color: #39d353; border: 1px solid #153040; }
+
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  /* Technical prose blocks */
+  .prose {
+    font-size: 13px;
+    color: #c9d1d9;
+    line-height: 1.8;
+  }
+  .prose p { margin-bottom: 12px; }
+  .prose strong { color: #f0f6fc; }
+
+  /* Callout blocks */
+  .callout {
+    border-left: 3px solid; padding: 12px 16px; margin: 16px 0;
+    font-size: 12px; line-height: 1.7; background: rgba(255,255,255,0.02);
+    border-radius: 0 8px 8px 0;
+  }
+  .callout-blue { border-color: #58a6ff; }
+  .callout-green { border-color: #3fb950; }
+  .callout-amber { border-color: #d29922; }
+  .callout-red { border-color: #f85149; }
+  .callout-purple { border-color: #bb9af7; }
+
+  /* Formula blocks */
+  .formula {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: #bb9af7;
+    font-style: italic;
+    overflow-x: auto;
+  }
+  .formula .label { color: #8b949e; font-style: normal; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
+  .formula .note { color: #484f58; font-style: normal; font-size: 11px; margin-top: 4px; }
+
+  /* System diagram */
+  .diagram-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 24px 16px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  .diagram-node {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+  .diagram-node .node-label { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.05em; }
+  .diagram-node .node-value { font-size: 14px; color: #f0f6fc; font-weight: 700; margin-top: 2px; }
+  .diagram-node .node-sub { font-size: 10px; color: #484f58; margin-top: 2px; }
+  .diagram-node.highlight { border-color: #58a6ff; box-shadow: 0 0 8px rgba(88,166,255,0.15); }
+  .diagram-node.highlight-green { border-color: #3fb950; box-shadow: 0 0 8px rgba(63,185,80,0.15); }
+  .diagram-node.highlight-amber { border-color: #d29922; box-shadow: 0 0 8px rgba(210,153,34,0.15); }
+  .diagram-node.removed { border-color: #f85149; opacity: 0.4; text-decoration: line-through; }
+  .diagram-arrow {
+    color: #30363d;
+    font-size: 18px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .diagram-arrow.energy-recovery { color: #3fb950; }
+  .diagram-arrow.energy-deploy { color: #58a6ff; }
+
+  /* Spec tables */
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+
+  /* Manufacturer cards */
+  .mfr-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .mfr-name { font-size: 14px; font-weight: 700; color: #f0f6fc; margin-bottom: 2px; }
+  .mfr-sub { font-size: 11px; color: #8b949e; margin-bottom: 8px; }
+  .mfr-detail { font-size: 12px; color: #c9d1d9; line-height: 1.6; }
+
+  /* Aero mode comparison */
+  .mode-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .mode-col {
+    padding: 20px;
+    background: #161b22;
+  }
+  .mode-col:first-child { border-right: 1px solid #30363d; }
+  .mode-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .mode-z .mode-label { color: #f85149; }
+  .mode-x .mode-label { color: #3fb950; }
+  .mode-detail { font-size: 12px; color: #c9d1d9; line-height: 1.7; }
+  .mode-detail strong { color: #f0f6fc; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .mode-compare { grid-template-columns: 1fr; }
+    .mode-col:first-child { border-right: none; border-bottom: 1px solid #30363d; }
+    .diagram-flow { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================================================================= HERO -->
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to championship</a>
+  <h1>The Technology</h1>
+  <div class="tagline">Inside the most complex racing machines ever built &mdash; 2026 power unit architecture, active aerodynamics, and the materials science that makes it possible.</div>
+  <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <span class="badge badge-green">350 kW MGU-K</span>
+    <span class="badge badge-blue">Active Aero</span>
+    <span class="badge badge-purple">800V+ Battery</span>
+    <span class="badge badge-amber">300+ Sensors</span>
+    <span class="badge badge-red">No MGU-H</span>
+  </div>
+</div>
+
+<!-- ==================================== POWER UNIT ARCHITECTURE -->
+<div class="section">
+  <h2>Power Unit Architecture</h2>
+  <p class="section-sub">The 2026 power unit is a 50/50 hybrid: ~400 kW from internal combustion, 350 kW from electric. Total system output ~750 kW (1,006 hp).</p>
+
+  <h3>System Topology</h3>
+  <div class="card">
+    <div class="card-title">Energy Flow Diagram &mdash; 2026 Power Unit</div>
+    <div class="diagram-flow">
+      <div class="diagram-node">
+        <div class="node-label">Fuel</div>
+        <div class="node-value">100%</div>
+        <div class="node-sub">sustainable</div>
+      </div>
+      <div class="diagram-arrow">&rarr;</div>
+      <div class="diagram-node highlight-amber">
+        <div class="node-label">ICE</div>
+        <div class="node-value">~400 kW</div>
+        <div class="node-sub">1.6L V6 turbo</div>
+      </div>
+      <div class="diagram-arrow">&rarr;</div>
+      <div class="diagram-node">
+        <div class="node-label">Turbo</div>
+        <div class="node-value">Single</div>
+        <div class="node-sub">wastegate ctrl</div>
+      </div>
+      <div class="diagram-arrow">&rarr;</div>
+      <div class="diagram-node removed">
+        <div class="node-label">MGU-H</div>
+        <div class="node-value">Removed</div>
+        <div class="node-sub">for 2026</div>
+      </div>
+      <div class="diagram-arrow">&rarr;</div>
+      <div class="diagram-node highlight-green">
+        <div class="node-label">MGU-K</div>
+        <div class="node-value">350 kW</div>
+        <div class="node-sub">crankshaft</div>
+      </div>
+      <div class="diagram-arrow energy-recovery">&larr;</div>
+      <div class="diagram-node highlight">
+        <div class="node-label">Battery</div>
+        <div class="node-value">9 MJ</div>
+        <div class="node-sub">800V+ Li-ion</div>
+      </div>
+      <div class="diagram-arrow energy-deploy">&rarr;</div>
+      <div class="diagram-node">
+        <div class="node-label">Drive</div>
+        <div class="node-value">~750 kW</div>
+        <div class="node-sub">combined</div>
+      </div>
+    </div>
+    <div class="callout callout-red" style="margin-top: 12px;">
+      <strong>Key change:</strong> The MGU-H is gone. In the 2014&ndash;2025 era, the MGU-H sat on the turbocharger shaft and recovered exhaust energy while simultaneously eliminating turbo lag by motoring the compressor up to speed. Its removal simplifies the power unit architecture but reintroduces turbo lag as a real engineering problem. Anti-lag strategies &mdash; overrun combustion, wastegate modulation, variable turbine geometry &mdash; become critical differentiators.
+    </div>
+  </div>
+
+  <h3>Internal Combustion Engine</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Configuration:</strong> 1.6-liter V6, 90&deg; bank angle, 15,000 RPM limit. Single turbocharger with wastegate control. Direct injection with variable valve timing. Bore and stroke are constrained by regulation to prevent extreme short-stroke designs that would push the power band too high for the tire compounds to exploit.</p>
+      <p><strong>Output:</strong> Approximately 400 kW (~536 hp) from the ICE alone. The thermal efficiency of these engines approaches 50% &mdash; roughly double that of a road car engine. Every percentage point of thermal efficiency gained is worth several kW at the crankshaft.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Thermal Efficiency</span>
+      &eta;<sub>thermal</sub> = W<sub>net</sub> / Q<sub>in</sub> &asymp; 0.50
+      <div class="note">where W<sub>net</sub> is net work output and Q<sub>in</sub> is fuel energy input. For comparison: road car SI engines achieve &eta; &asymp; 0.25&ndash;0.30.</div>
+    </div>
+    <div class="prose">
+      <p><strong>Sustainable fuel:</strong> 100% non-fossil-origin fuel is mandated from race one. The fuel must be a drop-in replacement &mdash; same energy density targets, same combustion characteristics. Fuel suppliers (Aramco, Shell, Petronas, ExxonMobil, Castrol) have spent years developing synthetic and bio-derived blends that meet the FIA specification. The stoichiometric air-fuel ratio changes slightly with different fuel chemistries, requiring recalibration of the entire injection and combustion mapping.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Fuel Energy Budget</span>
+      E<sub>fuel</sub> = m&#x0307;<sub>fuel</sub> &middot; LHV &middot; &eta;<sub>thermal</sub>
+      <div class="note">where m&#x0307;<sub>fuel</sub> is mass flow rate (no fuel flow limit in 2026), LHV is lower heating value (~34 MJ/L for sustainable fuel), and &eta;<sub>thermal</sub> is the ICE thermal efficiency.</div>
+    </div>
+  </div>
+
+  <h3>MGU-K (Motor Generator Unit &mdash; Kinetic)</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Specification:</strong> 350 kW motor-generator unit coupled to the crankshaft. This is 3&times; the power of the 2025 unit (120 kW). The MGU-K operates bidirectionally: under braking, it acts as a generator, converting kinetic energy into electrical energy stored in the battery. Under acceleration, it draws from the battery to deliver 350 kW of additional drive torque.</p>
+      <p><strong>Energy recovery:</strong> Under braking, the MGU-K can recover up to 8.5 MJ per lap (regulated limit). The rear axle braking force is split between the hydraulic brakes and the MGU-K generator torque. The brake-by-wire system manages this split in real time, maintaining consistent pedal feel for the driver while maximizing energy recovery.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Regenerative Braking Power</span>
+      P<sub>regen</sub> = &tau;<sub>MGU-K</sub> &middot; &omega;<sub>crank</sub> &le; 350 kW
+      <div class="note">The MGU-K torque &tau; multiplied by crankshaft angular velocity &omega; gives instantaneous recovery power. Recovery is limited by battery acceptance rate and thermal constraints on the motor windings.</div>
+    </div>
+    <div class="callout callout-green">
+      <strong>Why this matters:</strong> At 350 kW, the MGU-K alone provides nearly as much power as the entire 2013 V8 engine (550 kW). The electric system is no longer a supplement &mdash; it is half the powertrain. Teams that optimize energy harvesting, deployment strategy, and thermal management of the MGU-K will find lap time. The driver's energy management &mdash; where and how hard to brake, when to deploy &mdash; becomes a first-order performance variable.
+    </div>
+  </div>
+
+  <h3>Battery / Energy Store</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Specification:</strong> Lithium-ion cells, approximately 20 kg, 9 MJ per lap usable energy. System voltage exceeds 800V &mdash; in the range of modern EV hypercar platforms. The battery is not a single monolithic pack; it is an array of cells organized into modules with individual cell monitoring, balancing circuits, and thermal management channels.</p>
+      <p><strong>Thermal management:</strong> Li-ion cells operate in a narrow temperature window &mdash; typically 25&ndash;45&deg;C for optimal performance and longevity. Below this range, internal resistance rises and power delivery drops. Above it, thermal runaway risk increases. Liquid cooling circuits run through the pack, regulated by the ECU based on cell temperature, current draw, and ambient conditions. In hot climates (Bahrain, Qatar, Las Vegas), battery cooling is a limiting factor on deployment strategy.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Energy Store Constraints</span>
+      E<sub>deploy</sub> &le; 9 MJ/lap &nbsp;&nbsp;|&nbsp;&nbsp; E<sub>recover</sub> &le; 8.5 MJ/lap &nbsp;&nbsp;|&nbsp;&nbsp; P<sub>max</sub> = 350 kW
+      <div class="note">The asymmetry between deployment (9 MJ) and recovery (8.5 MJ) limits means the battery slowly depletes over stints unless the driver modulates braking intensity and deployment timing. Optimal strategy requires solving a dynamic programming problem over the full race distance.</div>
+    </div>
+    <div class="prose">
+      <p><strong>Cell chemistry:</strong> Teams and suppliers are exploring high-nickel NMC (nickel-manganese-cobalt) and NCA (nickel-cobalt-aluminum) cathode chemistries for energy density. Silicon-carbon composite anodes are under development for higher charge acceptance rates. The FIA mandates specific safety standards for cell behavior under crash loads, including nail penetration and crush tests.</p>
+    </div>
+  </div>
+
+  <h3>Turbocharger</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Configuration:</strong> Single turbocharger with wastegate control. The turbine sits in the exhaust stream and drives a compressor via a common shaft. Without the MGU-H to motor the compressor, the turbo must spool from exhaust enthalpy alone. At low RPM and during gear changes, there is a finite time delay before boost pressure reaches target &mdash; classic turbo lag.</p>
+      <p><strong>Lag mitigation:</strong> Teams will employ several strategies to manage lag. Wastegate control can maintain turbine speed during lift-off by keeping some exhaust flow through the turbine. Anti-lag systems (ALS) inject fuel into the exhaust manifold during deceleration, sustaining combustion upstream of the turbine to keep it spinning. Variable turbine geometry (VTG), if permitted, adjusts the effective turbine nozzle area to match flow conditions across the RPM range. The choice of compressor map &mdash; trading peak efficiency for wider operating range &mdash; becomes a key design decision.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Turbo Response</span>
+      I<sub>turbo</sub> &middot; d&omega;/dt = &tau;<sub>turbine</sub> &minus; &tau;<sub>compressor</sub> &minus; &tau;<sub>friction</sub>
+      <div class="note">Turbo angular acceleration is governed by the moment of inertia I and the net torque balance. Lower inertia = faster spool-up, but smaller turbines limit peak airflow. Without the MGU-H providing a &tau;<sub>motor</sub> term, the only driving torque is from the exhaust.</div>
+    </div>
+  </div>
+
+  <h3>Power Unit Manufacturers</h3>
+  <div class="grid grid-3">
+    <div class="mfr-card">
+      <div class="mfr-name" style="color: #00d2be;">Mercedes</div>
+      <div class="mfr-sub">Factory team + customers</div>
+      <div class="mfr-detail">In-house PU. Brixworth facility. Supplies Mercedes works team. Continuous development since the V6 turbo-hybrid era began in 2014. Eight constructors' titles in the hybrid era.</div>
+    </div>
+    <div class="mfr-card">
+      <div class="mfr-name" style="color: #dc143c;">Ferrari</div>
+      <div class="mfr-sub">Factory team + Cadillac (customer)</div>
+      <div class="mfr-detail">In-house PU. Maranello facility. Supplies Ferrari works team and Cadillac F1 as a customer operation (2026&ndash;2027). The only manufacturer present in every F1 season since 1950.</div>
+    </div>
+    <div class="mfr-card">
+      <div class="mfr-name" style="color: #ff8700;">Honda</div>
+      <div class="mfr-sub">Aston Martin + customer TBD</div>
+      <div class="mfr-detail">Honda Racing Corporation PU. Sakura facility. Primary supply to Aston Martin. Honda returned as a full works supplier after their successful 2019&ndash;2025 partnership with Red Bull produced four drivers' titles.</div>
+    </div>
+    <div class="mfr-card">
+      <div class="mfr-name" style="color: #3671C6;">Red Bull / Ford</div>
+      <div class="mfr-sub">Red Bull Racing + RB (VCARB)</div>
+      <div class="mfr-detail">Red Bull Powertrains facility in Milton Keynes, technical partnership with Ford. First clean-sheet PU from a team-owned manufacturer. Supplies both Red Bull Racing and RB (formerly AlphaTauri/VCARB).</div>
+    </div>
+    <div class="mfr-card">
+      <div class="mfr-name" style="color: #0090ff;">Renault</div>
+      <div class="mfr-sub">Alpine</div>
+      <div class="mfr-detail">Renault Sport Racing PU. Viry-Ch&acirc;tillon facility. Supplies Alpine only. The architect of the original V6 turbo-hybrid concept &mdash; Renault pushed for the 2014 regulations that defined the hybrid era.</div>
+    </div>
+    <div class="mfr-card">
+      <div class="mfr-name" style="color: #00e701;">Audi</div>
+      <div class="mfr-sub">Factory team (ex-Sauber)</div>
+      <div class="mfr-detail">Clean-sheet PU developed at Neuburg an der Donau. First new manufacturer PU since Honda's 2015 return. VW Group resources. The elimination of MGU-H was a precondition for Audi's entry &mdash; it removed the single most complex and expensive component to develop from scratch.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================== ACTIVE AERODYNAMICS -->
+<div class="section section-divider">
+  <h2>Active Aerodynamics</h2>
+  <p class="section-sub">For the first time since 1994, F1 cars have actively adjustable aerodynamic surfaces. The old DRS button is replaced by a fully automated, continuously variable system.</p>
+
+  <h3>The Two Modes</h3>
+  <div class="mode-compare">
+    <div class="mode-col mode-z">
+      <div class="mode-label">Z-Mode (High Downforce)</div>
+      <div class="mode-detail">
+        <p><strong>When:</strong> Cornering, braking zones, low-speed sections.</p>
+        <p style="margin-top:8px;"><strong>Front wing:</strong> Flap angle at maximum incidence. Multi-element wing generates peak downforce. C<sub>L</sub> maximized.</p>
+        <p style="margin-top:8px;"><strong>Rear wing:</strong> Full-span flap closed. High-pressure upper surface, low-pressure lower surface. Maximum induced drag accepted as trade-off for grip.</p>
+        <p style="margin-top:8px;"><strong>Downforce:</strong> Peak aero load ~5,000 N at 250 km/h. The car could theoretically drive inverted on a ceiling above ~200 km/h.</p>
+      </div>
+    </div>
+    <div class="mode-col mode-x">
+      <div class="mode-label">X-Mode (Low Drag)</div>
+      <div class="mode-detail">
+        <p><strong>When:</strong> Straights, DRS-equivalent zones, high-speed sections.</p>
+        <p style="margin-top:8px;"><strong>Front wing:</strong> Flap angle reduced to minimum. Pressure differential decreased. Drag reduced significantly.</p>
+        <p style="margin-top:8px;"><strong>Rear wing:</strong> Flap opens fully &mdash; far beyond the old DRS aperture. Near-stall angle on main plane. C<sub>D</sub> minimized.</p>
+        <p style="margin-top:8px;"><strong>Top speed gain:</strong> Estimated 15&ndash;20 km/h increase over Z-mode at the same power output. Larger delta than DRS ever provided.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Actuation and Control</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Actuators:</strong> Front wing flap adjustment is driven by hydraulic or electric actuators embedded in the endplates. Transition time between modes is approximately 0.5 seconds &mdash; fast enough for the braking zone into a corner, but not instantaneous. The structural loads on the flap hinges are enormous: aerodynamic pressure at 300 km/h applies hundreds of kilograms of force per element.</p>
+      <p><strong>Control system:</strong> The wing angle is not driver-controlled. The FIA-mandated standard ECU determines wing position based on car speed, track position (GPS), and proximity to other cars. The logic is deterministic and identical for all teams &mdash; no team can gain an advantage through control software. The driver sees the mode state on the steering wheel display but cannot override it.</p>
+      <p><strong>Failure modes:</strong> If a wing actuator fails, the system defaults to a safe state (high-downforce Z-mode) to prevent sudden loss of grip. Redundant position sensors on each flap element confirm that commanded and actual angles match within tolerance. A mismatch triggers an automatic safety flag to race control.</p>
+    </div>
+    <div class="callout callout-blue">
+      <strong>The design challenge:</strong> Unlike a fixed-aero car where you optimize for one configuration, the 2026 car must be aerodynamically efficient in TWO states. The front wing profile must generate adequate downforce in Z-mode while transitioning cleanly to a low-drag shape in X-mode without flow separation or buffeting. The rear wing must seal properly in both positions. The underbody &mdash; which generates ~40% of total downforce &mdash; must work with both front/rear wing states, maintaining balanced aerodynamic loads. This is a fundamentally harder optimization problem than designing for a single operating point.
+    </div>
+  </div>
+
+  <h3>Pressure Distribution</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Flow physics:</strong> An F1 car generates downforce through three mechanisms: the wing surfaces (upper/lower pressure differential via Bernoulli), the underbody (ground effect via Venturi acceleration), and body surfaces (diffuser, bargeboards, floor edges). In Z-mode, the front wing operates at high angle of attack, creating a strong low-pressure region on the suction surface. The rear wing does the same. The underbody tunnels accelerate air beneath the car, reducing static pressure and pulling the car toward the ground.</p>
+      <p><strong>Transition aerodynamics:</strong> When the car switches from Z-mode to X-mode, the pressure field over the entire car changes. The front wing sheds load first (0.5s transition), which shifts the aerodynamic center of pressure rearward momentarily. The rear wing opens shortly after. During transition, the car experiences a transient pitch moment that the suspension must absorb. Teams will spend significant CFD and wind tunnel time optimizing the transition sequence to minimize pitch instability.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Downforce (Simplified)</span>
+      F<sub>down</sub> = &frac12; &rho; v&sup2; A C<sub>L</sub>
+      <div class="note">where &rho; &asymp; 1.225 kg/m&sup3; (sea level), v is velocity, A is reference area, and C<sub>L</sub> is the lift coefficient (negative = downforce). C<sub>L</sub> changes significantly between Z-mode (~3.5) and X-mode (~1.5). The quadratic velocity dependence means aero loads at 300 km/h are 9&times; those at 100 km/h.</div>
+    </div>
+    <div class="formula">
+      <span class="label">Drag</span>
+      F<sub>drag</sub> = &frac12; &rho; v&sup2; A C<sub>D</sub>
+      <div class="note">C<sub>D</sub> in X-mode drops to roughly 60&ndash;65% of Z-mode. At 300 km/h, this translates to ~40% less drag force, freeing ~100 kW of power that was previously consumed overcoming air resistance. That power now accelerates the car.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================================== CHASSIS & MATERIALS -->
+<div class="section section-divider">
+  <h2>Chassis &amp; Materials</h2>
+  <p class="section-sub">The structural engineering behind a 768 kg machine that withstands 5G cornering loads and 350 km/h impacts.</p>
+
+  <h3>Monocoque</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Construction:</strong> Carbon fiber composite survival cell. The monocoque is a semi-monocoque structure &mdash; a stressed-skin design where the outer shell carries structural loads. Layers of pre-impregnated carbon fiber fabric (prepreg) are laid up over an aramid (Kevlar) honeycomb core, then cured in an autoclave at ~130&deg;C and 6&ndash;7 bar pressure. The result is a structure with an extraordinary strength-to-weight ratio: specific tensile strength exceeding 2,500 kN&middot;m/kg.</p>
+      <p><strong>Crash testing:</strong> The monocoque must pass a battery of FIA crash tests before it can race. These include frontal impact (nose cone absorbs energy, deceleration must not exceed specified g-levels), side impact (energy-absorbing panels protect the driver), rear impact (gearbox casing and rear crash structure), and a static roll-hoop load test. The survival cell must maintain its structural integrity &mdash; the driver's feet, legs, and torso must remain within the deformation envelope.</p>
+    </div>
+    <div class="callout callout-amber">
+      <strong>The weight paradox:</strong> The 2026 minimum weight is 768 kg &mdash; 32 kg lighter than 2025. Teams must add ballast (typically tungsten, &rho; = 19,250 kg/m&sup3;) to reach the minimum. The lighter you build the actual car, the more ballast you can place strategically &mdash; low and centered &mdash; to lower the center of gravity and optimize moment of inertia. Every kilogram of structural weight saved is a kilogram of ballast you can position optimally. This is why teams spend millions shaving grams from every bracket, fastener, and cable tie.
+    </div>
+  </div>
+
+  <h3>Halo</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Material:</strong> Grade 5 titanium (Ti-6Al-4V). Mass: 9 kg. The Halo is a single-piece forging &mdash; no welds, no joints. Three-point mounting: two rear attachments to the roll hoop structure, one front attachment to the chassis centerline.</p>
+      <p><strong>Load rating:</strong> 125 kN static load &mdash; equivalent to supporting the weight of a London double-decker bus (12.7 tonnes). The FIA test applies this load quasi-statically at the top of the Halo for 5 seconds. Deflection must remain within specified limits. The structure must also withstand a 50 kN lateral load.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Halo Load Test</span>
+      F<sub>vertical</sub> = 125 kN &asymp; 12.7 tonnes &nbsp;&nbsp;|&nbsp;&nbsp; F<sub>lateral</sub> = 50 kN &asymp; 5.1 tonnes
+      <div class="note">For context: a 750 kg wheel assembly striking the Halo at 225 km/h (as in Leclerc-Alonso Spa 2018) imparts an impulse of ~47 kN&middot;s. The Halo is designed for impacts well beyond observed racing incidents.</div>
+    </div>
+  </div>
+
+  <h3>Suspension</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Configuration:</strong> Push-rod front, pull-rod rear (typical, team-dependent). Carbon fiber wishbones form the primary locating members. The spring, damper, and anti-roll bar assemblies are packaged inside the monocoque or gearbox casing to minimize aerodynamic disruption.</p>
+      <p><strong>Third element:</strong> In addition to the conventional spring-damper at each corner, teams run a third spring/damper (and often an inerter) to control heave &mdash; the vertical motion of the entire car. Heave control is critical for ground-effect cars because ride height directly determines underbody downforce. A few millimeters of ride height change can shift the aerodynamic balance dramatically.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Inerter Force</span>
+      F<sub>inerter</sub> = b &middot; (a&#x0308;<sub>1</sub> &minus; a&#x0308;<sub>2</sub>)
+      <div class="note">where b is the inertance (kg) and a&#x0308; is the acceleration of each terminal. The inerter (invented at Cambridge, patented by McLaren as the "J-damper") provides a force proportional to relative acceleration &mdash; the mechanical equivalent of capacitance in an electrical circuit. It allows tuning the suspension's frequency response independent of static spring rate.</div>
+    </div>
+  </div>
+
+  <h3>Floor &amp; Ground Effect</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Design:</strong> The underbody features shaped tunnels with a Venturi profile &mdash; the cross-sectional area narrows, accelerating airflow and reducing static pressure beneath the car. This pressure differential between the upper and lower surfaces generates approximately 40% of total downforce. The diffuser at the rear expands the airflow back to freestream conditions, recovering pressure and maintaining attached flow.</p>
+      <p><strong>Ride height sensitivity:</strong> Ground-effect downforce is extremely sensitive to ride height. Too low: the tunnels choke, flow separates, downforce collapses suddenly (porpoising). Too high: the Venturi effect weakens, downforce drops gradually. The optimal operating window is narrow &mdash; a few millimeters &mdash; and the suspension must maintain the floor within this window over bumps, kerbs, fuel load changes, and tire wear. This is why heave control and third-element tuning are among the most closely guarded setup parameters.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Venturi Effect (Simplified)</span>
+      P<sub>1</sub> + &frac12;&rho;v<sub>1</sub>&sup2; = P<sub>2</sub> + &frac12;&rho;v<sub>2</sub>&sup2;
+      <div class="note">Bernoulli along a streamline in the tunnel. As cross-section narrows (throat), velocity v increases and static pressure P drops. The pressure difference between the upper surface (atmospheric) and the low-pressure tunnel floor generates downforce. Edge sealing &mdash; preventing high-pressure air from leaking into the tunnel from the sides &mdash; is critical for maintaining the pressure differential.</div>
+    </div>
+  </div>
+
+  <h3>Material Budget</h3>
+  <div class="card">
+    <div class="card-title">Materials by Application</div>
+    <table>
+      <thead>
+        <tr><th>Material</th><th>Application</th><th>Key Property</th><th>Density (kg/m&sup3;)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Carbon Fiber Composite</td><td>Monocoque, bodywork, wishbones, floor</td><td>Specific strength: 2,500+ kN&middot;m/kg</td><td>~1,600</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Ti-6Al-4V (Grade 5)</td><td>Halo, fasteners, suspension uprights</td><td>Yield strength: 880 MPa, fatigue life</td><td>4,430</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Aluminum (7075-T6)</td><td>Gearbox casing, radiator cores, brackets</td><td>Machinability, thermal conductivity</td><td>2,810</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Magnesium (AZ91D)</td><td>Wheel rims, gearbox internals</td><td>Lightest structural metal</td><td>1,810</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Steel (maraging)</td><td>Gears, shafts, springs</td><td>Hardness, wear resistance</td><td>8,000</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Inconel 718</td><td>Exhaust system, turbo housing</td><td>Creep resistance at 700&deg;C+</td><td>8,190</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Aramid (Kevlar)</td><td>Honeycomb core, impact panels</td><td>Energy absorption, shear strength</td><td>~1,440</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Tungsten</td><td>Ballast</td><td>Maximum density for CG tuning</td><td>19,250</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================================== ELECTRONICS & SENSORS -->
+<div class="section section-divider">
+  <h2>Electronics &amp; Sensors</h2>
+  <p class="section-sub">A rolling data center: 300+ sensors, ~1,000 telemetry channels, 1.5 TB per race weekend.</p>
+
+  <h3>Standard ECU</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Hardware:</strong> FIA-mandated McLaren Applied Technologies standard ECU (TAG-320B or successor). Identical hardware for all 22 cars. The ECU runs all engine management (injection timing, ignition, boost control), energy management (MGU-K deployment/recovery scheduling), active aero control, brake-by-wire, clutch control, and data logging. Teams write their own software within FIA-defined parameters &mdash; the hardware is spec, but the control strategies are proprietary.</p>
+      <p><strong>Telemetry:</strong> Approximately 1,000 channels of data are logged at rates from 1 Hz (ambient temperature) to 1 kHz+ (vibration, knock detection). Channels include engine parameters (RPM, manifold pressure, exhaust temperature per cylinder, oil pressure, water temperature), chassis parameters (ride height, suspension travel, steering angle, brake pressure, wheel speed), and electrical parameters (battery voltage, current, cell temperatures, MGU-K torque).</p>
+    </div>
+  </div>
+
+  <h3>Sensor Network</h3>
+  <div class="card">
+    <div class="card-title">300+ Sensors Per Car</div>
+    <div class="grid grid-3">
+      <div>
+        <div class="stat-sm" style="color:#3fb950;">Thermal</div>
+        <div class="stat-label" style="line-height:1.7;margin-top:6px;">Exhaust gas temperature (per cylinder), water temp, oil temp, gearbox temp, brake disc temp (IR pyrometers), tire surface temp (multi-zone IR), battery cell temp (per module), MGU-K winding temp, ambient air temp.</div>
+      </div>
+      <div>
+        <div class="stat-sm" style="color:#58a6ff;">Mechanical</div>
+        <div class="stat-label" style="line-height:1.7;margin-top:6px;">Strain gauges (wishbones, wing mounts, Halo), accelerometers (6-axis IMU), ride height (laser/ultrasonic), suspension potentiometers, steering torque sensor, wheel speed encoders, brake wear sensors, tire pressure (TPMS).</div>
+      </div>
+      <div>
+        <div class="stat-sm" style="color:#bb9af7;">Fluid / Pressure</div>
+        <div class="stat-label" style="line-height:1.7;margin-top:6px;">Manifold absolute pressure, turbo boost pressure, fuel pressure (rail and injector), oil pressure (engine and gearbox), hydraulic system pressure, brake line pressure (all four corners), pitot tubes (airspeed), Kiel probes (total pressure mapping).</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Data Transmission</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Volume:</strong> Each car generates approximately 1.5 TB of data per race weekend across practice, qualifying, and race. This includes raw sensor data, derived channels (calculated by the ECU in real time), video feeds (onboard cameras are separate from telemetry), and GPS positioning.</p>
+      <p><strong>Live link:</strong> A subset of telemetry is transmitted in real time from the car to the pit wall via a dedicated radio link, and from the pit wall to the team's factory via satellite uplink. Bandwidth is limited by regulation &mdash; teams cannot stream all 1,000 channels live. They must choose which parameters to prioritize for real-time monitoring. The factory can run simulations against live data but cannot send setup changes back to the car during parc ferm&eacute;.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card" style="margin:0;">
+        <div class="card-title">Per Weekend</div>
+        <div class="stat warn">~1.5 TB</div>
+        <div class="stat-label">Raw + derived data</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Channels</div>
+        <div class="stat" style="color:#58a6ff;">~1,000</div>
+        <div class="stat-label">Logged parameters</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Sample Rate</div>
+        <div class="stat" style="color:#bb9af7;">1 kHz+</div>
+        <div class="stat-label">Critical channels</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Sensors</div>
+        <div class="stat ok">300+</div>
+        <div class="stat-label">Per car</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Steering Wheel</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Interface:</strong> 20+ buttons, multiple rotary dials, clutch paddles, shift paddles, and an integrated LED/LCD display. The steering wheel is the driver's sole interface with the car's systems. Functions accessible from the wheel include: brake bias adjustment (front/rear percentage), differential settings (entry/mid/exit), engine mode (power/fuel saving), MGU-K deployment strategy, radio, drink, pit limiter, and neutral.</p>
+      <p><strong>Display:</strong> Multi-color LED array plus an LCD screen showing lap time, sector deltas, tire temperatures, energy state, gear position, and DRS/aero mode status. The display layout is driver-customizable &mdash; some drivers prefer a minimal view (gear number and delta only), others want full telemetry. At 300 km/h, the driver has approximately 0.2 seconds of glance time available for the display.</p>
+      <p><strong>Cost:</strong> A single steering wheel assembly costs approximately $50,000&ndash;$100,000. Teams typically build 4&ndash;6 per season per driver, with spares. Each is bespoke &mdash; grip shape, button placement, and paddle geometry are tailored to individual driver hand anatomy and preference.</p>
+    </div>
+  </div>
+
+  <h3>Simulation &amp; Development Limits</h3>
+  <div class="card">
+    <div class="card-title">FIA-Regulated Development Tools</div>
+    <table>
+      <thead>
+        <tr><th>Tool</th><th>Regulation</th><th>Constraint</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:#f0f6fc;font-weight:600;">CFD (Computational Fluid Dynamics)</td><td>Energy-capped</td><td>500 MW&middot;hr per 8-week Aerodynamic Testing Period (ATP). Teams allocate compute budget across RANS, LES, and DES simulations. Higher-fidelity simulations burn through the allocation faster.</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Wind Tunnel</td><td>Run-limited, scaled by position</td><td>80 runs/week for the lowest-placed constructor (P10), scaled down to 56 runs/week for the champion (P1). 60% scale model. Wind-on hours and occupancy hours are also capped.</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Driver-in-Loop Simulator</td><td>Unrestricted (within cost cap)</td><td>No regulatory limit on simulator time. Teams run multi-day simulator programs for setup optimization, track learning, race strategy validation, and development correlation. The simulator is the one tool where more money directly buys more time.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout callout-purple" style="margin-top:16px;">
+      <strong>The ATR sliding scale:</strong> Aerodynamic Testing Restrictions (ATR) are inversely proportional to constructor championship position. The team that finishes last gets the most development time &mdash; a regulatory mechanism designed to promote convergence. In practice, the delta is ~30% between first and last, which is significant but not enough to erase the advantage of a larger, more experienced aero department.
+    </div>
+  </div>
+</div>
+
+<!-- ==================================== TIRE TECHNOLOGY -->
+<div class="section section-divider">
+  <h2>Tire Technology</h2>
+  <p class="section-sub">Pirelli is the sole supplier. The tire is the only component that touches the track &mdash; and the single largest variable in race strategy.</p>
+
+  <h3>Compound Range</h3>
+  <div class="card">
+    <div class="card-title">2026 Tire Compounds</div>
+    <table>
+      <thead>
+        <tr><th>Compound</th><th>Type</th><th>Grip Level</th><th>Durability</th><th>Use Case</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:#f0f6fc;font-weight:600;">C1</td><td>Hard</td><td class="neg">Lowest</td><td class="ok">Highest</td><td>High-degradation circuits, long stints. Silverstone, Barcelona.</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">C2</td><td>Medium-Hard</td><td style="color:#d29922;">Low-Medium</td><td style="color:#d29922;">High</td><td>Versatile hard option. Often the race tire at demanding circuits.</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">C3</td><td>Medium</td><td style="color:#d29922;">Medium</td><td style="color:#d29922;">Medium</td><td>Baseline compound. Allocated to most circuits. Balanced grip/life.</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">C4</td><td>Medium-Soft</td><td style="color:#3fb950;">Medium-High</td><td style="color:#d29922;">Low-Medium</td><td>Qualifying compound at most circuits. Short-stint race option.</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">C5</td><td>Soft</td><td class="ok">Highest</td><td class="neg">Lowest</td><td>Monaco, Singapore &mdash; slow circuits where degradation is low. Peak grip for qualifying.</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Intermediate</td><td>Wet (light)</td><td>&mdash;</td><td>&mdash;</td><td>Damp/drying track. Tread pattern disperses standing water up to ~25 L/s per tire.</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Full Wet</td><td>Wet (heavy)</td><td>&mdash;</td><td>&mdash;</td><td>Standing water. Disperses up to ~65 L/s per tire. Raised tread depth for aquaplaning resistance.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>2026 Specification Changes</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Rim size:</strong> 18-inch (retained from 2022 regulations). The move from 13-inch to 18-inch rims in 2022 reduced tire sidewall height, decreasing sidewall deflection and making handling more predictable. The tire is no longer a significant spring element in the suspension &mdash; that role has shifted entirely to the mechanical suspension.</p>
+      <p><strong>Width reduction:</strong> Front tires narrowed from 305 mm to 280 mm. Rear tires narrowed from 405 mm to 375 mm. This reduces the mechanical grip footprint, which is deliberate &mdash; with active aerodynamics providing more total downforce, Pirelli and the FIA want to rebalance the grip sources toward aero. Less mechanical grip means the active aero delta becomes more meaningful for lap time.</p>
+      <p><strong>Tire blankets:</strong> Preheating temperature targets are being reduced for 2026, continuing the phase-down toward eventual elimination. The current target is ~70&deg;C blanket temperature (down from 100&deg;C in earlier eras). The out-lap becomes more critical as drivers must manage cold tires for longer. Tire compound design must account for a wider operating temperature range &mdash; the rubber must deliver acceptable grip from 50&deg;C (cold) through 110&deg;C (peak operating).</p>
+    </div>
+    <div class="callout callout-amber">
+      <strong>The grip balance shift:</strong> Narrower tires + active aero = a car where aerodynamic grip dominates mechanical grip more than ever. This has implications for low-speed corners (where aero loads are small and the narrower contact patch hurts) and for wet conditions (where aero contribution drops and the smaller tire footprint provides less drainage). Teams must solve a multi-regime optimization problem across dry qualifying (peak aero + peak tire temp), dry race (degrading tire + fuel load changes), and wet (minimal aero, cold tires, aquaplaning risk).
+    </div>
+  </div>
+</div>
+
+<!-- ==================================== DATA SCIENCE & STRATEGY -->
+<div class="section section-divider">
+  <h2>Data Science &amp; Strategy</h2>
+  <p class="section-sub">Computational race strategy: Monte Carlo simulation, tire degradation models, and real-time optimization under uncertainty.</p>
+
+  <h3>Race Strategy Engine</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>The problem:</strong> Given a set of tire compounds, a fuel load, a degradation model, traffic predictions, and a probability distribution over safety car deployments, find the pit stop strategy (timing, compound selection) that minimizes total race time. This is a stochastic optimization problem with discrete decisions (when to stop, which compound) and continuous state variables (tire age, fuel load, track position).</p>
+      <p><strong>Tire degradation model:</strong> Each compound degrades as a function of laps driven, fuel load (heavier car = more energy through the tire), track temperature, driving style, and setup. Teams model degradation as a time penalty per lap that increases nonlinearly with tire age. The "cliff" &mdash; where degradation accelerates sharply &mdash; is the most important parameter to identify, and it shifts with conditions.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Lap Time Model</span>
+      t<sub>lap</sub>(n) = t<sub>base</sub> + &alpha;(n) &middot; n + &beta; &middot; m<sub>fuel</sub>(n) + &gamma; &middot; traffic(n) + &epsilon;
+      <div class="note">where n is lap number, &alpha;(n) is the (lap-dependent) degradation rate, m<sub>fuel</sub> is remaining fuel mass, traffic() captures time lost behind slower cars, and &epsilon; is stochastic noise (weather, yellow flags, driver error). The total race time T = &Sigma; t<sub>lap</sub>(n) + &Sigma; t<sub>pit</sub> is minimized over the choice of pit stop laps and compound selections.</div>
+    </div>
+    <div class="prose">
+      <p><strong>Safety car probability:</strong> Historical data shows that a safety car deployment occurs in approximately 60&ndash;70% of races, with a roughly uniform probability per lap (Poisson process). The expected number of safety car laps per race is ~4. This probability must be folded into the strategy: a safety car provides a "free" pit stop (reduced time loss), so strategies that keep optionality for late stops can exploit this. The probabilistic value of waiting is non-trivial and depends on current track position and tire state.</p>
+    </div>
+    <div class="formula">
+      <span class="label">Safety Car Model</span>
+      P(SC on lap n) &asymp; &lambda; &middot; dt &nbsp;&nbsp;|&nbsp;&nbsp; &lambda; &asymp; 0.015 per lap
+      <div class="note">A Poisson process with rate &lambda; gives P(at least one SC in a 57-lap race) = 1 - e<sup>-&lambda;&middot;57</sup> &asymp; 0.58. This matches observed frequencies. The value of an "opportunistic" pit stop under SC is the difference between normal pit loss (~22s) and SC pit loss (~10&ndash;12s).</div>
+    </div>
+  </div>
+
+  <h3>Pit Stop Engineering</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Target:</strong> Less than 2.0 seconds stationary. The current record is 1.80s (Red Bull, 2019). The pit crew consists of 20+ members with defined roles: 3 per wheel (gun operator, tire off, tire on), 2 front jack, 2 rear jack, 1 front wing adjustment, 1 lollipop/traffic. Each action is practiced thousands of times per season.</p>
+      <p><strong>Wheel guns:</strong> Pneumatic impact guns operating at approximately 3,000 RPM. The wheel nut is a single central-lock design &mdash; one nut per wheel, captive on the axle. The gun operator must hit the nut, spin it off, the old tire is removed, the new tire is presented, the nut is spun on and torqued, all within the sub-2-second window. Reaction time from car stop to gun engagement is typically 0.15&ndash;0.20s.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card" style="margin:0;">
+        <div class="card-title">Target Time</div>
+        <div class="stat ok">&lt;2.0s</div>
+        <div class="stat-label">Stationary time</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Crew Size</div>
+        <div class="stat" style="color:#58a6ff;">20+</div>
+        <div class="stat-label">Pit crew members</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Gun Speed</div>
+        <div class="stat" style="color:#bb9af7;">3,000</div>
+        <div class="stat-label">RPM (pneumatic)</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Time Loss</div>
+        <div class="stat warn">~22s</div>
+        <div class="stat-label">Total pit lane transit</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Simulation &amp; Machine Learning</h3>
+  <div class="card">
+    <div class="prose">
+      <p><strong>Monte Carlo race simulation:</strong> Teams run thousands of race simulations in real time during the race itself. Each simulation samples from probability distributions over safety car timing, tire degradation rates, competitor strategy, and weather. The strategy engine evaluates the expected race finishing position (not just time &mdash; position matters because points are nonlinear) for each candidate strategy and recommends the option with the highest expected value. As the race progresses and uncertainty resolves, the simulation narrows and recommendations sharpen.</p>
+      <p><strong>Machine learning applications:</strong> ML is used extensively behind the scenes, though rarely discussed publicly. Key applications include:</p>
+    </div>
+    <div class="grid grid-2" style="margin-top:12px;">
+      <div class="card" style="margin:0;">
+        <div class="card-title">Setup Optimization</div>
+        <div class="stat-label" style="line-height:1.7;margin-top:4px;">Gaussian process regression or Bayesian optimization over the high-dimensional setup space (spring rates, ride heights, wing angles, differential settings, brake bias). The simulator provides a noisy objective function; the optimizer finds the region of parameter space that maximizes expected lap time performance. Reduces the number of setup iterations needed from dozens to single digits.</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Competitor Analysis</div>
+        <div class="stat-label" style="line-height:1.7;margin-top:4px;">GPS traces, sector times, and speed trap data from competitors are fed into models that estimate rival tire degradation, fuel loads, and likely pit windows. These estimates are used to predict whether an undercut or overcut will succeed. Bayesian updating as new laps come in refines the estimate. This is adversarial inference &mdash; your opponent is also modeling you.</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Failure Prediction</div>
+        <div class="stat-label" style="line-height:1.7;margin-top:4px;">Anomaly detection on sensor streams. Vibration signatures, temperature trends, and pressure readings are compared against baseline models. Deviations trigger alerts &mdash; a bearing running 8&deg;C above expected, an oil pressure oscillation, a brake disc temperature asymmetry. The goal is to detect incipient failure early enough to manage it (reduce power, change brake bias) rather than suffer a DNF.</div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title">Strategy Prediction</div>
+        <div class="stat-label" style="line-height:1.7;margin-top:4px;">Recurrent neural networks or transformer models trained on historical race data predict the probability of various strategic outcomes: will the one-stop work? What is the probability of rain in the next 10 laps? Should we pit now or gamble on a safety car? These models augment human strategists &mdash; they don't replace them. The final call is always human.</div>
+      </div>
+    </div>
+    <div class="callout callout-blue" style="margin-top:16px;">
+      <strong>The computational arms race:</strong> Strategy is one of the few areas where spending more directly translates to better tools. A team with a faster Monte Carlo engine can evaluate more scenarios per lap. A team with better degradation models makes more accurate predictions. A team with more telemetry engineers catches more anomalies. The cost cap constrains overall spending, but the allocation between aero development, PU development, and computational infrastructure is a strategic choice in itself. The teams that invest most heavily in data science may not have the fastest car &mdash; but they extract the most from whatever car they have.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ FOOTER -->
+<footer>
+  Data: FIA 2026 Technical &amp; Sporting Regulations &middot; <a href="https://www.fia.com/regulation/category/110">FIA F1 Regulations</a> &middot; <a href="https://www.formula1.com/en/latest/article/f1-rules-and-regulations">Formula1.com</a> &middot; Generated 2026-05-23 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+</body>
+</html>

@@ -8,6 +8,7 @@ from . import coherence as coh
 from . import profiles as prof
 from . import markets
 from . import calendar_data as cal
+from . import sponsors as spn
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = ROOT / "templates"
@@ -143,6 +144,9 @@ PAGES = [
     "rules.html",
     "format.html",
     "circuits.html",
+    "sponsors.html",
+    "physics.html",
+    "technology.html",
 ]
 
 
@@ -186,6 +190,8 @@ def generate_all(year: int | None = None) -> None:
     data["regulation_changes"] = cal.REGULATION_CHANGES
     data["weekend_format"] = cal.RACE_WEEKEND_FORMAT
     data["circuit_details"] = cal.CIRCUIT_DETAILS
+    data["team_sponsors"] = spn.TEAM_SPONSORS
+    data["sector_colors"] = spn.SECTOR_COLORS
 
     print("Fetching prediction market odds...")
     if data["next_race"]:

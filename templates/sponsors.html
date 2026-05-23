@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Sponsors & Money</title>
+<meta name="description" content="F1 {{ data.year }} team sponsors, title deals, sector analysis, and the $3B+ sponsorship economy. Every sponsor on the grid mapped by team, value, and sector.">
+<meta property="og:title" content="F1 {{ data.year }} — Sponsors & Money">
+<meta property="og:description" content="The $3B+ F1 sponsorship economy: title deals, sector breakdown, and every sponsor on the {{ data.year }} grid.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/sponsors.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Sponsors & Money">
+<meta name="twitter:description" content="Title deals, crypto wave, AI entrants, and $3B+ in F1 sponsorship mapped across the {{ data.year }} grid.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { position: relative; width: 100%; height: 480px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .sector-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+
+  .value-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #0d2818;
+    color: #3fb950;
+    border: 1px solid #1b3d2a;
+  }
+
+  .team-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .team-card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .team-card-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  .team-card-body { padding: 20px; }
+
+  .title-sponsor-block {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .title-sponsor-name { font-size: 16px; font-weight: 700; color: #f0f6fc; margin-bottom: 6px; }
+  .title-sponsor-meta { font-size: 11px; color: #8b949e; margin-bottom: 8px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .title-sponsor-desc { font-size: 12px; color: #c9d1d9; line-height: 1.6; }
+
+  .partner-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .partner-card {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .partner-name { font-size: 12px; font-weight: 600; color: #f0f6fc; margin-bottom: 4px; }
+  .partner-desc { font-size: 11px; color: #8b949e; line-height: 1.5; }
+
+  .sponsor-count { font-size: 11px; color: #484f58; margin-top: 12px; padding-top: 12px; border-top: 1px solid #21262d; }
+
+  .callout {
+    background: #0d1830;
+    border: 1px solid #1b2d4a;
+    border-left: 4px solid #58a6ff;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .callout-title { color: #58a6ff; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .callout-body { color: #c9d1d9; font-size: 13px; line-height: 1.6; }
+
+  .callout-amber {
+    background: #2a1f00;
+    border: 1px solid #3d2e00;
+    border-left: 4px solid #d29922;
+  }
+  .callout-amber .callout-title { color: #d29922; }
+
+  .callout-green {
+    background: #0d2818;
+    border: 1px solid #1b3d2a;
+    border-left: 4px solid #3fb950;
+  }
+  .callout-green .callout-title { color: #3fb950; }
+
+  .callout-purple {
+    background: #1c1530;
+    border: 1px solid #2d2050;
+    border-left: 4px solid #bb9af7;
+  }
+  .callout-purple .callout-title { color: #bb9af7; }
+
+  .callout-red {
+    background: #2d0f0f;
+    border: 1px solid #4a1b1b;
+    border-left: 4px solid #f85149;
+  }
+  .callout-red .callout-title { color: #f85149; }
+
+  .tag-in {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    background: #0d2818;
+    color: #3fb950;
+    border: 1px solid #1b3d2a;
+    margin: 2px;
+  }
+  .tag-out {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    background: #2d0f0f;
+    color: #f85149;
+    border: 1px solid #4a1b1b;
+    margin: 2px;
+  }
+
+  .explainer { font-size: 13px; color: #c9d1d9; line-height: 1.7; max-width: 800px; }
+  .explainer p { margin-bottom: 12px; }
+  .explainer strong { color: #f0f6fc; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  th.right, td.right { text-align: right; }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+
+  .progress-bar { height: 6px; background: #21262d; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .chart-container { height: 360px; }
+    .partner-grid { grid-template-columns: 1fr; }
+    .team-card-header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- HERO                                                         -->
+<!-- ============================================================ -->
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Sponsors & Money</h1>
+  <div class="tagline">The $3B+ sponsorship economy that funds Formula 1. Title deals, sector distribution, and every major partner on the {{ data.year }} grid — who pays, how much, and what they get.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- OVERVIEW STATS                                               -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2>Sponsorship Overview</h2>
+  <p class="section-sub">{{ data.year }} season grid-wide figures</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Total Title Deal Value</div>
+      <div class="stat ok" id="totalValue">--</div>
+      <div class="stat-label">estimated annual title sponsorships</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sponsors on Grid</div>
+      <div class="stat" id="totalSponsors">--</div>
+      <div class="stat-label">title + major partners across all teams</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Largest Title Deal</div>
+      <div class="stat-sm" style="color: #d29922;" id="largestDeal">--</div>
+      <div class="stat-label" id="largestDealLabel">--</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sectors Represented</div>
+      <div class="stat" id="sectorCount">--</div>
+      <div class="stat-label">industry sectors sponsoring F1</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TITLE SPONSOR RANKING CHART                                  -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Title Sponsor Ranking</h2>
+  <p class="section-sub">Annual title deal value by team — sorted by estimated value ($M/year)</p>
+  <div class="card">
+    <div class="chart-container" style="height: 520px;">
+      <canvas id="titleRankChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PER-TEAM SPONSOR CARDS                                       -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Team Sponsors</h2>
+  <p class="section-sub">Title and major partners for each constructor, sorted by championship standing</p>
+
+  {% for c in data.constructors %}
+  {% set sponsors = data.team_sponsors.get(c.team_id, {}) %}
+  {% set title = sponsors.get('title', {}) %}
+  {% set majors = sponsors.get('major', []) %}
+  <div class="team-card" style="border-top: 3px solid #{{ c.team_hex }};">
+    <div class="team-card-header">
+      <h3 style="color: #{{ c.team_hex }};">{{ c.team_display }}</h3>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        {% if title and title.name %}
+        <span style="font-size: 12px; color: #c9d1d9;">{{ title.name }}</span>
+        {% if title.value_m %}
+        <span class="value-badge">${{ title.value_m }}M/yr</span>
+        {% endif %}
+        {% else %}
+        <span style="font-size: 12px; color: #484f58;">No title sponsor</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="team-card-body">
+      {% if title and title.name %}
+      <div class="title-sponsor-block">
+        <div class="title-sponsor-name">{{ title.name }}</div>
+        <div class="title-sponsor-meta">
+          {% if title.sector %}
+          <span class="sector-badge" style="color: {{ data.sector_colors.get(title.sector, '#8b949e') }}; border-color: {{ data.sector_colors.get(title.sector, '#8b949e') }}40; background: {{ data.sector_colors.get(title.sector, '#8b949e') }}15;">{{ title.sector }}</span>
+          {% endif %}
+          {% if title.hq %}
+          <span>HQ: {{ title.hq }}</span>
+          {% endif %}
+          {% if title.value_m %}
+          <span>${{ title.value_m }}M/year</span>
+          {% endif %}
+        </div>
+        {% if title.desc %}
+        <div class="title-sponsor-desc">{{ title.desc }}</div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if majors %}
+      <h3>Major Partners</h3>
+      <div class="partner-grid">
+        {% for p in majors %}
+        <div class="partner-card">
+          <div class="partner-name">{{ p.name }}</div>
+          {% if p.sector %}
+          <span class="sector-badge" style="color: {{ data.sector_colors.get(p.sector, '#8b949e') }}; border-color: {{ data.sector_colors.get(p.sector, '#8b949e') }}40; background: {{ data.sector_colors.get(p.sector, '#8b949e') }}15; margin-bottom: 4px;">{{ p.sector }}</span>
+          {% endif %}
+          {% if p.desc %}
+          <div class="partner-desc">{{ p.desc }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="sponsor-count">
+        {% set total_count = (1 if title and title.name else 0) + (majors|length) %}
+        {{ total_count }} sponsor{{ 's' if total_count != 1 else '' }} listed
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTOR ANALYSIS                                              -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Sector Analysis</h2>
+  <p class="section-sub">Industry distribution across all F1 sponsors — which sectors are investing in the grid?</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Sector Distribution</div>
+      <div class="chart-container" style="height: 380px;">
+        <canvas id="sectorChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Key Insight</div>
+      <div class="explainer" style="margin-top: 8px;">
+        <p><strong>Technology dominates</strong> the F1 sponsorship landscape, followed by Finance and Energy. The sport's global viewership (1.5B+ cumulative TV audience) and affluent demographic make it a premium platform for B2B technology companies and financial services firms.</p>
+        <p>The <strong>crypto sector</strong> has matured from speculative 2022-era deals into established partnerships, with OKX, Kraken, Coinbase, and Gate.io all holding major positions. Meanwhile, <strong>AI companies</strong> represent the newest wave of entrants seeking brand visibility.</p>
+      </div>
+      <div id="sectorTable" style="margin-top: 16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ECONOMIC INSIGHTS                                            -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Economic Insights</h2>
+  <p class="section-sub">Structural patterns in the F1 sponsorship economy</p>
+
+  <div class="grid grid-2">
+    <div class="callout callout-amber">
+      <div class="callout-title">The Title Sponsor Premium</div>
+      <div class="callout-body">
+        What does $100M/year buy in F1? Primary livery placement on the car — the single most visible piece of real estate in motorsport. But it goes deeper: title sponsors get embedded data access (telemetry, simulation), hospitality suites at every race (24 weekends), brand integration into team communications, and often naming rights (Oracle Red Bull Racing, Visa Cash App RB). The ROI calculation: F1 delivers ~$3.8B in global media value annually. A title sponsor captures a disproportionate share of that exposure relative to their spend.
+      </div>
+    </div>
+
+    <div class="callout callout-purple">
+      <div class="callout-title">Crypto & F1</div>
+      <div class="callout-body">
+        The crypto-F1 relationship has survived the 2022 crash and matured. OKX (McLaren), Kraken (Williams), Coinbase (Ferrari), and Gate.io (Red Bull) represent exchange-level commitments — not speculative token projects. Bybit (Red Bull's former title sponsor) was replaced after consolidation. Crypto exchanges use F1 for brand legitimacy in regulated markets — the same reason financial institutions sponsor golf and tennis. The sector has moved from hype to strategic positioning.
+      </div>
+    </div>
+
+    <div class="callout callout-green">
+      <div class="callout-title">AI Enters F1</div>
+      <div class="callout-body">
+        The {{ data.year }} grid features a new category of sponsor: AI companies seeking mainstream brand awareness. Claude/Anthropic at Williams, Groq at McLaren, ElevenLabs at Audi (Sauber), and TWG AI at Cadillac represent the first wave. These deals mirror the pattern of tech companies (HP, Dell, AWS, Google Cloud) that entered F1 to reach a global engineering audience — but AI companies are also contributing actual technical capability, blurring the line between sponsor and technical partner.
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">The Manufacturer Play</div>
+      <div class="callout-body">
+        {{ data.year }} marks peak manufacturer involvement: Ford powers Red Bull and RB, Honda backs Aston Martin, Toyota has returned via Haas, Audi enters as a full constructor (taking over Sauber), and GM/Cadillac joins as the 11th team. These aren't traditional sponsorships — they're strategic investments in electrification credibility, engineering talent pipelines, and technology transfer. The cost cap makes F1 more manufacturer-friendly: capped spending means predictable budgets, unlike the unlimited-spend era that drove Honda and Toyota out in 2008-2009.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SPONSOR CHANGES                                              -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>{{ data.year }} Sponsor Changes</h2>
+  <p class="section-sub">Notable sponsor arrivals and departures heading into the {{ data.year }} season</p>
+
+  <div class="card">
+    <div class="grid grid-2" style="gap: 24px;">
+      <div>
+        <h3 style="color: #3fb950;">Arrivals</h3>
+        <div style="margin-top: 8px; line-height: 2.2;">
+          <span class="tag-in">Cadillac / GM (11th team)</span>
+          <span class="tag-in">Audi (full constructor)</span>
+          <span class="tag-in">TWG AI &rarr; Cadillac</span>
+          <span class="tag-in">ElevenLabs &rarr; Audi</span>
+          <span class="tag-in">Claude/Anthropic &rarr; Williams</span>
+          <span class="tag-in">Groq &rarr; McLaren</span>
+          <span class="tag-in">Toyota &rarr; Haas</span>
+          <span class="tag-in">Ford &rarr; Red Bull / RB</span>
+          <span class="tag-in">Coinbase &rarr; Ferrari</span>
+          <span class="tag-in">Gate.io &rarr; Red Bull</span>
+        </div>
+      </div>
+      <div>
+        <h3 style="color: #f85149;">Departures</h3>
+        <div style="margin-top: 8px; line-height: 2.2;">
+          <span class="tag-out">Alfa Romeo (Sauber rebrand)</span>
+          <span class="tag-out">Bybit (Red Bull title)</span>
+          <span class="tag-out">Velo (McLaren)</span>
+          <span class="tag-out">Mission Winnow (Ferrari)</span>
+          <span class="tag-out">BWT (Alpine)</span>
+          <span class="tag-out">Acronis (multiple teams)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top: 16px;">
+    <div class="callout-title">Net Direction</div>
+    <div class="callout-body">
+      The {{ data.year }} grid shows net positive sponsor inflow, driven primarily by the Cadillac entry (bringing an entirely new partner roster) and the AI sector's emergence. The manufacturer influx (Ford, Toyota, Audi, GM) represents strategic capital rather than traditional sponsorship — these are long-term commitments tied to engineering programs, not marketing cycles. Departures are largely consolidation (Bybit replaced by Gate.io, Alfa Romeo rebranded as Audi) rather than sponsors leaving the sport entirely.
+    </div>
+  </div>
+</div>
+
+<footer>
+  Data: Public reporting, team announcements &middot; Sponsorship values are estimates &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // DATA (injected from Jinja2)
+  // ============================================================
+  var constructors = [
+    {% for c in data.constructors %}
+    {
+      teamId: '{{ c.team_id }}',
+      color: '#{{ c.team_hex }}',
+      teamCss: '{{ c.team_css }}',
+      teamDisplay: '{{ c.team_display }}',
+      points: {{ c.points|int }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  var teamSponsors = {
+    {% for team_id, sp in data.team_sponsors.items() %}
+    '{{ team_id }}': {
+      title: {
+        {% if sp.title %}
+        name: '{{ sp.title.name|default("") }}',
+        value_m: {{ sp.title.value_m|default(0) }},
+        sector: '{{ sp.title.sector|default("") }}',
+        hq: '{{ sp.title.hq|default("") }}',
+        desc: '{{ sp.title.desc|default("")|replace("'", "\\'")|replace("\n", " ") }}'
+        {% endif %}
+      },
+      major: [
+        {% for p in sp.get('major', []) %}
+        {
+          name: '{{ p.name|default("") }}',
+          sector: '{{ p.sector|default("") }}',
+          desc: '{{ p.desc|default("")|replace("'", "\\'")|replace("\n", " ") }}'
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  };
+
+  var sectorColors = {
+    {% for sector, color in data.sector_colors.items() %}
+    '{{ sector }}': '{{ color }}'{% if not loop.last %},{% endif %}
+    {% endfor %}
+  };
+
+  // ============================================================
+  // OVERVIEW STATS
+  // ============================================================
+  var totalValue = 0;
+  var totalSponsorCount = 0;
+  var largestDealValue = 0;
+  var largestDealName = '';
+  var largestDealTeam = '';
+  var allSectors = {};
+
+  Object.keys(teamSponsors).forEach(function(teamId) {
+    var sp = teamSponsors[teamId];
+    if (sp.title && sp.title.name) {
+      totalSponsorCount++;
+      var val = sp.title.value_m || 0;
+      totalValue += val;
+      if (val > largestDealValue) {
+        largestDealValue = val;
+        largestDealName = sp.title.name;
+        // Find team display name
+        for (var i = 0; i < constructors.length; i++) {
+          if (constructors[i].teamId === teamId) {
+            largestDealTeam = constructors[i].teamDisplay;
+            break;
+          }
+        }
+      }
+      if (sp.title.sector) {
+        allSectors[sp.title.sector] = (allSectors[sp.title.sector] || 0) + 1;
+      }
+    }
+    if (sp.major) {
+      sp.major.forEach(function(p) {
+        totalSponsorCount++;
+        if (p.sector) {
+          allSectors[p.sector] = (allSectors[p.sector] || 0) + 1;
+        }
+      });
+    }
+  });
+
+  document.getElementById('totalValue').textContent = '$' + totalValue + 'M';
+  document.getElementById('totalSponsors').textContent = totalSponsorCount;
+  document.getElementById('largestDeal').textContent = largestDealName + ' $' + largestDealValue + 'M';
+  document.getElementById('largestDealLabel').textContent = largestDealTeam;
+  document.getElementById('sectorCount').textContent = Object.keys(allSectors).length;
+
+  // ============================================================
+  // UTILITY: Canvas setup
+  // ============================================================
+  function setupCanvas(canvas) {
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx: ctx, W: rect.width, H: rect.height };
+  }
+
+  // ============================================================
+  // CHART 1: Title Sponsor Ranking (horizontal bars)
+  // ============================================================
+  function drawTitleRanking() {
+    var canvas = document.getElementById('titleRankChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    var pad = { top: 20, right: 100, bottom: 30, left: 140 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Build data: team + title sponsor value, sorted by value
+    var barData = constructors.map(function(c) {
+      var sp = teamSponsors[c.teamId] || {};
+      var title = sp.title || {};
+      return {
+        teamDisplay: c.teamDisplay,
+        color: c.color,
+        sponsorName: title.name || '(none)',
+        value: title.value_m || 0
+      };
+    }).sort(function(a, b) { return b.value - a.value; });
+
+    var n = barData.length;
+    var barH = Math.min(30, (cH / n) - 4);
+    var gap = (cH - barH * n) / (n + 1);
+    var maxVal = barData[0].value || 1;
+
+    barData.forEach(function(d, i) {
+      var y = pad.top + gap + i * (barH + gap);
+      var barW = maxVal > 0 ? (d.value / maxVal) * cW : 0;
+
+      // Team name
+      ctx.fillStyle = '#c9d1d9';
+      ctx.font = '11px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(d.teamDisplay, pad.left - 10, y + barH / 2);
+
+      // Bar
+      if (d.value > 0) {
+        ctx.fillStyle = d.color;
+        ctx.globalAlpha = 0.85;
+        ctx.beginPath();
+        ctx.roundRect(pad.left, y, Math.max(barW, 2), barH, 3);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        // Value + sponsor name
+        ctx.fillStyle = d.color;
+        ctx.font = '11px "SF Mono", "Fira Code", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(d.sponsorName + '  $' + d.value + 'M', pad.left + barW + 8, y + barH / 2);
+      } else {
+        // No title sponsor
+        ctx.fillStyle = '#30363d';
+        ctx.globalAlpha = 0.4;
+        ctx.beginPath();
+        ctx.roundRect(pad.left, y, 20, barH, 3);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = '#484f58';
+        ctx.font = '11px "SF Mono", "Fira Code", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('no title sponsor', pad.left + 30, y + barH / 2);
+      }
+    });
+
+    // Axis label
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Estimated Annual Title Deal Value ($M)', W / 2, H - 5);
+  }
+
+  // ============================================================
+  // CHART 2: Sector Donut
+  // ============================================================
+  function drawSectorDonut() {
+    var canvas = document.getElementById('sectorChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Sort sectors by count
+    var sectorList = Object.keys(allSectors).map(function(name) {
+      return { name: name, count: allSectors[name] };
+    }).sort(function(a, b) { return b.count - a.count; });
+
+    var total = sectorList.reduce(function(a, s) { return a + s.count; }, 0);
+    if (total === 0) return;
+
+    var cx = W / 2;
+    var cy = H / 2 - 10;
+    var outerR = Math.min(cx, cy) - 40;
+    var innerR = outerR * 0.55;
+
+    var startAngle = -Math.PI / 2;
+
+    sectorList.forEach(function(s) {
+      var sliceAngle = (s.count / total) * Math.PI * 2;
+      var endAngle = startAngle + sliceAngle;
+      var color = sectorColors[s.name] || '#8b949e';
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, outerR, startAngle, endAngle);
+      ctx.arc(cx, cy, innerR, endAngle, startAngle, true);
+      ctx.closePath();
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.85;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Stroke between slices
+      ctx.strokeStyle = '#161b22';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Label — only for sectors with enough room
+      if (sliceAngle > 0.3) {
+        var midAngle = startAngle + sliceAngle / 2;
+        var labelR = outerR + 18;
+        var lx = cx + Math.cos(midAngle) * labelR;
+        var ly = cy + Math.sin(midAngle) * labelR;
+
+        ctx.fillStyle = color;
+        ctx.font = '10px "SF Mono", "Fira Code", monospace';
+        ctx.textAlign = midAngle > Math.PI / 2 && midAngle < Math.PI * 1.5 ? 'right' : 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(s.name + ' (' + s.count + ')', lx, ly);
+      }
+
+      startAngle = endAngle;
+    });
+
+    // Center text
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = 'bold 22px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(total, cx, cy - 6);
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.fillText('sponsors', cx, cy + 12);
+  }
+
+  // ============================================================
+  // SECTOR TABLE
+  // ============================================================
+  function buildSectorTable() {
+    var container = document.getElementById('sectorTable');
+    var sectorList = Object.keys(allSectors).map(function(name) {
+      return { name: name, count: allSectors[name] };
+    }).sort(function(a, b) { return b.count - a.count; });
+
+    var total = sectorList.reduce(function(a, s) { return a + s.count; }, 0);
+    if (total === 0) return;
+
+    // Find representative sponsors for each sector
+    var sectorSponsors = {};
+    Object.keys(teamSponsors).forEach(function(teamId) {
+      var sp = teamSponsors[teamId];
+      if (sp.title && sp.title.name && sp.title.sector) {
+        if (!sectorSponsors[sp.title.sector]) sectorSponsors[sp.title.sector] = [];
+        sectorSponsors[sp.title.sector].push(sp.title.name);
+      }
+      if (sp.major) {
+        sp.major.forEach(function(p) {
+          if (p.sector) {
+            if (!sectorSponsors[p.sector]) sectorSponsors[p.sector] = [];
+            sectorSponsors[p.sector].push(p.name);
+          }
+        });
+      }
+    });
+
+    var html = '<table>';
+    html += '<thead><tr><th>Sector</th><th class="right">Count</th><th class="right">Share</th><th>Representative Sponsors</th></tr></thead>';
+    html += '<tbody>';
+
+    sectorList.forEach(function(s) {
+      var pct = ((s.count / total) * 100).toFixed(1);
+      var color = sectorColors[s.name] || '#8b949e';
+      var reps = (sectorSponsors[s.name] || []).slice(0, 3).join(', ');
+      html += '<tr>';
+      html += '<td><span class="sector-badge" style="color:' + color + ';border-color:' + color + '40;background:' + color + '15;">' + s.name + '</span></td>';
+      html += '<td class="right">' + s.count + '</td>';
+      html += '<td class="right">' + pct + '%</td>';
+      html += '<td style="color:#8b949e;font-size:11px;">' + reps + '</td>';
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  // ============================================================
+  // DRAW ALL
+  // ============================================================
+  function drawAll() {
+    drawTitleRanking();
+    drawSectorDonut();
+  }
+
+  buildSectorTable();
+  drawAll();
+  window.addEventListener('resize', drawAll);
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — The Physics of Formula 1</title>
+<meta name="description" content="Rigorous physics of Formula 1: aerodynamic forces, energy budgets, thermodynamics, fluid dynamics, tire friction models, and stopping distances. Real equations with 2026 regulation values.">
+<meta property="og:title" content="F1 2026 — The Physics of Formula 1">
+<meta property="og:description" content="The forces, energies, and thermodynamics that govern F1 — from 5G cornering loads to 350 km/h straight-line aerodynamics. Real math, not pop-science.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/physics.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — The Physics of Formula 1">
+<meta name="twitter:description" content="Aerodynamic downforce, energy recovery, tire friction models, and thermodynamics — the real physics behind F1 racing.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { position: relative; width: 100%; height: 480px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+
+  .formula {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 18px;
+    color: #f0f6fc;
+    text-align: center;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .formula .var { color: #58a6ff; font-style: italic; }
+  .formula .op { color: #8b949e; }
+  .formula .fn { color: #d2a8ff; }
+  .formula .unit { color: #7ee787; font-style: normal; font-size: 13px; }
+  .formula .num { color: #f0f6fc; font-style: normal; }
+  .formula-note {
+    font-size: 12px;
+    color: #8b949e;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .explainer { font-size: 13px; color: #c9d1d9; line-height: 1.7; max-width: 800px; }
+  .explainer p { margin-bottom: 12px; }
+  .explainer strong { color: #f0f6fc; }
+
+  .callout {
+    background: #0d1830;
+    border: 1px solid #1b2d4a;
+    border-left: 4px solid #58a6ff;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .callout-title { color: #58a6ff; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .callout-body { color: #c9d1d9; font-size: 13px; line-height: 1.6; }
+
+  .callout-amber {
+    background: #2a1f00;
+    border: 1px solid #3d2e00;
+    border-left: 4px solid #d29922;
+  }
+  .callout-amber .callout-title { color: #d29922; }
+
+  .callout-green {
+    background: #0d2818;
+    border: 1px solid #1b3d2a;
+    border-left: 4px solid #3fb950;
+  }
+  .callout-green .callout-title { color: #3fb950; }
+
+  .callout-red {
+    background: #2d0f0f;
+    border: 1px solid #4a1b1b;
+    border-left: 4px solid #f85149;
+  }
+  .callout-red .callout-title { color: #f85149; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  th.right, td.right { text-align: right; }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .progress-bar { height: 6px; background: #21262d; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+  .param-table td:first-child { color: #58a6ff; font-weight: 600; font-style: italic; }
+  .param-table td:nth-child(2) { color: #f0f6fc; font-weight: 600; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8b949e; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .chart-container { height: 360px; }
+    .formula { font-size: 14px; padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- HERO                                                          -->
+<!-- ============================================================ -->
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>The Physics</h1>
+  <div class="tagline">The forces, energies, and thermodynamics that govern Formula 1 &mdash; from 5G cornering to 350 km/h straights.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: FORCES & DYNAMICS                                  -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2>Forces &amp; Dynamics</h2>
+  <p class="section-sub">Aerodynamic loads, G-forces, and weight transfer under braking and cornering</p>
+
+  <!-- Aerodynamic Forces -->
+  <h3>Aerodynamic Forces</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>Aerodynamic force scales as <strong>v&sup2;</strong>. This quadratic dependence is the central fact of F1 car design: doubling speed quadruples the aerodynamic load. The car generates more downforce than its own weight above ~180 km/h &mdash; it could theoretically drive inverted on a ceiling.</p>
+      <p>The 2026 regulations introduce active aerodynamics and simplified floor geometry. The net effect: downforce is cut by roughly 30% and drag by approximately 55% compared to 2025-spec cars, trading peak cornering grip for significantly higher straight-line speeds and reduced fuel consumption.
+<span style="color: #8b949e; font-size: 11px;">(Ref: {'power_unit': {'title': 'Power Unit Revolution', 'changes': [{'what': 'MGU-H deleted', 'from': 'Motor Generator Unit - Heat (recovered exhaust energy)', 'to': 'Removed entirely', 'implication': 'Simpler, cheaper PU. Turbo lag returns. New manufacturers (Audi, Ford) can enter without mastering the most complex component.'}, {'what': 'MGU-K tripled', 'from': '120 kW (161 hp)', 'to': '350 kW (469 hp)', 'implication': "Nearly half the car's power is now electric. Massive energy recovery under braking. Changes braking character fundamentally."}, {'what': 'Battery capacity doubled', 'from': '4 MJ usable per lap', 'to': '9 MJ usable per lap', 'implication': 'Longer electric-only running possible. Energy management becomes a key strategy differentiator.'}, {'what': 'ICE power reduced', 'from': '~550 kW', 'to': '~400 kW', 'implication': 'Combined power stays similar (~750 kW total) but the split shifts to electric. ICE is less dominant.'}, {'what': 'Sustainable fuel mandate', 'from': 'E10 (10% ethanol blend)', 'to': '100% sustainable fuel', 'implication': 'Zero net carbon from fuel. All teams run identical fuel spec. New combustion characteristics affect engine tuning.'}]}, 'aero': {'title': 'Active Aerodynamics', 'changes': [{'what': 'Active front and rear wings', 'from': 'Fixed aero (only DRS on rear wing)', 'to': 'Full-time active aero — wings adjust angle continuously', 'implication': 'Cars switch between high-downforce (corners) and low-drag (straights) automatically. Fundamentally changes car behavior.'}, {'what': 'DRS removed', 'from': 'Drag Reduction System (rear wing only, within 1s)', 'to': "Replaced by 'Overtake Mode' + active aero", 'implication': 'No more DRS zones. Instead, following cars get energy bonus. Active aero provides drag reduction everywhere.'}, {'what': 'Z-Mode / X-Mode', 'from': 'Single aero configuration', 'to': 'Z-Mode (high downforce, corners) / X-Mode (low drag, straights)', 'implication': 'Car automatically transitions between modes. The transition speed and smoothness becomes a design differentiator.'}, {'what': 'Downforce cut 30%', 'from': '~2000 kg at 250 km/h', 'to': '~1400 kg at 250 km/h', 'implication': 'Cars are less planted in corners. More driver skill required. Closer racing because less aero wake disruption.'}, {'what': 'Drag cut 55%', 'from': 'High drag coefficient', 'to': '55% lower drag', 'implication': 'Higher top speeds on straights. Better fuel efficiency. Cars are faster in a straight line but slower in corners.'}]}, 'chassis': {'title': 'Smaller, Lighter Cars', 'changes': [{'what': 'Minimum weight', 'from': '800 kg (2025)', 'to': '768 kg (2026)', 'implication': '32 kg lighter. Teams struggle to meet target — most start overweight. Weight reduction is an ongoing development battle.'}, {'what': 'Wheelbase shortened', 'from': '3.6 m maximum', 'to': '3.4 m maximum (-200 mm)', 'implication': 'More agile cars. Better direction changes. Cars look noticeably shorter.'}, {'what': 'Car width reduced', 'from': '2.0 m', 'to': '1.9 m (-100 mm)', 'implication': 'Narrower cars. More room for overtaking. Changed aerodynamic characteristics.'}, {'what': 'Tyre width reduced', 'from': '305 mm front / 405 mm rear', 'to': '280 mm front / 375 mm rear', 'implication': 'Less mechanical grip. Combined with lower downforce, makes cars more challenging to drive.'}, {'what': 'Floor width reduced', 'from': '1.6 m', 'to': '1.45 m (-150 mm)', 'implication': 'Less ground effect. Reduced dependency on underbody aero. Cars less sensitive to ride height.'}]}, 'sporting': {'title': 'Sporting Regulations', 'changes': [{'what': 'Overtake Mode', 'from': 'DRS within 1 second', 'to': 'Energy bonus when within 1s at detection point, lasts full next lap', 'implication': 'Attacking car gets +0.5 MJ extra energy. More strategic than DRS — driver chooses when to deploy.'}, {'what': 'Boost Button', 'from': 'No equivalent', 'to': 'Manual energy deployment override', 'implication': 'Drivers can override automatic energy management for attack/defense. Adds tactical dimension to wheel-to-wheel racing.'}, {'what': 'Sprint format unchanged', 'from': '6 Sprint weekends (2025)', 'to': '6 Sprint weekends (China, Miami, Canada, GB, Netherlands, Singapore)', 'implication': 'Sprint format stable. Extra points available at 6 venues. 36 points for top 8 finishers.'}, {'what': 'Cost cap', 'from': '$135M (2025)', 'to': '$135M (2026, unchanged)', 'implication': 'Same budget ceiling despite massive new regulations. Teams must develop entirely new cars within existing budgets.'}, {'what': 'New teams', 'from': '10 teams / 20 cars', 'to': '11 teams / 22 cars', 'implication': 'Cadillac F1 (GM/Andretti) enters as 11th team. First new constructor since Haas (2016). 22 cars on grid.'}]}})</span></p>
+    </div>
+    <div class="formula">
+      <span class="var">F</span><sub style="color:#8b949e;">downforce</sub> <span class="op">=</span>
+      <span class="num">&frac12;</span> <span class="var">&rho;</span> <span class="var">v</span>&sup2; <span class="var">C<sub>L</sub></span> <span class="var">A</span>
+    </div>
+    <div class="formula-note">
+      Downforce: &rho; = air density, v = velocity, C<sub>L</sub> = lift coefficient (negative, but magnitude used here), A = reference area
+    </div>
+    <div class="formula">
+      <span class="var">F</span><sub style="color:#8b949e;">drag</sub> <span class="op">=</span>
+      <span class="num">&frac12;</span> <span class="var">&rho;</span> <span class="var">v</span>&sup2; <span class="var">C<sub>D</sub></span> <span class="var">A</span>
+    </div>
+    <div class="formula-note">
+      Drag: same form, different coefficient. The L/D ratio determines aerodynamic efficiency.
+    </div>
+
+    <h3>2026 Aerodynamic Parameters</h3>
+    <table class="param-table">
+      <thead>
+        <tr><th>Parameter</th><th>Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>&rho;</td><td>1.225 kg/m&sup3;</td><td>ISA sea-level air density</td></tr>
+        <tr><td>A</td><td>~1.5 m&sup2;</td><td>Frontal reference area</td></tr>
+        <tr><td>C<sub>L</sub></td><td>~2.5</td><td>High-downforce configuration (post-2026 reduction)</td></tr>
+        <tr><td>C<sub>D</sub></td><td>~0.7</td><td>Including open wheels, cooling ducts</td></tr>
+        <tr><td>L/D</td><td>~3.6</td><td>Low compared to aircraft (~15&ndash;20) but extreme for a ground vehicle</td></tr>
+        <tr><td>m</td><td>768 kg</td><td>2026 minimum weight (car + driver)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Force vs Speed table -->
+  <div class="card" style="margin-top: 16px;">
+    <div class="card-title">Force at Speed &mdash; Computed Values</div>
+    <div class="explainer" style="margin-bottom: 12px;">
+      <p>Using F = &frac12; &times; 1.225 &times; v&sup2; &times; C &times; 1.5, with v in m/s. Weight of car: mg = 768 &times; 9.81 = 7534 N.</p>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Speed</th>
+          <th class="right">v (m/s)</th>
+          <th class="right">Downforce (N)</th>
+          <th class="right">Downforce (kg<sub>f</sub>)</th>
+          <th class="right">Drag (N)</th>
+          <th class="right">Drag Power (kW)</th>
+          <th class="right">F<sub>down</sub> / mg</th>
+        </tr>
+      </thead>
+      <tbody id="forceTable"></tbody>
+    </table>
+    <div class="chart-container" style="height: 400px;">
+      <canvas id="forceChart"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background: #58a6ff;"></div>Downforce</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #f85149;"></div>Drag</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #3fb950; border-radius: 0; height: 2px; width: 16px;"></div>Car weight (mg = 7534 N)</div>
+    </div>
+  </div>
+
+  <!-- G-Forces -->
+  <h3>G-Forces</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>An F1 driver's body is a force transducer. Under braking from 300 km/h, the driver decelerates at <strong>5&ndash;6G</strong> &mdash; comparable to a fighter pilot in a high-G turn, but repeated 50+ times per race and sustained for 1&ndash;2 seconds per event. Lateral G under cornering reaches the same range at high-speed corners (Copse, 130R, Blanchimont).</p>
+      <p>The asymmetry is notable: acceleration peaks at only <strong>1.5&ndash;2G</strong> due to tire traction limits and power delivery constraints, while braking and cornering exploit aerodynamic downforce that grows with v&sup2;.</p>
+    </div>
+    <div class="grid grid-4" style="margin-top: 16px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #f85149;">Braking</div>
+        <div class="stat neg">5&ndash;6G</div>
+        <div class="stat-label">Peak longitudinal deceleration</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #d29922;">Lateral (cornering)</div>
+        <div class="stat warn">5&ndash;6G</div>
+        <div class="stat-label">High-speed corners</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #3fb950;">Acceleration</div>
+        <div class="stat ok">1.5&ndash;2G</div>
+        <div class="stat-label">Traction-limited off corners</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #58a6ff;">Combined</div>
+        <div class="stat" style="color: #58a6ff;">~6.5G</div>
+        <div class="stat-label">Trail-braking into corner entry</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 16px;">
+      <div class="callout-title">Neck Load Under Lateral G</div>
+      <div class="callout-body">
+        A driver's head + helmet mass is approximately 7 kg. At 5G lateral: F = ma = 7 &times; 5 &times; 9.81 &approx; <strong>343 N</strong> (35 kg<sub>f</sub>) of lateral force on the neck. Over a 90-minute race with dozens of high-G corners, the cumulative loading is enormous. At peak combined loading (~6.5G), the neck sustains ~450 N. Fighter pilots experience comparable G but wear G-suits and are seated reclined; F1 drivers absorb it with pure musculoskeletal conditioning.
+      </div>
+    </div>
+  </div>
+
+  <!-- Weight Transfer -->
+  <h3>Weight Transfer</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>Under braking, the inertial force acts through the center of mass, creating a moment about the contact patches. The normal force on the front axle increases and on the rear decreases. This is not a shift of mass &mdash; it is a redistribution of normal forces, governed by the height of the CG and the wheelbase.</p>
+    </div>
+    <div class="formula">
+      <span class="var">&Delta;F</span><sub style="color:#8b949e;">front</sub> <span class="op">=</span>
+      <span class="var">m</span> <span class="var">a</span>
+      <span class="op">&times;</span>
+      <span class="var">h</span> <span class="op">/</span> <span class="var">L</span>
+    </div>
+    <div class="formula-note">
+      &Delta;F = weight transfer (N), m = car mass, a = deceleration, h = CG height (~0.30 m), L = wheelbase (~3.6 m)
+    </div>
+    <div class="grid grid-3" style="margin-top: 16px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Under 5G Braking</div>
+        <div class="stat-sm" style="color: #f85149;" id="wtBraking">--</div>
+        <div class="stat-label">Forward weight transfer</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Front Axle Load</div>
+        <div class="stat-sm" style="color: #d29922;" id="wtFront">--</div>
+        <div class="stat-label">Static ~46% &rarr; increases under braking</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Rear Axle Load</div>
+        <div class="stat-sm" style="color: #8b949e;" id="wtRear">--</div>
+        <div class="stat-label">Static ~54% &rarr; decreases under braking</div>
+      </div>
+    </div>
+    <div class="callout-amber callout" style="margin-top: 16px;">
+      <div class="callout-title">Implication for Tire Grip</div>
+      <div class="callout-body">
+        Because tire grip is <em>not</em> proportional to normal force (load sensitivity &mdash; see Tire Physics below), this weight transfer actually reduces the total available grip. The front tires gain force but at diminishing returns on &mu;, while the rear tires lose force and grip drops faster than linearly. Net effect: the car as a system has less total grip under weight transfer than at static equilibrium. This is why aero balance (front/rear downforce split) is critical &mdash; it partially compensates for mechanical weight transfer.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: ENERGY BUDGET                                      -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Energy Budget</h2>
+  <p class="section-sub">Total energy flow per race: chemical, kinetic, electrical, and thermal</p>
+
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Fuel Energy (Chemical)</div>
+      <div class="stat" style="color: #f85149;">~4840 MJ</div>
+      <div class="stat-label">110 kg &times; 44 MJ/kg total chemical energy</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Useful Work Output</div>
+      <div class="stat" style="color: #d29922;">~1500 MJ</div>
+      <div class="stat-label">Mechanical work at crankshaft (~31% of fuel)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Electrical Recovery</div>
+      <div class="stat" style="color: #3fb950;">~150 MJ</div>
+      <div class="stat-label">MGU-K + MGU-H recovery per race</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Thermal Rejection</div>
+      <div class="stat" style="color: #58a6ff;">~3340 MJ</div>
+      <div class="stat-label">Exhaust, coolant, oil, radiation</div>
+    </div>
+  </div>
+
+  <!-- 2026 PU -->
+  <h3>2026 Power Unit Architecture</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>The 2026 regulations dramatically increase the electrical fraction of the powertrain. The MGU-H is deleted, but the MGU-K output nearly triples. Total system power rises to <strong>750 kW</strong>, with electrical power constituting 47% of the total &mdash; a fundamental shift from the ICE-dominant architecture of 2014&ndash;2025.</p>
+    </div>
+    <div class="grid grid-3" style="margin-top: 16px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">ICE Output</div>
+        <div class="stat-sm" style="color: #f85149;">400 kW</div>
+        <div class="stat-label">~544 bhp &mdash; 1.6L V6 turbo, ~50% thermal efficiency</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">MGU-K Output</div>
+        <div class="stat-sm" style="color: #3fb950;">350 kW</div>
+        <div class="stat-label">~476 bhp &mdash; nearly 3&times; the 2025 limit (120 kW)</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Total System</div>
+        <div class="stat-sm" style="color: #d29922;">750 kW</div>
+        <div class="stat-label">~1020 bhp combined &mdash; ICE + MGU-K</div>
+      </div>
+    </div>
+
+    <div class="callout-green callout" style="margin-top: 16px;">
+      <div class="callout-title">Thermal Efficiency: Best in Any Combustion Application</div>
+      <div class="callout-body">
+        The F1 power unit achieves approximately <strong>50% brake thermal efficiency</strong> &mdash; meaning half the chemical energy in the fuel becomes useful mechanical work. For context: a modern road car petrol engine achieves ~30%, a large marine diesel ~50%, and the Carnot limit for the F1 operating temperatures (T<sub>H</sub> &approx; 2500 K, T<sub>C</sub> &approx; 350 K) is &eta;<sub>Carnot</sub> = 1 &minus; T<sub>C</sub>/T<sub>H</sub> &approx; 86%. The F1 ICE operates at ~58% of Carnot efficiency.
+      </div>
+    </div>
+  </div>
+
+  <!-- Energy Recovery -->
+  <h3>Energy Recovery &amp; Deployment</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>The MGU-K harvests kinetic energy during braking (regenerative braking), stores it in a lithium-ion battery, and redeploys it under acceleration. The 2026 regulations permit <strong>9 MJ of deployment per lap</strong> &mdash; up from 4 MJ in 2025. This energy flow is constrained by both power limits (350 kW) and total energy per lap.</p>
+    </div>
+    <div class="formula">
+      <span class="var">E</span><sub style="color:#8b949e;">kinetic</sub> <span class="op">=</span>
+      <span class="num">&frac12;</span> <span class="var">m</span> <span class="var">v</span>&sup2;
+      <span class="op">&nbsp;&nbsp;&rarr;&nbsp;&nbsp;</span>
+      <span class="fn">MGU-K</span>
+      <span class="op">&nbsp;&nbsp;&rarr;&nbsp;&nbsp;</span>
+      <span class="fn">Battery</span>
+      <span class="op">&nbsp;&nbsp;&rarr;&nbsp;&nbsp;</span>
+      <span class="fn">Deployment</span>
+    </div>
+    <div class="formula-note">
+      Braking: kinetic &rarr; electrical (harvest). Accelerating: electrical &rarr; kinetic (deploy). Round-trip efficiency ~85&ndash;90%.
+    </div>
+
+    <table style="margin-top: 16px;">
+      <thead>
+        <tr><th>Parameter</th><th class="right">2025</th><th class="right">2026</th><th>Change</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="driver-name">MGU-K power</td><td class="right">120 kW</td><td class="right">350 kW</td><td><span class="ok">+192%</span></td></tr>
+        <tr><td class="driver-name">Energy deployment / lap</td><td class="right">4 MJ</td><td class="right">9 MJ</td><td><span class="ok">+125%</span></td></tr>
+        <tr><td class="driver-name">Battery capacity</td><td class="right">4 MJ</td><td class="right">9 MJ</td><td><span class="ok">+125%</span></td></tr>
+        <tr><td class="driver-name">MGU-H</td><td class="right">Present</td><td class="right">Deleted</td><td><span class="neg">Removed</span></td></tr>
+        <tr><td class="driver-name">ICE power</td><td class="right">~550 kW</td><td class="right">400 kW</td><td><span class="neg">&minus;27%</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Fuel -->
+  <h3>Fuel Consumption</h3>
+  <div class="card">
+    <div class="grid grid-4">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Race Fuel Load</div>
+        <div class="stat-sm" style="color: #f0f6fc;">110 kg</div>
+        <div class="stat-label">Maximum fuel allowance</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Per-Lap Consumption</div>
+        <div class="stat-sm" style="color: #f0f6fc;">~1.6 kg</div>
+        <div class="stat-label">Circuit-dependent (1.3&ndash;2.0 kg)</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Calorific Value</div>
+        <div class="stat-sm" style="color: #f0f6fc;">44 MJ/kg</div>
+        <div class="stat-label">Regulated lower heating value</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Flow Rate (peak)</div>
+        <div class="stat-sm" style="color: #f0f6fc;">~80 kg/h</div>
+        <div class="stat-label">FIA fuel flow sensor limited</div>
+      </div>
+    </div>
+
+    <!-- Sankey Concept -->
+    <h3>Energy Flow: Fuel to Wheels</h3>
+    <div class="chart-container" style="height: 320px;">
+      <canvas id="sankeyChart"></canvas>
+    </div>
+    <div class="formula-note">
+      Approximate energy partition per race: 4840 MJ fuel chemical energy &rarr; 1500 MJ useful work + 1700 MJ exhaust heat + 1000 MJ coolant rejection + 640 MJ other losses (friction, pumping, radiation)
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: THERMODYNAMICS                                     -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Thermodynamics</h2>
+  <p class="section-sub">Temperatures, heat flows, and thermal limits across brakes, tires, and power unit</p>
+
+  <!-- Brakes -->
+  <h3>Brake Temperatures</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>F1 brakes are carbon-carbon composites: woven carbon fiber in a carbon matrix. They operate at <strong>400&ndash;1000&deg;C</strong> &mdash; visibly glowing orange-red during night races. The specific heat capacity of carbon-carbon is ~0.71 J/(g&middot;K), and the disc mass is ~1.5 kg per corner. Each heavy braking event dissipates megajoules in seconds.</p>
+    </div>
+    <div class="formula">
+      <span class="var">E</span><sub style="color:#8b949e;">braking</sub> <span class="op">=</span>
+      <span class="num">&frac12;</span> <span class="var">m</span> <span class="var">v</span><sub style="color:#8b949e;">i</sub>&sup2;
+      <span class="op">&minus;</span>
+      <span class="num">&frac12;</span> <span class="var">m</span> <span class="var">v</span><sub style="color:#8b949e;">f</sub>&sup2;
+      <span class="op">&minus;</span>
+      <span class="var">E</span><sub style="color:#8b949e;">regen</sub>
+    </div>
+    <div class="formula-note">
+      Not all kinetic energy goes to heat &mdash; the MGU-K harvests a fraction. Remainder is dissipated as heat in the carbon-carbon discs.
+    </div>
+    <div class="grid grid-3" style="margin-top: 16px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #f85149;">KE at 300 km/h</div>
+        <div class="stat-sm neg">2.67 MJ</div>
+        <div class="stat-label">&frac12; &times; 768 &times; 83.3&sup2;</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #d29922;">Peak Disc Temperature</div>
+        <div class="stat-sm warn">~1000&deg;C</div>
+        <div class="stat-label">1273 K &mdash; glowing orange</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #58a6ff;">Operating Window</div>
+        <div class="stat-sm" style="color: #58a6ff;">400&ndash;800&deg;C</div>
+        <div class="stat-label">Below 400&deg;C: poor friction coefficient</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tires -->
+  <h3>Tire Temperatures</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>Tire performance is a strong function of temperature. The compound has a narrow operating window: too cold and the polymer chains lack mobility for grip; too hot and thermal degradation destroys the surface. Engineers distinguish <strong>surface temperature</strong> (IR-measured, transient) from <strong>bulk/core temperature</strong> (thermocouple, slower to respond).</p>
+    </div>
+    <div class="grid grid-2" style="margin-top: 16px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Surface Temperature</div>
+        <table>
+          <tr><td class="driver-name">Operating window</td><td class="right">85&ndash;110&deg;C</td></tr>
+          <tr><td class="driver-name">Peak (hot stint)</td><td class="right">~130&deg;C</td></tr>
+          <tr><td class="driver-name">Blistering threshold</td><td class="right">&gt;140&deg;C</td></tr>
+          <tr><td class="driver-name">Measurement</td><td class="right">IR pyrometer, 3 points across tread</td></tr>
+        </table>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Core/Carcass Temperature</div>
+        <table>
+          <tr><td class="driver-name">Operating window</td><td class="right">100&ndash;130&deg;C</td></tr>
+          <tr><td class="driver-name">Critical upper limit</td><td class="right">~140&deg;C</td></tr>
+          <tr><td class="driver-name">Thermal inertia</td><td class="right">High &mdash; lags surface by 2&ndash;5 laps</td></tr>
+          <tr><td class="driver-name">Measurement</td><td class="right">Embedded thermocouple</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="callout-amber callout" style="margin-top: 16px;">
+      <div class="callout-title">Degradation Modes</div>
+      <div class="callout-body">
+        <strong>Thermal degradation:</strong> Overheating the bulk compound breaks polymer cross-links, permanently reducing grip. Irreversible.<br>
+        <strong>Blistering:</strong> Sub-surface gas pockets expand when carcass temperature exceeds ~140&deg;C, tearing chunks of rubber from the tread.<br>
+        <strong>Graining:</strong> Surface rubber tears and rolls into pellets when the tire slides before reaching operating temperature. Common on out-laps and in cold conditions.<br>
+        <strong>Abrasive wear:</strong> Mechanical removal of rubber through sliding contact. Rate increases with slip, load, and abrasive surface roughness.
+      </div>
+    </div>
+  </div>
+
+  <!-- Engine Cooling -->
+  <h3>Engine &amp; PU Cooling</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>The power unit rejects approximately <strong>300 kW</strong> of heat through the cooling system at full power &mdash; enough to heat 150 homes. This heat must be transferred from the engine block, turbo, MGU-K, and battery through coolant loops to radiators in the sidepods, where it is dumped to the airstream.</p>
+    </div>
+    <div class="grid grid-3" style="margin-top: 16px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Heat Rejection</div>
+        <div class="stat-sm" style="color: #f85149;">~300 kW</div>
+        <div class="stat-label">Radiator + oil cooler combined</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Coolant Temp</div>
+        <div class="stat-sm" style="color: #d29922;">~120&deg;C</div>
+        <div class="stat-label">Pressurized system, boiling point raised</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Oil Temp</div>
+        <div class="stat-sm" style="color: #d29922;">~150&deg;C</div>
+        <div class="stat-label">Lubricant thermal limit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thermal Efficiency Comparison -->
+  <h3>Thermal Efficiency Comparison</h3>
+  <div class="card">
+    <div class="chart-container" style="height: 350px;">
+      <canvas id="efficiencyChart"></canvas>
+    </div>
+    <div class="formula-note">
+      Carnot limit computed for T<sub>H</sub> = 2500 K (combustion), T<sub>C</sub> = 350 K (ambient). Real engines are far below Carnot due to irreversible losses (friction, finite-rate heat transfer, exhaust enthalpy).
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: FLUID DYNAMICS                                     -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Fluid Dynamics</h2>
+  <p class="section-sub">Reynolds numbers, ground effect, turbulent wakes, and active aerodynamics</p>
+
+  <!-- Reynolds Number -->
+  <h3>Reynolds Number</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>The Reynolds number characterizes the flow regime. For an F1 car at racing speed, Re is firmly in the <strong>fully turbulent</strong> regime &mdash; boundary layer transition, vortex shedding, and turbulent mixing dominate the aerodynamic behavior. This makes analytical solutions intractable; teams rely on CFD (limited to 2000 CPU-core hours per week under the regulations) and 60%-scale wind tunnel testing.</p>
+    </div>
+    <div class="formula">
+      <span class="var">Re</span> <span class="op">=</span>
+      <span class="var">&rho;</span> <span class="var">v</span> <span class="var">L</span>
+      <span class="op">/</span> <span class="var">&mu;</span>
+    </div>
+    <div class="formula-note">
+      &rho; = 1.225 kg/m&sup3;, v = 83.3 m/s (300 km/h), L = 5.6 m (car length), &mu; = 1.81 &times; 10<sup>&minus;5</sup> Pa&middot;s
+    </div>
+    <div class="grid grid-3" style="margin-top: 16px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Re at 300 km/h</div>
+        <div class="stat-sm" style="color: #58a6ff;" id="reynoldsValue">--</div>
+        <div class="stat-label">Based on car length</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">Flow Regime</div>
+        <div class="stat-sm" style="color: #d29922;">Fully Turbulent</div>
+        <div class="stat-label">Transition at Re ~ 5 &times; 10<sup>5</sup></div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title">CFD Allowance</div>
+        <div class="stat-sm" style="color: #8b949e;">2000 cores</div>
+        <div class="stat-label">CPU-core hours/week (ATR-regulated)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ground Effect -->
+  <h3>Ground Effect</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>The underfloor generates a significant fraction of total downforce via the <strong>Venturi effect</strong>. The floor is shaped as a converging-diverging channel: air accelerates under the car, static pressure drops (Bernoulli), and the pressure difference between the low-pressure underside and atmospheric pressure above pushes the car toward the ground.</p>
+      <p>This mechanism is far more aerodynamically efficient than wing-generated downforce because the induced drag is much lower &mdash; the floor does not shed large tip vortices the way a wing does. The L/D ratio of floor-generated downforce is roughly <strong>5&ndash;8</strong>, compared to <strong>2&ndash;3</strong> for the front wing.</p>
+    </div>
+    <div class="formula">
+      <span class="var">P</span> <span class="op">+</span>
+      <span class="num">&frac12;</span> <span class="var">&rho;</span> <span class="var">v</span>&sup2; <span class="op">+</span>
+      <span class="var">&rho;</span> <span class="var">g</span> <span class="var">h</span>
+      <span class="op">=</span> <span class="fn">const</span>
+    </div>
+    <div class="formula-note">
+      Bernoulli's equation along a streamline (incompressible, inviscid limit). As v increases under the floor, P decreases. The car is pushed down by the pressure differential.
+    </div>
+    <div class="callout" style="margin-top: 16px;">
+      <div class="callout-title">Ride Height Sensitivity</div>
+      <div class="callout-body">
+        Ground effect downforce is extremely sensitive to ride height. As the car approaches the ground, the Venturi effect intensifies &mdash; until the boundary layers on the floor and ground merge, stalling the flow. This creates a sharp aerodynamic cliff: below a critical ride height (~15&ndash;25 mm), downforce collapses suddenly. This is the origin of <strong>porpoising</strong> &mdash; the car bounces as it oscillates across this stall boundary. The 2026 floor geometry is designed to produce a gentler stall characteristic.
+      </div>
+    </div>
+  </div>
+
+  <!-- Dirty Air -->
+  <h3>Turbulent Wake &amp; Dirty Air</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>A car trailing another at close range encounters a highly turbulent, low-energy wake. The leading car's aerodynamic surfaces (wings, floor, diffuser) extract energy from the airflow, leaving a deficit for the follower. The practical effect: a following car loses <strong>30&ndash;40%</strong> of its downforce at one car length separation.</p>
+      <p>The 2026 regulations aim to reduce this effect through simplified upper-body geometry and active aerodynamics. The design target is to retain <strong>&gt;80%</strong> of downforce when following at one car length, compared to ~55&ndash;60% under 2025 regulations.</p>
+    </div>
+    <div class="grid grid-2" style="margin-top: 16px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #f85149;">Downforce Loss (2025 spec)</div>
+        <div class="stat-sm neg">30&ndash;40%</div>
+        <div class="stat-label">At one car length behind</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #3fb950;">Downforce Loss (2026 target)</div>
+        <div class="stat-sm ok">&lt;20%</div>
+        <div class="stat-label">Active aero + simplified surfaces</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Aero -->
+  <h3>Active Aerodynamics</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>The 2026 regulations permit <strong>adjustable front and rear wing elements</strong> that change angle of attack. In low-drag mode (Z-mode), the wings flatten to minimize C<sub>D</sub> for straight-line speed; in high-downforce mode (X-mode), they pitch to maximize C<sub>L</sub> for cornering.</p>
+      <p>The optimization problem is classic: maximize the lift-to-drag ratio L/D at each point on the circuit. Since L/D = C<sub>L</sub>/C<sub>D</sub>, and both coefficients depend nonlinearly on wing angle, the optimal angle is a function of instantaneous speed, corner radius, and following distance.</p>
+    </div>
+    <div class="formula">
+      <span class="var">L</span><span class="op">/</span><span class="var">D</span> <span class="op">=</span>
+      <span class="var">C<sub>L</sub></span>
+      <span class="op">/</span>
+      <span class="var">C<sub>D</sub></span> <span class="op">=</span>
+      <span class="fn">f</span><span class="op">(</span><span class="var">&alpha;</span><span class="op">)</span>
+    </div>
+    <div class="formula-note">
+      L/D as a function of angle of attack &alpha;. Beyond the stall angle (~18&ndash;22&deg; for F1 wing profiles), C<sub>L</sub> drops sharply while C<sub>D</sub> spikes &mdash; flow separation.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: TIRE PHYSICS                                       -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Tire Physics</h2>
+  <p class="section-sub">Friction models, slip angle, load sensitivity, and degradation mechanisms</p>
+
+  <!-- Friction Model -->
+  <h3>Friction Model</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>Tire friction is <em>not</em> Coulomb friction. The coefficient of friction &mu; for a rubber tire is a function of slip angle, vertical load, temperature, and surface condition. Critically, &mu; can exceed 1.0 &mdash; F1 tires routinely achieve <strong>&mu; &approx; 1.5&ndash;1.8</strong> &mdash; because rubber grip is generated by two mechanisms: <strong>adhesion</strong> (molecular bonding between rubber and asphalt) and <strong>hysteresis</strong> (energy dissipation as rubber deforms around surface asperities).</p>
+    </div>
+    <div class="formula">
+      <span class="var">&mu;</span> <span class="op">=</span>
+      <span class="fn">f</span><span class="op">(</span><span class="var">&alpha;</span><span class="op">,</span>
+      <span class="var">F<sub>z</sub></span><span class="op">,</span>
+      <span class="var">T</span><span class="op">,</span>
+      <span class="var">wear</span><span class="op">)</span>
+    </div>
+    <div class="formula-note">
+      &alpha; = slip angle, F<sub>z</sub> = normal load, T = temperature, wear = remaining tread. Not a constant &mdash; a four-dimensional surface.
+    </div>
+    <div class="callout" style="margin-top: 16px;">
+      <div class="callout-title">Why &mu; &gt; 1 Does Not Violate Physics</div>
+      <div class="callout-body">
+        Coulomb's law F<sub>friction</sub> = &mu;N applies to rigid bodies sliding on rigid surfaces, where friction arises from surface asperity interlocking. Rubber is viscoelastic: it conforms to surface texture, creating a real contact area much larger than for rigid materials. The adhesive component (van der Waals forces at the molecular interface) adds force beyond what geometric interlocking provides. The "coefficient" &mu; is simply the ratio F<sub>lateral</sub>/F<sub>normal</sub> and is not bounded by 1 for any fundamental reason &mdash; it is not a true material constant.
+      </div>
+    </div>
+  </div>
+
+  <!-- Slip Angle -->
+  <h3>Slip Angle</h3>
+  <div class="card">
+    <div class="explainer">
+      <p>The <strong>slip angle</strong> is the angle between the direction the tire is pointing and the direction it is actually traveling. At zero slip angle, lateral force is zero. As slip angle increases, lateral force builds approximately linearly (the slope is the <strong>cornering stiffness</strong>), peaks at around <strong>6&ndash;8&deg;</strong>, and then decreases as the contact patch begins to slide.</p>
+      <p>Operating beyond the peak is controllable oversteer/understeer territory. An F1 driver lives at or just below the peak &mdash; the "magic window" &mdash; extracting maximum lateral force without exceeding the limit.</p>
+    </div>
+    <div class="chart-container" style="height: 400px;">
+      <canvas id="slipAngleChart"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background: #f85149;"></div>Heavy load (high F<sub>z</sub>) &mdash; lower peak &mu; (load sensitivity)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #58a6ff;"></div>Light load (low F<sub>z</sub>) &mdash; higher peak &mu;</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #3fb950; border-radius: 0; height: 2px; width: 16px;"></div>Peak &mu; window (6&ndash;8&deg;)</div>
+    </div>
+  </div>
+
+  <!-- Load Sensitivity -->
+  <h3>Load Sensitivity</h3>
+  <div class="card">
+    <div class="explainer">
+      <p><strong>Load sensitivity</strong> is the property that &mu; decreases as normal force F<sub>z</sub> increases. This is one of the most important nonlinear effects in vehicle dynamics. Its consequences:</p>
+      <p>&bull; <strong>Lighter cars corner faster</strong> (per unit mass), because each tire operates at lower F<sub>z</sub> and higher &mu;.<br>
+      &bull; <strong>Weight transfer hurts total grip.</strong> The loaded side gains less &mu; than the unloaded side loses.<br>
+      &bull; <strong>Aero balance matters.</strong> Distributing downforce evenly across all four tires maximizes total grip.</p>
+    </div>
+    <div class="formula">
+      <span class="var">&mu;</span><span class="op">(</span><span class="var">F<sub>z</sub></span><span class="op">)</span> <span class="op">&approx;</span>
+      <span class="var">&mu;</span><sub style="color:#8b949e;">0</sub>
+      <span class="op">&minus;</span>
+      <span class="var">k</span> <span class="var">F<sub>z</sub></span>
+    </div>
+    <div class="formula-note">
+      Linearized model. &mu;<sub>0</sub> &approx; 1.8 (unloaded), k &approx; 5 &times; 10<sup>&minus;5</sup> N<sup>&minus;1</sup>. At F<sub>z</sub> = 6000 N: &mu; &approx; 1.5
+    </div>
+    <div class="chart-container" style="height: 350px;">
+      <canvas id="loadSensChart"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background: #d2a8ff;"></div>&mu; vs. normal load</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #d29922;"></div>Lateral force F<sub>y</sub> = &mu; &times; F<sub>z</sub></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: STOPPING DISTANCE                                  -->
+<!-- ============================================================ -->
+<div class="section section-divider">
+  <h2>Stopping Distance</h2>
+  <p class="section-sub">From 300 km/h to standstill: distance, time, and energy dissipation</p>
+
+  <div class="card">
+    <div class="explainer">
+      <p>An F1 car braking from 300 km/h to rest stops in approximately <strong>100 meters</strong> and <strong>4 seconds</strong>, sustaining ~5G average deceleration. By comparison, a high-performance road car (Porsche 911 GT3) requires ~350 m from the same speed. The difference is almost entirely due to aerodynamic downforce increasing tire grip at high speed.</p>
+    </div>
+    <div class="formula">
+      <span class="var">d</span> <span class="op">=</span>
+      <span class="var">v</span>&sup2; <span class="op">/</span>
+      <span class="op">(</span><span class="num">2</span> <span class="var">a</span><span class="op">)</span>
+      <span class="op">&nbsp;&nbsp;&nbsp;</span>
+      <span class="var">t</span> <span class="op">=</span>
+      <span class="var">v</span> <span class="op">/</span> <span class="var">a</span>
+      <span class="op">&nbsp;&nbsp;&nbsp;</span>
+      <span class="var">E</span> <span class="op">=</span>
+      <span class="num">&frac12;</span> <span class="var">m</span> <span class="var">v</span>&sup2;
+    </div>
+    <div class="formula-note">
+      Constant-deceleration approximation. Real braking profile: deceleration is highest at top speed (maximum aero load) and decreases as speed drops and downforce fades.
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-top: 16px;">
+    <div class="card">
+      <div class="card-title" style="color: #f85149;">F1 Car</div>
+      <table>
+        <tr><td class="driver-name">Initial speed</td><td class="right">300 km/h (83.3 m/s)</td></tr>
+        <tr><td class="driver-name">Average deceleration</td><td class="right">~5G (49 m/s&sup2;)</td></tr>
+        <tr><td class="driver-name">Stopping distance</td><td class="right" style="color: #f85149;">~71 m (constant-a) / ~100 m (real)</td></tr>
+        <tr><td class="driver-name">Stopping time</td><td class="right">~3.5 s</td></tr>
+        <tr><td class="driver-name">Energy dissipated</td><td class="right">2.67 MJ</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #d29922;">Road Car (High-Performance)</div>
+      <table>
+        <tr><td class="driver-name">Initial speed</td><td class="right">300 km/h (83.3 m/s)</td></tr>
+        <tr><td class="driver-name">Average deceleration</td><td class="right">~1G (9.81 m/s&sup2;)</td></tr>
+        <tr><td class="driver-name">Stopping distance</td><td class="right" style="color: #d29922;">~354 m</td></tr>
+        <tr><td class="driver-name">Stopping time</td><td class="right">~8.5 s</td></tr>
+        <tr><td class="driver-name">Energy dissipated</td><td class="right">5.2 MJ (heavier car ~1500 kg)</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #3fb950;">Why F1 Stops Faster</div>
+      <div class="explainer" style="max-width: none;">
+        <p>The F1 car's braking advantage comes from three sources:</p>
+        <p><strong>1. Downforce.</strong> At 300 km/h, the car generates ~26 kN of downforce &mdash; 3.4&times; its own weight. Total normal force on the tires: ~34 kN, allowing enormous friction force.</p>
+        <p><strong>2. Tire compound.</strong> Racing slicks with &mu; &approx; 1.5&ndash;1.8 vs. road tires at &mu; &approx; 0.9&ndash;1.0.</p>
+        <p><strong>3. Carbon brakes.</strong> Operating at 1000&deg;C with no fade. Steel brakes on road cars overheat and lose performance within one or two hard stops from 300 km/h.</p>
+        <p>As speed drops, downforce decreases quadratically, so the final portion of braking (below ~100 km/h) is much closer to a road car's performance.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Braking Distance Comparison Chart -->
+  <div class="card" style="margin-top: 16px;">
+    <div class="card-title">Braking Distance Comparison</div>
+    <div class="chart-container" style="height: 350px;">
+      <canvas id="brakingChart"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background: #f85149;"></div>F1 car (speed-dependent deceleration)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #d29922;"></div>Road car (constant ~1G)</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Data: FIA Technical Regulations 2026 &middot; Generated 2026-05-23 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+// ============================================================
+// CONSTANTS
+// ============================================================
+const RHO = 1.225;       // kg/m^3
+const A = 1.5;           // m^2 reference area
+const CL = 2.5;          // lift coefficient (downforce)
+const CD = 0.7;          // drag coefficient
+const M = 768;           // kg (car + driver)
+const G = 9.81;          // m/s^2
+const MG = M * G;        // weight in N
+const H_CG = 0.30;       // CG height, m
+const L_WB = 3.6;        // wheelbase, m
+const MU_AIR = 1.81e-5;  // Pa.s dynamic viscosity
+const L_CAR = 5.6;       // car length, m
+
+// ============================================================
+// SECTION 1: Force vs Speed Table + Chart
+// ============================================================
+const speeds = [100, 150, 200, 250, 300, 350];
+const forceData = speeds.map(sKmh => {
+  const v = sKmh / 3.6;
+  const Fd = 0.5 * RHO * v * v * CL * A;
+  const Fdr = 0.5 * RHO * v * v * CD * A;
+  const Pdrag = Fdr * v / 1000; // kW
+  return { sKmh, v, Fd, Fdr, Pdrag, ratio: Fd / MG };
+});
+
+const ftb = document.getElementById('forceTable');
+forceData.forEach(d => {
+  const tr = document.createElement('tr');
+  const ratioColor = d.ratio > 1 ? '#3fb950' : d.ratio > 0.5 ? '#d29922' : '#8b949e';
+  tr.innerHTML =
+    '<td class="driver-name">' + d.sKmh + ' km/h</td>' +
+    '<td class="right">' + d.v.toFixed(1) + '</td>' +
+    '<td class="right" style="color:#58a6ff;">' + Math.round(d.Fd).toLocaleString() + '</td>' +
+    '<td class="right">' + Math.round(d.Fd / G).toLocaleString() + '</td>' +
+    '<td class="right" style="color:#f85149;">' + Math.round(d.Fdr).toLocaleString() + '</td>' +
+    '<td class="right">' + Math.round(d.Pdrag) + '</td>' +
+    '<td class="right" style="color:' + ratioColor + ';">' + d.ratio.toFixed(2) + 'x</td>';
+  ftb.appendChild(tr);
+});
+
+// Weight transfer computation
+const aDecel = 5 * G; // 5G braking
+const deltaF = M * aDecel * H_CG / L_WB;
+const staticFront = MG * 0.46;
+const staticRear = MG * 0.54;
+document.getElementById('wtBraking').textContent = Math.round(deltaF).toLocaleString() + ' N';
+document.getElementById('wtFront').textContent = Math.round(staticFront + deltaF).toLocaleString() + ' N';
+document.getElementById('wtRear').textContent = Math.round(staticRear - deltaF).toLocaleString() + ' N';
+
+// Reynolds number
+const Re300 = RHO * (300 / 3.6) * L_CAR / MU_AIR;
+document.getElementById('reynoldsValue').textContent = (Re300 / 1e7).toFixed(1) + ' x 10⁷';
+
+// ============================================================
+// CHART: Force vs Speed
+// ============================================================
+function drawForceChart() {
+  const canvas = document.getElementById('forceChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const H = rect.height;
+  const pad = { top: 40, right: 60, bottom: 50, left: 80 };
+  const cW = W - pad.left - pad.right;
+  const cH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Generate smooth curve data
+  const pts = [];
+  for (let s = 50; s <= 370; s += 5) {
+    const v = s / 3.6;
+    pts.push({
+      s: s,
+      Fd: 0.5 * RHO * v * v * CL * A,
+      Fdr: 0.5 * RHO * v * v * CD * A
+    });
+  }
+
+  const maxF = Math.max(pts[pts.length - 1].Fd, MG) * 1.1;
+
+  // Grid
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + cH - (cH * i / 5);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.fillText(Math.round(maxF * i / 5 / 1000) + ' kN', pad.left - 8, y + 4);
+  }
+
+  // X axis labels
+  ctx.textAlign = 'center';
+  for (let s = 50; s <= 350; s += 50) {
+    const x = pad.left + ((s - 50) / 320) * cW;
+    ctx.fillText(s + '', x, H - pad.bottom + 20);
+  }
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.fillText('Speed (km/h)', W / 2, H - 5);
+
+  // Y axis label
+  ctx.save();
+  ctx.translate(15, pad.top + cH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#8b949e';
+  ctx.textAlign = 'center';
+  ctx.fillText('Force (kN)', 0, 0);
+  ctx.restore();
+
+  // Axes
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, H - pad.bottom);
+  ctx.lineTo(W - pad.right, H - pad.bottom);
+  ctx.stroke();
+
+  // Car weight reference line
+  const mgY = pad.top + cH - (MG / maxF) * cH;
+  ctx.strokeStyle = '#3fb950';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, mgY);
+  ctx.lineTo(W - pad.right, mgY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#3fb950';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('mg = ' + (MG / 1000).toFixed(1) + ' kN', W - pad.right + 5, mgY + 4);
+
+  function toXY(s, f) {
+    return {
+      x: pad.left + ((s - 50) / 320) * cW,
+      y: pad.top + cH - (f / maxF) * cH
+    };
+  }
+
+  // Downforce curve
+  ctx.strokeStyle = '#58a6ff';
+  ctx.lineWidth = 3;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const pt = toXY(p.s, p.Fd);
+    if (i === 0) ctx.moveTo(pt.x, pt.y);
+    else ctx.lineTo(pt.x, pt.y);
+  });
+  ctx.stroke();
+
+  // Downforce fill
+  ctx.fillStyle = 'rgba(88, 166, 255, 0.06)';
+  ctx.beginPath();
+  ctx.moveTo(toXY(pts[0].s, 0).x, toXY(pts[0].s, 0).y);
+  pts.forEach(p => {
+    const pt = toXY(p.s, p.Fd);
+    ctx.lineTo(pt.x, pt.y);
+  });
+  ctx.lineTo(toXY(pts[pts.length - 1].s, 0).x, toXY(pts[pts.length - 1].s, 0).y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Drag curve
+  ctx.strokeStyle = '#f85149';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  pts.forEach((p, i) => {
+    const pt = toXY(p.s, p.Fdr);
+    if (i === 0) ctx.moveTo(pt.x, pt.y);
+    else ctx.lineTo(pt.x, pt.y);
+  });
+  ctx.stroke();
+
+  // Drag fill
+  ctx.fillStyle = 'rgba(248, 81, 73, 0.06)';
+  ctx.beginPath();
+  ctx.moveTo(toXY(pts[0].s, 0).x, toXY(pts[0].s, 0).y);
+  pts.forEach(p => {
+    const pt = toXY(p.s, p.Fdr);
+    ctx.lineTo(pt.x, pt.y);
+  });
+  ctx.lineTo(toXY(pts[pts.length - 1].s, 0).x, toXY(pts[pts.length - 1].s, 0).y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Data point markers on the table speeds
+  forceData.forEach(d => {
+    // Downforce dot
+    var pt = toXY(d.sKmh, d.Fd);
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#161b22';
+    ctx.fill();
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Drag dot
+    pt = toXY(d.sKmh, d.Fdr);
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#161b22';
+    ctx.fill();
+    ctx.strokeStyle = '#f85149';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+}
+
+// ============================================================
+// CHART: Thermal Efficiency Comparison
+// ============================================================
+function drawEfficiencyChart() {
+  const canvas = document.getElementById('efficiencyChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const H = rect.height;
+  const pad = { top: 30, right: 100, bottom: 40, left: 200 };
+  const cW = W - pad.left - pad.right;
+  const cH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const engines = [
+    { name: 'Petrol road car', eff: 0.30, color: '#8b949e' },
+    { name: 'Diesel road car', eff: 0.38, color: '#8b949e' },
+    { name: 'Gas turbine (power gen)', eff: 0.40, color: '#d29922' },
+    { name: 'F1 PU (2026)', eff: 0.50, color: '#f85149' },
+    { name: 'Large marine diesel', eff: 0.50, color: '#d29922' },
+    { name: 'Carnot limit (F1 temps)', eff: 0.86, color: '#3fb950' }
+  ];
+
+  const barH = Math.min(36, (cH / engines.length) - 10);
+  const gap = (cH - barH * engines.length) / (engines.length + 1);
+
+  // Grid
+  ctx.strokeStyle = '#21262d';
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  for (let i = 0; i <= 10; i++) {
+    const x = pad.left + (cW * i / 10);
+    if (i > 0) {
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, H - pad.bottom);
+      ctx.stroke();
+    }
+    ctx.fillText((i * 10) + '%', x, H - pad.bottom + 20);
+  }
+
+  // Axis
+  ctx.strokeStyle = '#30363d';
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, H - pad.bottom);
+  ctx.lineTo(W - pad.right, H - pad.bottom);
+  ctx.stroke();
+
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Brake Thermal Efficiency', W / 2, H - 5);
+
+  engines.forEach((e, i) => {
+    const y = pad.top + gap + i * (barH + gap);
+    const bW = cW * e.eff;
+
+    // Bar
+    ctx.fillStyle = e.color;
+    ctx.globalAlpha = e.name.includes('Carnot') ? 0.4 : 0.85;
+    ctx.beginPath();
+    ctx.roundRect(pad.left, y, bW, barH, 3);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Carnot dashed border
+    if (e.name.includes('Carnot')) {
+      ctx.strokeStyle = '#3fb950';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.roundRect(pad.left, y, bW, barH, 3);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Label
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = '12px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(e.name, pad.left - 10, y + barH / 2 + 4);
+
+    // Value
+    ctx.fillStyle = e.color;
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText((e.eff * 100).toFixed(0) + '%', pad.left + bW + 8, y + barH / 2 + 4);
+  });
+}
+
+// ============================================================
+// CHART: Sankey Energy Flow (simplified block diagram)
+// ============================================================
+function drawSankeyChart() {
+  const canvas = document.getElementById('sankeyChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const H = rect.height;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const totalE = 4840;
+  const flows = [
+    { label: 'Useful work', value: 1500, color: '#3fb950' },
+    { label: 'Exhaust heat', value: 1700, color: '#f85149' },
+    { label: 'Coolant rejection', value: 1000, color: '#d29922' },
+    { label: 'Other losses', value: 640, color: '#8b949e' }
+  ];
+
+  const pad = { top: 40, right: 40, bottom: 30, left: 40 };
+  const blockW = 120;
+  const gapX = (W - pad.left - pad.right - blockW * 2) / 1;
+  const srcX = pad.left;
+  const dstX = pad.left + blockW + gapX;
+  const srcH = H - pad.top - pad.bottom;
+  const srcY = pad.top;
+
+  // Source block (fuel)
+  ctx.fillStyle = '#58a6ff';
+  ctx.globalAlpha = 0.3;
+  ctx.fillRect(srcX, srcY, blockW, srcH);
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = '#58a6ff';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(srcX, srcY, blockW, srcH);
+  ctx.fillStyle = '#f0f6fc';
+  ctx.font = '13px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Fuel', srcX + blockW / 2, srcY + srcH / 2 - 10);
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.fillStyle = '#58a6ff';
+  ctx.fillText(totalE + ' MJ', srcX + blockW / 2, srcY + srcH / 2 + 10);
+
+  // Destination blocks
+  let cumY = srcY;
+  flows.forEach(f => {
+    const fH = (f.value / totalE) * srcH;
+    const midSrcY = cumY + fH / 2;
+
+    // Destination block
+    ctx.fillStyle = f.color;
+    ctx.globalAlpha = 0.2;
+    ctx.fillRect(dstX, cumY, blockW, fH);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = f.color;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(dstX, cumY, blockW, fH);
+
+    // Flow band
+    ctx.fillStyle = f.color;
+    ctx.globalAlpha = 0.12;
+    ctx.beginPath();
+    ctx.moveTo(srcX + blockW, cumY);
+    ctx.lineTo(dstX, cumY);
+    ctx.lineTo(dstX, cumY + fH);
+    ctx.lineTo(srcX + blockW, cumY + fH);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Labels
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    var labelX = dstX + blockW + 10;
+    ctx.fillText(f.label, labelX, cumY + fH / 2 - 6);
+    ctx.fillStyle = f.color;
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.fillText(f.value + ' MJ (' + Math.round(f.value / totalE * 100) + '%)', labelX, cumY + fH / 2 + 10);
+
+    cumY += fH;
+  });
+}
+
+// ============================================================
+// CHART: Slip Angle vs. Lateral Force
+// ============================================================
+function drawSlipAngleChart() {
+  const canvas = document.getElementById('slipAngleChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const HH = rect.height;
+  const pad = { top: 40, right: 60, bottom: 50, left: 70 };
+  const cW = W - pad.left - pad.right;
+  const cH = HH - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, HH);
+
+  // Pacejka-like model: mu(alpha) = D * sin(C * atan(B * alpha - E * (B * alpha - atan(B * alpha))))
+  // Simplified: mu = muPeak * sin(2 * atan(alpha / alphaPeak * tan(pi/(2*C_shape))))
+  // Even simpler empirical: mu = muPeak * (alpha / alphaPeak) * exp(1 - alpha / alphaPeak)
+  function slipCurve(muPeak, alphaPeak, alpha) {
+    const x = alpha / alphaPeak;
+    return muPeak * x * Math.exp(1 - x);
+  }
+
+  const curves = [
+    { label: 'Heavy load (Fz = 8000 N)', muPeak: 1.4, alphaPeak: 7, color: '#f85149' },
+    { label: 'Light load (Fz = 3000 N)', muPeak: 1.75, alphaPeak: 6.5, color: '#58a6ff' }
+  ];
+
+  const maxAlpha = 18;
+  const maxMu = 2.0;
+
+  // Grid
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + cH - (cH * i / 5);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.textAlign = 'right';
+    ctx.fillText((maxMu * i / 5).toFixed(1), pad.left - 8, y + 4);
+  }
+
+  ctx.textAlign = 'center';
+  for (let a = 0; a <= maxAlpha; a += 2) {
+    const x = pad.left + (a / maxAlpha) * cW;
+    ctx.fillText(a + '°', x, HH - pad.bottom + 20);
+  }
+
+  // Axes
+  ctx.strokeStyle = '#30363d';
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, HH - pad.bottom);
+  ctx.lineTo(W - pad.right, HH - pad.bottom);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Slip Angle', W / 2, HH - 5);
+  ctx.save();
+  ctx.translate(15, pad.top + cH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('µ (friction coefficient)', 0, 0);
+  ctx.restore();
+
+  // Peak window shading (6-8 degrees)
+  const x6 = pad.left + (6 / maxAlpha) * cW;
+  const x8 = pad.left + (8 / maxAlpha) * cW;
+  ctx.fillStyle = 'rgba(63, 185, 80, 0.08)';
+  ctx.fillRect(x6, pad.top, x8 - x6, cH);
+  ctx.strokeStyle = '#3fb950';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(x6, pad.top);
+  ctx.lineTo(x6, HH - pad.bottom);
+  ctx.moveTo(x8, pad.top);
+  ctx.lineTo(x8, HH - pad.bottom);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#3fb950';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Peak µ window', (x6 + x8) / 2, pad.top + 15);
+
+  // Draw curves
+  curves.forEach(c => {
+    ctx.strokeStyle = c.color;
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (let a = 0.1; a <= maxAlpha; a += 0.2) {
+      const mu = slipCurve(c.muPeak, c.alphaPeak, a);
+      const x = pad.left + (a / maxAlpha) * cW;
+      const y = pad.top + cH - (mu / maxMu) * cH;
+      if (a < 0.3) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Peak marker
+    const peakMu = c.muPeak;
+    const peakX = pad.left + (c.alphaPeak / maxAlpha) * cW;
+    const peakY = pad.top + cH - (peakMu / maxMu) * cH;
+    ctx.beginPath();
+    ctx.arc(peakX, peakY, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#161b22';
+    ctx.fill();
+    ctx.strokeStyle = c.color;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.fillStyle = c.color;
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('µ=' + peakMu.toFixed(2), peakX + 10, peakY - 4);
+  });
+}
+
+// ============================================================
+// CHART: Load Sensitivity
+// ============================================================
+function drawLoadSensChart() {
+  const canvas = document.getElementById('loadSensChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const HH = rect.height;
+  const pad = { top: 40, right: 80, bottom: 50, left: 70 };
+  const cW = W - pad.left - pad.right;
+  const cH = HH - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, HH);
+
+  const mu0 = 1.8;
+  const k = 5e-5;
+  const maxFz = 12000;
+  const maxMu = 2.0;
+  const maxFy = 14000;
+
+  // Grid
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + cH - (cH * i / 5);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.textAlign = 'right';
+    ctx.fillText((maxMu * i / 5).toFixed(1), pad.left - 8, y + 4);
+  }
+
+  ctx.textAlign = 'center';
+  for (let f = 0; f <= maxFz; f += 2000) {
+    const x = pad.left + (f / maxFz) * cW;
+    ctx.fillText((f / 1000).toFixed(0) + 'kN', x, HH - pad.bottom + 20);
+  }
+
+  // Axes
+  ctx.strokeStyle = '#30363d';
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, HH - pad.bottom);
+  ctx.lineTo(W - pad.right, HH - pad.bottom);
+  ctx.stroke();
+
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Normal Force Fz (N)', W / 2, HH - 5);
+  ctx.save();
+  ctx.translate(15, pad.top + cH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('µ / Fy (scaled)', 0, 0);
+  ctx.restore();
+
+  // mu vs Fz
+  ctx.strokeStyle = '#d2a8ff';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let fz = 100; fz <= maxFz; fz += 100) {
+    const mu = mu0 - k * fz;
+    const x = pad.left + (fz / maxFz) * cW;
+    const y = pad.top + cH - (mu / maxMu) * cH;
+    if (fz < 200) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Fy = mu * Fz (scaled to fit on same axes)
+  ctx.strokeStyle = '#d29922';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let fz = 100; fz <= maxFz; fz += 100) {
+    const mu = mu0 - k * fz;
+    const Fy = mu * fz;
+    const x = pad.left + (fz / maxFz) * cW;
+    const y = pad.top + cH - (Fy / maxFy) * cH; // scaled
+    if (fz < 200) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Right axis labels for Fy
+  ctx.fillStyle = '#d29922';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'left';
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + cH - (cH * i / 5);
+    ctx.fillText(Math.round(maxFy * i / 5 / 1000) + ' kN', W - pad.right + 8, y + 4);
+  }
+  ctx.save();
+  ctx.translate(W - 10, pad.top + cH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Fy (N)', 0, 0);
+  ctx.restore();
+
+  // Note: Fy curve is sublinear - key insight
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  const noteX = pad.left + cW * 0.7;
+  const noteY = pad.top + 30;
+  ctx.fillText('Fy grows sublinearly —', noteX, noteY);
+  ctx.fillText('weight transfer always costs grip', noteX, noteY + 14);
+}
+
+// ============================================================
+// CHART: Braking Distance Comparison
+// ============================================================
+function drawBrakingChart() {
+  const canvas = document.getElementById('brakingChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const HH = rect.height;
+  const pad = { top: 40, right: 60, bottom: 50, left: 70 };
+  const cW = W - pad.left - pad.right;
+  const cH = HH - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, HH);
+
+  // F1: deceleration = base_G + aero_factor * v^2
+  // Simplified: a(v) = G * (2 + 3*(v/v0)^2) for v0 = 83.3 m/s
+  // Road car: constant 1G
+  const v0 = 300 / 3.6;
+  const dt = 0.01;
+  const maxDist = 400;
+
+  // Simulate F1 braking
+  const f1Points = [];
+  let v = v0, d = 0;
+  while (v > 0.5 && d < maxDist) {
+    const aero_g = 3 * (v / v0) * (v / v0);
+    const a = G * (2 + aero_g);
+    v -= a * dt;
+    if (v < 0) v = 0;
+    d += v * dt;
+    f1Points.push({ d: d, v: v * 3.6 });
+  }
+
+  // Simulate road car braking
+  const roadPoints = [];
+  v = v0; d = 0;
+  while (v > 0.5 && d < maxDist) {
+    const a = 1.0 * G;
+    v -= a * dt;
+    if (v < 0) v = 0;
+    d += v * dt;
+    roadPoints.push({ d: d, v: v * 3.6 });
+  }
+
+  const maxD = Math.max(roadPoints[roadPoints.length - 1].d, maxDist);
+  const maxV = 310;
+
+  // Grid
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + cH - (cH * i / 5);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(maxV * i / 5) + '', pad.left - 8, y + 4);
+  }
+
+  ctx.textAlign = 'center';
+  for (let dd = 0; dd <= maxD; dd += 50) {
+    const x = pad.left + (dd / maxD) * cW;
+    ctx.fillText(dd + 'm', x, HH - pad.bottom + 20);
+  }
+
+  // Axes
+  ctx.strokeStyle = '#30363d';
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, HH - pad.bottom);
+  ctx.lineTo(W - pad.right, HH - pad.bottom);
+  ctx.stroke();
+
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Distance (m)', W / 2, HH - 5);
+  ctx.save();
+  ctx.translate(15, pad.top + cH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Speed (km/h)', 0, 0);
+  ctx.restore();
+
+  function toXY(dd, vv) {
+    return {
+      x: pad.left + (dd / maxD) * cW,
+      y: pad.top + cH - (vv / maxV) * cH
+    };
+  }
+
+  // Road car curve
+  ctx.strokeStyle = '#d29922';
+  ctx.lineWidth = 3;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(toXY(0, 300).x, toXY(0, 300).y);
+  for (let i = 0; i < roadPoints.length; i += 10) {
+    const pt = toXY(roadPoints[i].d, roadPoints[i].v);
+    ctx.lineTo(pt.x, pt.y);
+  }
+  ctx.stroke();
+
+  // Road car fill
+  ctx.fillStyle = 'rgba(210, 153, 34, 0.06)';
+  ctx.beginPath();
+  ctx.moveTo(toXY(0, 0).x, toXY(0, 0).y);
+  ctx.lineTo(toXY(0, 300).x, toXY(0, 300).y);
+  for (let i = 0; i < roadPoints.length; i += 10) {
+    const pt = toXY(roadPoints[i].d, roadPoints[i].v);
+    ctx.lineTo(pt.x, pt.y);
+  }
+  var lastRd = roadPoints[roadPoints.length - 1];
+  ctx.lineTo(toXY(lastRd.d, 0).x, toXY(lastRd.d, 0).y);
+  ctx.closePath();
+  ctx.fill();
+
+  // F1 curve
+  ctx.strokeStyle = '#f85149';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(toXY(0, 300).x, toXY(0, 300).y);
+  for (let i = 0; i < f1Points.length; i += 10) {
+    const pt = toXY(f1Points[i].d, f1Points[i].v);
+    ctx.lineTo(pt.x, pt.y);
+  }
+  ctx.stroke();
+
+  // F1 fill
+  ctx.fillStyle = 'rgba(248, 81, 73, 0.06)';
+  ctx.beginPath();
+  ctx.moveTo(toXY(0, 0).x, toXY(0, 0).y);
+  ctx.lineTo(toXY(0, 300).x, toXY(0, 300).y);
+  for (let i = 0; i < f1Points.length; i += 10) {
+    const pt = toXY(f1Points[i].d, f1Points[i].v);
+    ctx.lineTo(pt.x, pt.y);
+  }
+  var lastF1 = f1Points[f1Points.length - 1];
+  ctx.lineTo(toXY(lastF1.d, 0).x, toXY(lastF1.d, 0).y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Annotations
+  ctx.fillStyle = '#f85149';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'left';
+  var f1stop = f1Points[f1Points.length - 1].d;
+  ctx.fillText('F1: ~' + Math.round(f1stop) + ' m', toXY(f1stop, 30).x - 30, toXY(f1stop, 30).y);
+
+  ctx.fillStyle = '#d29922';
+  ctx.fillText('Road: ~' + Math.round(lastRd.d) + ' m', toXY(lastRd.d - 30, 30).x - 40, toXY(lastRd.d, 30).y);
+}
+
+// ============================================================
+// DRAW ALL
+// ============================================================
+function drawAll() {
+  drawForceChart();
+  drawEfficiencyChart();
+  drawSankeyChart();
+  drawSlipAngleChart();
+  drawLoadSensChart();
+  drawBrakingChart();
+}
+
+drawAll();
+window.addEventListener('resize', drawAll);
+</script>
+
+</body>
+</html>
