@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F1 2026 — Elo Ratings</title>
-<meta name="description" content="Elo rating system applied to the 2026 F1 season. Pairwise skill rankings separating driver talent from car performance, with teammate gap analysis.">
-<meta property="og:title" content="F1 2026 — Elo Ratings">
-<meta property="og:description" content="Elo rating system applied to the 2026 F1 season. Pairwise skill rankings separating driver talent from car performance.">
+<title>F1 {{ data.year }} — Elo Ratings</title>
+<meta name="description" content="Elo rating system applied to the {{ data.year }} F1 season. Pairwise skill rankings separating driver talent from car performance, with teammate gap analysis.">
+<meta property="og:title" content="F1 {{ data.year }} — Elo Ratings">
+<meta property="og:description" content="Elo rating system applied to the {{ data.year }} F1 season. Pairwise skill rankings separating driver talent from car performance.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/elo.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="F1 2026 — Elo Ratings">
-<meta name="twitter:description" content="Elo rating system applied to the 2026 F1 season. Pairwise skill rankings separating driver from car.">
+<meta name="twitter:title" content="F1 {{ data.year }} — Elo Ratings">
+<meta name="twitter:description" content="Elo rating system applied to the {{ data.year }} F1 season. Pairwise skill rankings separating driver from car.">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -106,11 +106,11 @@
 <div class="hero">
   <a class="back-link" href="index.html">&larr; back to overview</a>
   <h1>Elo Ratings</h1>
-  <div class="tagline">Separating driver from car. An Elo rating system applied to the 2026 season to estimate driver skill independent of machinery.</div>
+  <div class="tagline">Separating driver from car. An Elo rating system applied to the {{ data.year }} season to estimate driver skill independent of machinery.</div>
   <div class="badges">
     <span class="badge badge-blue">Pairwise Elo</span>
     <span class="badge badge-amber">K-factor 4</span>
-    <span class="badge badge-green">4 Races Processed</span>
+    <span class="badge badge-green">{{ data.current_round }} Races Processed</span>
     <span class="badge badge-purple">DNF-Neutral</span>
   </div>
 </div>
@@ -118,14 +118,14 @@
 <!-- Stats cards -->
 <div class="section">
   <h2>Key Metrics</h2>
-  <p class="section-sub">Headline figures from the Elo model after Round 4</p>
+  <p class="section-sub">Headline figures from the Elo model after Round {{ data.current_round }}</p>
   <div class="grid grid-3" id="stats-cards"></div>
 </div>
 
 <!-- Bar chart: final Elo ratings -->
 <div class="section section-divider">
   <h2>Final Elo Ratings</h2>
-  <p class="section-sub">Horizontal bar chart after Round 4 — sorted highest to lowest, colored by team</p>
+  <p class="section-sub">Horizontal bar chart after Round {{ data.current_round }} — sorted highest to lowest, colored by team</p>
   <div class="chart-container">
     <canvas id="bar-chart"></canvas>
   </div>
@@ -134,7 +134,7 @@
 <!-- Line chart: round-by-round progression -->
 <div class="section section-divider">
   <h2>Elo Progression</h2>
-  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through 4 races</p>
+  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through {{ data.current_round }} races</p>
   <div class="chart-container">
     <canvas id="line-chart"></canvas>
   </div>
@@ -237,59 +237,22 @@
 // ── Data (injected from Jinja2) ─────────────────────────────────────────
 const TEAMS = {};
 const DRIVER_LIST = [];
-TEAMS['Antonelli'] = { team: 'Mercedes', color: '#00d2be' };
-DRIVER_LIST.push('Antonelli');
-TEAMS['Russell'] = { team: 'Mercedes', color: '#00d2be' };
-DRIVER_LIST.push('Russell');
-TEAMS['Leclerc'] = { team: 'Ferrari', color: '#dc143c' };
-DRIVER_LIST.push('Leclerc');
-TEAMS['Norris'] = { team: 'McLaren', color: '#ff8700' };
-DRIVER_LIST.push('Norris');
-TEAMS['Hamilton'] = { team: 'Ferrari', color: '#dc143c' };
-DRIVER_LIST.push('Hamilton');
-TEAMS['Piastri'] = { team: 'McLaren', color: '#ff8700' };
-DRIVER_LIST.push('Piastri');
-TEAMS['Verstappen'] = { team: 'Red Bull', color: '#3671C6' };
-DRIVER_LIST.push('Verstappen');
-TEAMS['Bearman'] = { team: 'Haas F1 Team', color: '#b6babd' };
-DRIVER_LIST.push('Bearman');
-TEAMS['Gasly'] = { team: 'Alpine F1 Team', color: '#0090ff' };
-DRIVER_LIST.push('Gasly');
-TEAMS['Lawson'] = { team: 'RB F1 Team', color: '#6692ff' };
-DRIVER_LIST.push('Lawson');
-TEAMS['Colapinto'] = { team: 'Alpine F1 Team', color: '#0090ff' };
-DRIVER_LIST.push('Colapinto');
-TEAMS['Lindblad'] = { team: 'RB F1 Team', color: '#6692ff' };
-DRIVER_LIST.push('Lindblad');
-TEAMS['Hadjar'] = { team: 'Red Bull', color: '#3671C6' };
-DRIVER_LIST.push('Hadjar');
-TEAMS['Sainz'] = { team: 'Williams', color: '#64c4ff' };
-DRIVER_LIST.push('Sainz');
-TEAMS['Bortoleto'] = { team: 'Audi', color: '#00e701' };
-DRIVER_LIST.push('Bortoleto');
-TEAMS['Ocon'] = { team: 'Haas F1 Team', color: '#b6babd' };
-DRIVER_LIST.push('Ocon');
-TEAMS['Albon'] = { team: 'Williams', color: '#64c4ff' };
-DRIVER_LIST.push('Albon');
-TEAMS['Hülkenberg'] = { team: 'Audi', color: '#00e701' };
-DRIVER_LIST.push('Hülkenberg');
-TEAMS['Bottas'] = { team: 'Cadillac F1 Team', color: '#c0c0c0' };
-DRIVER_LIST.push('Bottas');
-TEAMS['Pérez'] = { team: 'Cadillac F1 Team', color: '#c0c0c0' };
-DRIVER_LIST.push('Pérez');
-TEAMS['Alonso'] = { team: 'Aston Martin', color: '#006f62' };
-DRIVER_LIST.push('Alonso');
-TEAMS['Stroll'] = { team: 'Aston Martin', color: '#006f62' };
-DRIVER_LIST.push('Stroll');
+{% for d in data.drivers %}
+TEAMS['{{ d.family_name }}'] = { team: '{{ d.team }}', color: '{{ d.team_hex }}' };
+DRIVER_LIST.push('{{ d.family_name }}');
+{% endfor %}
 
 const RACES = [
-  { label: 'R1 Australian Grand Prix', finishers: [
-    'Russell',    'Antonelli',    'Leclerc',    'Hamilton',    'Norris',    'Verstappen',    'Bearman',    'Lindblad',    'Bortoleto',    'Gasly',    'Ocon',    'Albon',    'Lawson',    'Colapinto',    'Sainz',    'Pérez',    'Stroll'  ]},  { label: 'R2 Chinese Grand Prix', finishers: [
-    'Antonelli',    'Russell',    'Hamilton',    'Leclerc',    'Bearman',    'Gasly',    'Lawson',    'Hadjar',    'Sainz',    'Colapinto',    'Hülkenberg',    'Lindblad',    'Bottas',    'Ocon',    'Pérez'  ]},  { label: 'R3 Japanese Grand Prix', finishers: [
-    'Antonelli',    'Piastri',    'Leclerc',    'Russell',    'Norris',    'Hamilton',    'Gasly',    'Verstappen',    'Lawson',    'Ocon',    'Hülkenberg',    'Hadjar',    'Bortoleto',    'Lindblad',    'Sainz',    'Colapinto',    'Pérez',    'Alonso',    'Bottas',    'Albon'  ]},  { label: 'R4 Miami Grand Prix', finishers: [
-    'Antonelli',    'Norris',    'Piastri',    'Russell',    'Verstappen',    'Hamilton',    'Colapinto',    'Leclerc',    'Sainz',    'Albon',    'Bearman',    'Bortoleto',    'Ocon',    'Lindblad',    'Alonso',    'Pérez',    'Stroll',    'Bottas'  ]}];
+  {% for race in data.races %}
+  { label: 'R{{ race.round }} {{ race.name }}', finishers: [
+    {% for r in race.results if not r.is_retired and not r.is_dns %}
+    '{{ r.driver.split(' ')[-1] if ' ' in r.driver else r.driver }}'{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]}{% if not loop.last %},{% endif %}
+  {% endfor %}
+];
 
-const currentRound = 4;
+const currentRound = {{ data.current_round }};
 
 // ── Elo computation ─────────────────────────────────────────────────────
 const K = 4;
@@ -609,28 +572,10 @@ window.addEventListener('resize', drawLineChart);
 // Build team order from data
 const teamOrder = [];
 const teamColorMap = {};
-teamOrder.push('Mercedes');
-teamColorMap['Mercedes'] = '#00d2be';
-teamOrder.push('Ferrari');
-teamColorMap['Ferrari'] = '#dc143c';
-teamOrder.push('McLaren');
-teamColorMap['McLaren'] = '#ff8700';
-teamOrder.push('Red Bull');
-teamColorMap['Red Bull'] = '#3671C6';
-teamOrder.push('Alpine F1 Team');
-teamColorMap['Alpine F1 Team'] = '#0090ff';
-teamOrder.push('Haas F1 Team');
-teamColorMap['Haas F1 Team'] = '#b6babd';
-teamOrder.push('RB F1 Team');
-teamColorMap['RB F1 Team'] = '#6692ff';
-teamOrder.push('Williams');
-teamColorMap['Williams'] = '#64c4ff';
-teamOrder.push('Audi');
-teamColorMap['Audi'] = '#00e701';
-teamOrder.push('Cadillac F1 Team');
-teamColorMap['Cadillac F1 Team'] = '#c0c0c0';
-teamOrder.push('Aston Martin');
-teamColorMap['Aston Martin'] = '#006f62';
+{% for c in data.constructors %}
+teamOrder.push('{{ c.name }}');
+teamColorMap['{{ c.name }}'] = '{{ c.team_hex }}';
+{% endfor %}
 
 const tbody = document.getElementById('teammate-table');
 teamOrder.forEach(team => {

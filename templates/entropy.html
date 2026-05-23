@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F1 2026 — Championship Entropy</title>
-<meta name="description" content="Shannon entropy measures F1 championship competitiveness. 2026 season compared to historical seasons including the 2021 and 2010 title fights.">
-<meta property="og:title" content="F1 2026 — Championship Entropy">
-<meta property="og:description" content="Shannon entropy measures F1 championship competitiveness. 2026 compared to the closest and most dominant seasons in history.">
+<title>F1 {{ data.year }} — Championship Entropy</title>
+<meta name="description" content="Shannon entropy measures F1 championship competitiveness. {{ data.year }} season compared to historical seasons including the 2021 and 2010 title fights.">
+<meta property="og:title" content="F1 {{ data.year }} — Championship Entropy">
+<meta property="og:description" content="Shannon entropy measures F1 championship competitiveness. {{ data.year }} compared to the closest and most dominant seasons in history.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/entropy.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="F1 2026 — Championship Entropy">
-<meta name="twitter:description" content="Shannon entropy applied to F1 — measuring how competitive the 2026 championship really is.">
+<meta name="twitter:title" content="F1 {{ data.year }} — Championship Entropy">
+<meta name="twitter:description" content="Shannon entropy applied to F1 — measuring how competitive the {{ data.year }} championship really is.">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -194,8 +194,8 @@
 
 <!-- Section 2: Current Entropy Calculation -->
 <div class="section section-divider">
-  <h2>2026 Championship Entropy</h2>
-  <p class="section-sub">After Round 4</p>
+  <h2>{{ data.year }} Championship Entropy</h2>
+  <p class="section-sub">After Round {{ data.current_round }}</p>
   <div class="grid grid-3">
     <div class="card">
       <div class="card-title">Shannon Entropy (H)</div>
@@ -205,7 +205,7 @@
     <div class="card">
       <div class="card-title">Maximum Possible (H<sub>max</sub>)</div>
       <div class="stat" id="currentHmax" style="color: #8b949e;">--</div>
-      <div class="stat-label">bits (for 22 drivers)</div>
+      <div class="stat-label">bits (for {{ data.drivers|length }} drivers)</div>
     </div>
     <div class="card">
       <div class="card-title">Competitiveness Index</div>
@@ -224,7 +224,7 @@
       </div>
       <div class="entropy-meter-labels">
         <span>0 — Total Domination</span>
-        <span id="hmaxLabel">log<sub>2</sub>(22) — Perfect Competition</span>
+        <span id="hmaxLabel">log<sub>2</sub>({{ data.drivers|length }}) — Perfect Competition</span>
       </div>
     </div>
   </div>
@@ -262,8 +262,8 @@
 
 <!-- Section 4: Round-by-Round Entropy -->
 <div class="section section-divider">
-  <h2>2026 Round-by-Round Entropy</h2>
-  <p class="section-sub">How championship uncertainty has evolved through the first 4 races</p>
+  <h2>{{ data.year }} Round-by-Round Entropy</h2>
+  <p class="section-sub">How championship uncertainty has evolved through the first {{ data.current_round }} races</p>
   <div class="card">
     <div class="chart-container" style="height: 400px;">
       <canvas id="roundChart"></canvas>
@@ -312,7 +312,7 @@
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -339,12 +339,15 @@ function hMax(n) {
 // DATA: Current standings (injected from Jinja2)
 // ============================================================
 const currentStandings = [
-  {name:'Antonelli', team:'Mercedes', color:'#00d2be', pts:100, teamCss:'team-mercedes'},  {name:'Russell', team:'Mercedes', color:'#00d2be', pts:80, teamCss:'team-mercedes'},  {name:'Leclerc', team:'Ferrari', color:'#dc143c', pts:59, teamCss:'team-ferrari'},  {name:'Norris', team:'McLaren', color:'#ff8700', pts:51, teamCss:'team-mclaren'},  {name:'Hamilton', team:'Ferrari', color:'#dc143c', pts:51, teamCss:'team-ferrari'},  {name:'Piastri', team:'McLaren', color:'#ff8700', pts:43, teamCss:'team-mclaren'},  {name:'Verstappen', team:'Red Bull', color:'#3671C6', pts:26, teamCss:'team-redbull'},  {name:'Bearman', team:'Haas F1 Team', color:'#b6babd', pts:17, teamCss:'team-haas'},  {name:'Gasly', team:'Alpine F1 Team', color:'#0090ff', pts:16, teamCss:'team-alpine'},  {name:'Lawson', team:'RB F1 Team', color:'#6692ff', pts:10, teamCss:'team-rb'},  {name:'Colapinto', team:'Alpine F1 Team', color:'#0090ff', pts:7, teamCss:'team-alpine'},  {name:'Lindblad', team:'RB F1 Team', color:'#6692ff', pts:4, teamCss:'team-rb'},  {name:'Hadjar', team:'Red Bull', color:'#3671C6', pts:4, teamCss:'team-redbull'},  {name:'Sainz', team:'Williams', color:'#64c4ff', pts:4, teamCss:'team-williams'},  {name:'Bortoleto', team:'Audi', color:'#00e701', pts:2, teamCss:'team-audi'},  {name:'Ocon', team:'Haas F1 Team', color:'#b6babd', pts:1, teamCss:'team-haas'},  {name:'Albon', team:'Williams', color:'#64c4ff', pts:1, teamCss:'team-williams'},  {name:'Hülkenberg', team:'Audi', color:'#00e701', pts:0, teamCss:'team-audi'},  {name:'Bottas', team:'Cadillac F1 Team', color:'#c0c0c0', pts:0, teamCss:'team-cadillac'},  {name:'Pérez', team:'Cadillac F1 Team', color:'#c0c0c0', pts:0, teamCss:'team-cadillac'},  {name:'Alonso', team:'Aston Martin', color:'#006f62', pts:0, teamCss:'team-aston'},  {name:'Stroll', team:'Aston Martin', color:'#006f62', pts:0, teamCss:'team-aston'}];
-const currentRound = 4;
-const currentYear = 2026;
+  {% for d in data.drivers %}
+  {name:'{{ d.family_name }}', team:'{{ d.team }}', color:'{{ d.team_hex }}', pts:{{ d.points|int }}, teamCss:'{{ d.team_css }}'}{% if not loop.last %},{% endif %}
+  {% endfor %}
+];
+const currentRound = {{ data.current_round }};
+const currentYear = {{ data.year }};
 
 // Build cumulative points per round from injected data
-const cumulativeData = {"George Russell": [25.0, 43.0, 55.0, 67.0], "Andrea Kimi Antonelli": [18.0, 43.0, 68.0, 93.0], "Charles Leclerc": [15.0, 27.0, 42.0, 46.0], "Lewis Hamilton": [12.0, 27.0, 35.0, 43.0], "Lando Norris": [10.0, 10.0, 20.0, 38.0], "Max Verstappen": [8.0, 8.0, 12.0, 22.0], "Oliver Bearman": [6.0, 16.0, 16.0, 16.0], "Arvid Lindblad": [4.0, 4.0, 4.0, 4.0], "Gabriel Bortoleto": [2.0, 2.0, 2.0, 2.0], "Pierre Gasly": [1.0, 9.0, 15.0, 15.0], "Esteban Ocon": [0.0, 0.0, 1.0, 1.0], "Alexander Albon": [0.0, 0.0, 0.0, 1.0], "Liam Lawson": [0.0, 6.0, 8.0, 8.0], "Franco Colapinto": [0.0, 1.0, 1.0, 7.0], "Carlos Sainz": [0.0, 2.0, 2.0, 4.0], "Sergio P\u00e9rez": [0.0, 0.0, 0.0, 0.0], "Lance Stroll": [0.0, 0.0, 0.0, 0.0], "Fernando Alonso": [0.0, 0.0, 0.0, 0.0], "Valtteri Bottas": [0.0, 0.0, 0.0, 0.0], "Isack Hadjar": [0.0, 4.0, 4.0, 4.0], "Oscar Piastri": [0.0, 0.0, 18.0, 33.0], "Nico H\u00fclkenberg": [0.0, 0.0, 0.0, 0.0]};
+const cumulativeData = {{ data.cumulative_points | tojson }};
 
 const N_DRIVERS = currentStandings.length;
 const H_MAX = hMax(N_DRIVERS);
@@ -354,7 +357,7 @@ const currentPoints = currentStandings.map(d => d.pts);
 
 // Build round-by-round data from cumulative points
 const roundByRound = [];
-const raceNames = [{round:1, name:'Australian Grand Prix'},{round:2, name:'Chinese Grand Prix'},{round:3, name:'Japanese Grand Prix'},{round:4, name:'Miami Grand Prix'}];
+const raceNames = [{% for r in data.races %}{round:{{ r.round }}, name:'{{ r.name }}'}{% if not loop.last %},{% endif %}{% endfor %}];
 
 for (var ri = 0; ri < currentRound; ri++) {
   var pts = currentStandings.map(function(d) {

@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F1 2026 — Driver Age Distribution</title>
-<meta name="description" content="Age analysis of the 2026 F1 grid. Debut ages, generational breakdown, and driver age distribution.">
-<meta property="og:title" content="F1 2026 — Driver Age Distribution">
-<meta property="og:description" content="Age analysis of the 2026 F1 grid. Debut ages, generational breakdown, and driver age distribution.">
+<title>F1 {{ data.year }} — Driver Age Distribution</title>
+<meta name="description" content="Age analysis of the {{ data.year }} F1 grid. Debut ages, generational breakdown, and driver age distribution.">
+<meta property="og:title" content="F1 {{ data.year }} — Driver Age Distribution">
+<meta property="og:description" content="Age analysis of the {{ data.year }} F1 grid. Debut ages, generational breakdown, and driver age distribution.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/age.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="F1 2026 — Driver Age Distribution">
-<meta name="twitter:description" content="Age analysis of the 2026 F1 grid. Debut ages, generational breakdown, and driver age distribution.">
+<meta name="twitter:title" content="F1 {{ data.year }} — Driver Age Distribution">
+<meta name="twitter:description" content="Age analysis of the {{ data.year }} F1 grid. Debut ages, generational breakdown, and driver age distribution.">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -61,28 +61,9 @@
   td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
   tr:hover td { background: rgba(88,166,255,0.04); }
   .driver-name { color: #f0f6fc; font-weight: 600; }
-  .team-mercedes { color: #00d2be; }
-  .team-mercedes { color: #00d2be; }
-  .team-ferrari { color: #dc143c; }
-  .team-mclaren { color: #ff8700; }
-  .team-ferrari { color: #dc143c; }
-  .team-mclaren { color: #ff8700; }
-  .team-redbull { color: #3671C6; }
-  .team-haas { color: #b6babd; }
-  .team-alpine { color: #0090ff; }
-  .team-rb { color: #6692ff; }
-  .team-alpine { color: #0090ff; }
-  .team-rb { color: #6692ff; }
-  .team-redbull { color: #3671C6; }
-  .team-williams { color: #64c4ff; }
-  .team-audi { color: #00e701; }
-  .team-haas { color: #b6babd; }
-  .team-williams { color: #64c4ff; }
-  .team-audi { color: #00e701; }
-  .team-cadillac { color: #c0c0c0; }
-  .team-cadillac { color: #c0c0c0; }
-  .team-aston { color: #006f62; }
-  .team-aston { color: #006f62; }
+  {% for d in data.drivers %}
+  .{{ d.team_css }} { color: {{ d.team_hex }}; }
+  {% endfor %}
 
   .chart-container { position: relative; width: 100%; height: 320px; margin: 16px 0; }
   canvas { width: 100%; height: 100%; }
@@ -109,13 +90,16 @@
 <div class="hero">
   <a href="index.html" class="back-link">&larr; back to standings</a>
   <h1>Driver Age Distribution</h1>
-  <div class="tagline">Age analysis of the 2026 F1 grid. Ages calculated at season start (Round 1, 2026-03-08). Includes debut age analysis showing how old each driver was when they first raced in F1.</div>
+  <div class="tagline">Age analysis of the {{ data.year }} F1 grid. Ages calculated at season start (Round 1, {{ data.season_start }}). Includes debut age analysis showing how old each driver was when they first raced in F1.</div>
 </div>
 
+{% set drivers_by_age = data.drivers|sort(attribute='age') %}
+{% set youngest = drivers_by_age|first %}
+{% set oldest = drivers_by_age|last %}
 
 <div class="section">
   <h2>Grid Statistics</h2>
-  <p class="section-sub">Summary metrics for the 22-driver 2026 grid</p>
+  <p class="section-sub">Summary metrics for the {{ data.drivers|length }}-driver {{ data.year }} grid</p>
   <div class="grid grid-4">
     <div class="card">
       <div class="card-title">Mean Age</div>
@@ -129,20 +113,20 @@
     </div>
     <div class="card">
       <div class="card-title">Youngest</div>
-      <div class="stat-sm" style="color:#bb9af7;">Lindblad</div>
-      <div class="stat-label">18 years old (b. 2007)</div>
+      <div class="stat-sm" style="color:#bb9af7;">{{ youngest.family_name }}</div>
+      <div class="stat-label">{{ youngest.age }} years old (b. {{ youngest.dob[:4] }})</div>
     </div>
     <div class="card">
       <div class="card-title">Oldest</div>
-      <div class="stat-sm" style="color:#d29922;">Alonso</div>
-      <div class="stat-label">44 years old (b. 1981)</div>
+      <div class="stat-sm" style="color:#d29922;">{{ oldest.family_name }}</div>
+      <div class="stat-label">{{ oldest.age }} years old (b. {{ oldest.dob[:4] }})</div>
     </div>
   </div>
 </div>
 
 <div class="section section-divider">
   <h2>Age Distribution Chart</h2>
-  <p class="section-sub">Driver count by age bracket at season start (2026-03-08)</p>
+  <p class="section-sub">Driver count by age bracket at season start ({{ data.season_start }})</p>
   <div class="card">
     <div class="chart-container">
       <canvas id="ageChart"></canvas>
@@ -154,26 +138,51 @@
   <h2>Generational Breakdown</h2>
   <p class="section-sub">Drivers grouped by career stage</p>
   <div class="gen-grid">
+    {% set gen_next = data.drivers|selectattr('age', 'le', 20)|sort(attribute='age')|list %}
+    {% set young_guns = data.drivers|selectattr('age', 'ge', 21)|selectattr('age', 'le', 25)|sort(attribute='age')|list %}
+    {% set prime = data.drivers|selectattr('age', 'ge', 26)|selectattr('age', 'le', 30)|sort(attribute='age')|list %}
+    {% set veterans = data.drivers|selectattr('age', 'ge', 31)|selectattr('age', 'le', 40)|sort(attribute='age')|list %}
+    {% set legends = data.drivers|selectattr('age', 'ge', 41)|sort(attribute='age')|list %}
+    {% if gen_next %}
     <div class="gen-card" style="border-left-color:#bb9af7;">
-      <div class="gen-title" style="color:#bb9af7;">Gen Next (18-20) — 3 drivers</div>
-      <div class="gen-drivers">Lindblad (18), Antonelli (19), Bearman (20)</div>
+      <div class="gen-title" style="color:#bb9af7;">Gen Next (18-20) — {{ gen_next|length }} driver{{ 's' if gen_next|length != 1 }}</div>
+      <div class="gen-drivers">
+      {%- for d in gen_next %}{{ d.family_name }} ({{ d.age }}){% if not loop.last %}, {% endif %}{% endfor -%}
+      </div>
     </div>
+    {% endif %}
+    {% if young_guns %}
     <div class="gen-card" style="border-left-color:#58a6ff;">
-      <div class="gen-title" style="color:#58a6ff;">Young Guns (21-25) — 5 drivers</div>
-      <div class="gen-drivers">Hadjar (21), Bortoleto (21), Colapinto (22), Piastri (24), Lawson (24)</div>
+      <div class="gen-title" style="color:#58a6ff;">Young Guns (21-25) — {{ young_guns|length }} driver{{ 's' if young_guns|length != 1 }}</div>
+      <div class="gen-drivers">
+      {%- for d in young_guns %}{{ d.family_name }} ({{ d.age }}){% if not loop.last %}, {% endif %}{% endfor -%}
+      </div>
     </div>
+    {% endif %}
+    {% if prime %}
     <div class="gen-card" style="border-left-color:#3fb950;">
-      <div class="gen-title" style="color:#3fb950;">Prime (26-30) — 8 drivers</div>
-      <div class="gen-drivers">Norris (26), Stroll (27), Russell (28), Leclerc (28), Verstappen (28), Ocon (29), Albon (29), Gasly (30)</div>
+      <div class="gen-title" style="color:#3fb950;">Prime (26-30) — {{ prime|length }} driver{{ 's' if prime|length != 1 }}</div>
+      <div class="gen-drivers">
+      {%- for d in prime %}{{ d.family_name }} ({{ d.age }}){% if not loop.last %}, {% endif %}{% endfor -%}
+      </div>
     </div>
+    {% endif %}
+    {% if veterans %}
     <div class="gen-card" style="border-left-color:#d29922;">
-      <div class="gen-title" style="color:#d29922;">Veterans (31-40) — 4 drivers</div>
-      <div class="gen-drivers">Sainz (31), Bottas (36), Pérez (36), Hülkenberg (38)</div>
+      <div class="gen-title" style="color:#d29922;">Veterans (31-40) — {{ veterans|length }} driver{{ 's' if veterans|length != 1 }}</div>
+      <div class="gen-drivers">
+      {%- for d in veterans %}{{ d.family_name }} ({{ d.age }}){% if not loop.last %}, {% endif %}{% endfor -%}
+      </div>
     </div>
+    {% endif %}
+    {% if legends %}
     <div class="gen-card" style="border-left-color:#f85149;">
-      <div class="gen-title" style="color:#f85149;">Legends (40+) — 2 drivers</div>
-      <div class="gen-drivers">Hamilton (41), Alonso (44)</div>
+      <div class="gen-title" style="color:#f85149;">Legends (40+) — {{ legends|length }} driver{{ 's' if legends|length != 1 }}</div>
+      <div class="gen-drivers">
+      {%- for d in legends %}{{ d.family_name }} ({{ d.age }}){% if not loop.last %}, {% endif %}{% endfor -%}
+      </div>
     </div>
+    {% endif %}
   </div>
 </div>
 
@@ -186,204 +195,17 @@
         <tr><th>Driver</th><th>Team</th><th>DOB</th><th>Current Age</th><th>Debut Year</th><th>Debut Age</th><th>F1 Seasons</th></tr>
       </thead>
       <tbody>
+        {% for d in data.drivers|sort(attribute='debut_age') %}
         <tr>
-          <td class="driver-name">Max Verstappen</td>
-          <td class="team-redbull">Red Bull</td>
-          <td>1997-09-30</td>
-          <td>28</td>
-          <td>2015</td>
-          <td style="color:#bb9af7;font-weight:700;">17</td>
-          <td>12</td>
+          <td class="driver-name">{{ d.name }}</td>
+          <td class="{{ d.team_css }}">{{ d.team_display }}</td>
+          <td>{{ d.dob }}</td>
+          <td>{{ d.age }}</td>
+          <td>{{ d.debut_year }}</td>
+          <td{% if d.debut_age <= 18 %} style="color:#bb9af7;font-weight:700;"{% endif %}>{{ d.debut_age }}</td>
+          <td>{{ d.f1_seasons }}</td>
         </tr>
-        <tr>
-          <td class="driver-name">Andrea Kimi Antonelli</td>
-          <td class="team-mercedes">Mercedes</td>
-          <td>2006-08-25</td>
-          <td>19</td>
-          <td>2025</td>
-          <td style="color:#bb9af7;font-weight:700;">18</td>
-          <td>2</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Oliver Bearman</td>
-          <td class="team-haas">Haas</td>
-          <td>2005-05-08</td>
-          <td>20</td>
-          <td>2024</td>
-          <td style="color:#bb9af7;font-weight:700;">18</td>
-          <td>3</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Arvid Lindblad</td>
-          <td class="team-rb">RB</td>
-          <td>2007-08-08</td>
-          <td>18</td>
-          <td>2026</td>
-          <td style="color:#bb9af7;font-weight:700;">18</td>
-          <td>1</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Lance Stroll</td>
-          <td class="team-aston">Aston Martin</td>
-          <td>1998-10-29</td>
-          <td>27</td>
-          <td>2017</td>
-          <td style="color:#bb9af7;font-weight:700;">18</td>
-          <td>10</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Lando Norris</td>
-          <td class="team-mclaren">McLaren</td>
-          <td>1999-11-13</td>
-          <td>26</td>
-          <td>2019</td>
-          <td>19</td>
-          <td>8</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Esteban Ocon</td>
-          <td class="team-haas">Haas</td>
-          <td>1996-09-17</td>
-          <td>29</td>
-          <td>2016</td>
-          <td>19</td>
-          <td>11</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Fernando Alonso</td>
-          <td class="team-aston">Aston Martin</td>
-          <td>1981-07-29</td>
-          <td>44</td>
-          <td>2001</td>
-          <td>19</td>
-          <td>26</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Charles Leclerc</td>
-          <td class="team-ferrari">Ferrari</td>
-          <td>1997-10-16</td>
-          <td>28</td>
-          <td>2018</td>
-          <td>20</td>
-          <td>9</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Franco Colapinto</td>
-          <td class="team-alpine">Alpine</td>
-          <td>2003-05-27</td>
-          <td>22</td>
-          <td>2024</td>
-          <td>20</td>
-          <td>3</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Isack Hadjar</td>
-          <td class="team-redbull">Red Bull</td>
-          <td>2004-09-28</td>
-          <td>21</td>
-          <td>2025</td>
-          <td>20</td>
-          <td>2</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Carlos Sainz</td>
-          <td class="team-williams">Williams</td>
-          <td>1994-09-01</td>
-          <td>31</td>
-          <td>2015</td>
-          <td>20</td>
-          <td>12</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Gabriel Bortoleto</td>
-          <td class="team-audi">Audi</td>
-          <td>2004-10-14</td>
-          <td>21</td>
-          <td>2025</td>
-          <td>20</td>
-          <td>2</td>
-        </tr>
-        <tr>
-          <td class="driver-name">George Russell</td>
-          <td class="team-mercedes">Mercedes</td>
-          <td>1998-02-15</td>
-          <td>28</td>
-          <td>2019</td>
-          <td>21</td>
-          <td>8</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Oscar Piastri</td>
-          <td class="team-mclaren">McLaren</td>
-          <td>2001-04-06</td>
-          <td>24</td>
-          <td>2023</td>
-          <td>21</td>
-          <td>4</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Pierre Gasly</td>
-          <td class="team-alpine">Alpine</td>
-          <td>1996-02-07</td>
-          <td>30</td>
-          <td>2017</td>
-          <td>21</td>
-          <td>10</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Liam Lawson</td>
-          <td class="team-rb">RB</td>
-          <td>2002-02-11</td>
-          <td>24</td>
-          <td>2023</td>
-          <td>21</td>
-          <td>4</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Sergio Pérez</td>
-          <td class="team-cadillac">Cadillac</td>
-          <td>1990-01-26</td>
-          <td>36</td>
-          <td>2011</td>
-          <td>21</td>
-          <td>16</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Lewis Hamilton</td>
-          <td class="team-ferrari">Ferrari</td>
-          <td>1985-01-07</td>
-          <td>41</td>
-          <td>2007</td>
-          <td>22</td>
-          <td>20</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Alexander Albon</td>
-          <td class="team-williams">Williams</td>
-          <td>1996-03-23</td>
-          <td>29</td>
-          <td>2019</td>
-          <td>22</td>
-          <td>8</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Nico Hülkenberg</td>
-          <td class="team-audi">Audi</td>
-          <td>1987-08-19</td>
-          <td>38</td>
-          <td>2010</td>
-          <td>22</td>
-          <td>17</td>
-        </tr>
-        <tr>
-          <td class="driver-name">Valtteri Bottas</td>
-          <td class="team-cadillac">Cadillac</td>
-          <td>1989-08-28</td>
-          <td>36</td>
-          <td>2013</td>
-          <td>23</td>
-          <td>14</td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
@@ -391,7 +213,7 @@
 
 <div class="section section-divider">
   <h2>Debut Age Distribution</h2>
-  <p class="section-sub">How old were current 2026 drivers when they entered F1?</p>
+  <p class="section-sub">How old were current {{ data.year }} drivers when they entered F1?</p>
   <div class="card">
     <div class="chart-container">
       <canvas id="debutChart"></canvas>
@@ -405,79 +227,69 @@
     </div>
     <div class="card">
       <div class="card-title">Youngest Debutant</div>
-      <div class="stat-sm" style="color:#bb9af7;">Verstappen</div>
-      <div class="stat-label">17 years old (2015)</div>
+      {% set by_debut = data.drivers|sort(attribute='debut_age') %}
+      {% set youngest_debut = by_debut|first %}
+      <div class="stat-sm" style="color:#bb9af7;">{{ youngest_debut.family_name }}</div>
+      <div class="stat-label">{{ youngest_debut.debut_age }} years old ({{ youngest_debut.debut_year }})</div>
     </div>
     <div class="card">
       <div class="card-title">Most Experienced</div>
-      <div class="stat-sm" style="color:#d29922;">Alonso</div>
-      <div class="stat-label">26 seasons in F1 (2001-2026)</div>
+      {% set by_seasons = data.drivers|sort(attribute='f1_seasons', reverse=True) %}
+      {% set most_exp = by_seasons|first %}
+      <div class="stat-sm" style="color:#d29922;">{{ most_exp.family_name }}</div>
+      <div class="stat-label">{{ most_exp.f1_seasons }} seasons in F1 ({{ most_exp.debut_year }}-{{ data.year }})</div>
     </div>
   </div>
 </div>
 
 <div class="section section-divider">
   <h2>Key Observations</h2>
-  <p class="section-sub">Notable patterns in the 2026 grid composition</p>
+  <p class="section-sub">Notable patterns in the {{ data.year }} grid composition</p>
   <div class="grid grid-2">
     <div class="card">
       <div class="card-title">Generational Shift</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        The 2026 grid features a 26-year age span between Lindblad (18) and Alonso (44).
-3 drivers aged 20 or under race alongside 2 drivers over 40.      </div>
+        The {{ data.year }} grid features a {{ oldest.age - youngest.age }}-year age span between {{ youngest.family_name }} ({{ youngest.age }}) and {{ oldest.family_name }} ({{ oldest.age }}).
+        {% if gen_next|length > 0 %}{{ gen_next|length }} driver{{ 's' if gen_next|length != 1 }} aged 20 or under race{{ '' if gen_next|length != 1 else 's' }} alongside {% endif %}
+        {% if legends|length > 0 %}{{ legends|length }} driver{{ 's' if legends|length != 1 }} over 40.{% endif %}
+      </div>
     </div>
     <div class="card">
       <div class="card-title">Youth Cohort</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        The under-25 cohort includes 8 drivers (36% of the grid). Peak performance typically clusters around age 26-28 where 8 drivers currently compete.
+        {% set under_25 = data.drivers|selectattr('age', 'le', 25)|list %}
+        The under-25 cohort includes {{ under_25|length }} drivers ({{ ((under_25|length / data.drivers|length) * 100)|round|int }}% of the grid). Peak performance typically clusters around age 26-28 where {{ prime|length }} drivers currently compete.
       </div>
     </div>
     <div class="card">
       <div class="card-title">New Entrants</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        4 drivers are in their first or second season:
-Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 seasons).
+        {% set rookies = data.drivers|selectattr('f1_seasons', 'le', 2)|sort(attribute='f1_seasons')|list %}
+        {{ rookies|length }} driver{{ 's' if rookies|length != 1 }} {{ 'are' if rookies|length != 1 else 'is' }} in {{ 'their' if rookies|length != 1 else 'their' }} first or second season:
+        {% for d in rookies %}{{ d.family_name }} ({{ d.f1_seasons }} season{{ 's' if d.f1_seasons != 1 }}){% if not loop.last %}, {% endif %}{% endfor %}.
       </div>
     </div>
     <div class="card">
       <div class="card-title">Debut Trends</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        13 of 22 drivers (59%) debuted at age 20 or younger, reflecting the post-2015 trend of younger entries driven by junior development programs.
+        {% set early_debut = data.drivers|selectattr('debut_age', 'le', 20)|list %}
+        {{ early_debut|length }} of {{ data.drivers|length }} drivers ({{ ((early_debut|length / data.drivers|length) * 100)|round|int }}%) debuted at age 20 or younger, reflecting the post-2015 trend of younger entries driven by junior development programs.
       </div>
     </div>
   </div>
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
 (function() {
   // Build age data from Jinja-injected driver list
   const allDrivers = [
-    {name:'Lindblad', age:18, debutAge:18, seasons:1},
-    {name:'Antonelli', age:19, debutAge:18, seasons:2},
-    {name:'Bearman', age:20, debutAge:18, seasons:3},
-    {name:'Hadjar', age:21, debutAge:20, seasons:2},
-    {name:'Bortoleto', age:21, debutAge:20, seasons:2},
-    {name:'Colapinto', age:22, debutAge:20, seasons:3},
-    {name:'Piastri', age:24, debutAge:21, seasons:4},
-    {name:'Lawson', age:24, debutAge:21, seasons:4},
-    {name:'Norris', age:26, debutAge:19, seasons:8},
-    {name:'Stroll', age:27, debutAge:18, seasons:10},
-    {name:'Russell', age:28, debutAge:21, seasons:8},
-    {name:'Leclerc', age:28, debutAge:20, seasons:9},
-    {name:'Verstappen', age:28, debutAge:17, seasons:12},
-    {name:'Ocon', age:29, debutAge:19, seasons:11},
-    {name:'Albon', age:29, debutAge:22, seasons:8},
-    {name:'Gasly', age:30, debutAge:21, seasons:10},
-    {name:'Sainz', age:31, debutAge:20, seasons:12},
-    {name:'Bottas', age:36, debutAge:23, seasons:14},
-    {name:'Pérez', age:36, debutAge:21, seasons:16},
-    {name:'Hülkenberg', age:38, debutAge:22, seasons:17},
-    {name:'Hamilton', age:41, debutAge:22, seasons:20},
-    {name:'Alonso', age:44, debutAge:19, seasons:26},
+    {% for d in data.drivers|sort(attribute='age') %}
+    {name:'{{ d.family_name }}', age:{{ d.age }}, debutAge:{{ d.debut_age }}, seasons:{{ d.f1_seasons }}},
+    {% endfor %}
   ];
 
   // Aggregate age distribution
@@ -593,7 +405,7 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
     ctx.fillStyle = '#8b949e';
     ctx.font = '11px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText('Age at Season Start (2026-03-08)', w/2, h - 8);
+    ctx.fillText('Age at Season Start ({{ data.season_start }})', w/2, h - 8);
   }
 
   function drawDebutChart() {
