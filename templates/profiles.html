@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Driver Psychological Profiles</title>
+<meta name="description" content="Personality archetypes, driving style analysis, and Big Five psychological assessment for every driver on the {{ data.year }} F1 grid. Trait radar charts, OCEAN profiles, and cluster analysis.">
+<meta property="og:title" content="F1 {{ data.year }} — Driver Psychological Profiles">
+<meta property="og:description" content="Personality archetypes, driving style analysis, and Big Five psychological assessment for every driver on the {{ data.year }} F1 grid.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/profiles.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Driver Psychological Profiles">
+<meta name="twitter:description" content="Personality archetypes, Big Five assessment, and driving style analysis for the {{ data.year }} F1 grid.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .chart-container canvas { width: 100%; display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
+  .team-mclaren { color: #ff8700; }
+  .team-redbull { color: #3671C6; }
+  .team-alpine { color: #0090ff; }
+  .team-haas { color: #b6babd; }
+  .team-rb { color: #6692ff; }
+  .team-williams { color: #64c4ff; }
+  .team-audi { color: #00e701; }
+  .team-cadillac { color: #c0c0c0; }
+  .team-aston { color: #006f62; }
+
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .archetype-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: rgba(88,166,255,0.1);
+    color: #58a6ff;
+    border: 1px solid rgba(88,166,255,0.2);
+  }
+
+  .profile-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .profile-header .driver-name { font-size: 16px; }
+  .profile-charts {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .profile-charts canvas { flex-shrink: 0; }
+  .big5-bars { flex: 1; min-width: 200px; }
+  .big5-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 11px;
+  }
+  .big5-label { width: 100px; color: #8b949e; text-align: right; flex-shrink: 0; }
+  .big5-bar-bg { flex: 1; height: 10px; background: #21262d; border-radius: 5px; overflow: hidden; }
+  .big5-bar-fill { height: 100%; border-radius: 5px; }
+  .big5-val { width: 28px; color: #c9d1d9; text-align: right; flex-shrink: 0; }
+  .profile-text { font-size: 12px; color: #c9d1d9; line-height: 1.7; }
+  .profile-text strong { color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px; margin-top: 8px; }
+
+  .cluster-group { margin-bottom: 20px; }
+  .cluster-title { color: #f0f6fc; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .cluster-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cluster-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 11px;
+    background: #21262d;
+    border: 1px solid #30363d;
+  }
+  .cluster-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .methodology {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 12px;
+    color: #8b949e;
+    line-height: 1.8;
+  }
+  .methodology p { margin-bottom: 10px; }
+  .methodology strong { color: #c9d1d9; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .profile-charts { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a class="back-link" href="index.html">&larr; back to overview</a>
+  <h1>Driver Profiles</h1>
+  <div class="tagline">Personality archetypes, driving style analysis, and Big Five psychological assessment for every driver on the {{ data.year }} grid.</div>
+  <div class="badges">
+    <span class="badge badge-purple">{{ data.driver_profiles|length }} Profiles</span>
+    <span class="badge badge-blue">Big Five OCEAN</span>
+    <span class="badge badge-amber">6-Axis Trait Radar</span>
+    <span class="badge badge-green">{{ data.current_round }} Races Observed</span>
+  </div>
+</div>
+
+<!-- Grid radar overlay -->
+<div class="section">
+  <h2>Grid Trait Overlay</h2>
+  <p class="section-sub">All {{ data.drivers|selectattr('profile')|list|length }} profiled drivers on a single radar chart &mdash; reveals clustering and outliers across 6 driving traits</p>
+  <div class="chart-container">
+    <canvas id="grid-radar"></canvas>
+  </div>
+  <div id="grid-radar-legend" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:11px;"></div>
+</div>
+
+<!-- Archetype summary table -->
+<div class="section section-divider">
+  <h2>Archetype Summary</h2>
+  <p class="section-sub">Every profiled driver, their archetype, and trait extremes</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Driver</th>
+          <th>Team</th>
+          <th>Archetype</th>
+          <th>Top Trait</th>
+          <th>Bottom Trait</th>
+          <th>Pts</th>
+        </tr>
+      </thead>
+      <tbody id="archetype-table"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Individual driver cards -->
+<div class="section section-divider">
+  <h2>Individual Profiles</h2>
+  <p class="section-sub">Detailed psychological and driving style breakdown for each driver</p>
+  <div class="grid grid-2">
+    {% for d in data.drivers if d.profile %}
+    <div class="profile-card" id="profile-{{ d.driver_id }}">
+      <div class="profile-header">
+        <span class="driver-name" style="color:#{{ d.team_hex }};">{{ d.name }}</span>
+        <span class="archetype-badge">{{ d.profile.archetype }}</span>
+        <span style="font-size:11px;color:#8b949e;">{{ d.team_display }} &middot; {{ d.points|int }} pts</span>
+      </div>
+      <div class="profile-charts">
+        <canvas id="radar-{{ d.driver_id }}" width="200" height="200"></canvas>
+        <div class="big5-bars">
+          {% set b5 = d.profile.big5 %}
+          {% set b5_colors = {'openness': '#58a6ff', 'conscientiousness': '#3fb950', 'extraversion': '#d29922', 'agreeableness': '#bb9af7', 'neuroticism': '#f85149'} %}
+          {% for trait_name, trait_val in [('Openness', b5.openness), ('Conscientiousness', b5.conscientiousness), ('Extraversion', b5.extraversion), ('Agreeableness', b5.agreeableness), ('Neuroticism', b5.neuroticism)] %}
+          <div class="big5-row">
+            <span class="big5-label">{{ trait_name }}</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:{{ trait_val }}%;background:{{ b5_colors[trait_name|lower] }};"></div>
+            </div>
+            <span class="big5-val">{{ trait_val }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="profile-text">
+        <strong>Driving Style</strong>
+        {{ d.profile.driving_style }}
+        <strong>Risk Profile</strong>
+        {{ d.profile.risk_profile }}
+        <strong>Team Dynamics</strong>
+        {{ d.profile.team_dynamics }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Cluster analysis -->
+<div class="section section-divider">
+  <h2>Cluster Analysis</h2>
+  <p class="section-sub">Drivers grouped by dominant trait &mdash; who excels where?</p>
+  <div class="card" id="cluster-section"></div>
+</div>
+
+<!-- Methodology -->
+<div class="section section-divider">
+  <h2>Methodology</h2>
+  <p class="section-sub">How these profiles were constructed</p>
+  <div class="methodology">
+    <p>
+      <strong>Trait scores (aggression, consistency, wet ability, tire management, qualifying, racecraft)</strong>
+      combine observed race data with qualitative assessment. Quantitative inputs include grid-to-finish deltas,
+      position change frequency, consistency metrics (standard deviation of finishing positions), wet-weather
+      performance differentials, tire degradation curves, and qualifying vs. teammate gaps.
+    </p>
+    <p>
+      <strong>Big Five personality dimensions (OCEAN)</strong> are interpretive assessments based on publicly
+      observable behavior: press conference demeanor, team radio transcripts, documented teammate relationships,
+      career trajectory decisions, and interview content. These are not clinically assessed — they represent
+      an informed interpretation, not a psychometric measurement.
+    </p>
+    <p>
+      <strong>Archetypes</strong> are editorial shorthand designed to capture the essence of each driver's
+      competitive identity. They combine driving style, personality, and career narrative into a single
+      memorable label.
+    </p>
+    <p>
+      All profiles should be read as analytical interpretations, not definitive psychological evaluations.
+      The data is filtered through {{ data.current_round }} races of the {{ data.year }} season with historical
+      context from prior seasons where applicable.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+// ── Data (injected from Jinja2) ─────────────────────────────────────────
+const DRIVERS = [
+  {% for d in data.drivers if d.profile %}
+  {
+    id: '{{ d.driver_id }}',
+    name: '{{ d.name }}',
+    familyName: '{{ d.family_name }}',
+    team: '{{ d.team_display }}',
+    teamColor: '#{{ d.team_hex }}',
+    points: {{ d.points }},
+    archetype: '{{ d.profile.archetype }}',
+    traits: {
+      aggression: {{ d.profile.traits.aggression }},
+      consistency: {{ d.profile.traits.consistency }},
+      wet_ability: {{ d.profile.traits.wet_ability }},
+      tire_mgmt: {{ d.profile.traits.tire_mgmt }},
+      qualifying: {{ d.profile.traits.qualifying }},
+      racecraft: {{ d.profile.traits.racecraft }}
+    },
+    big5: {
+      openness: {{ d.profile.big5.openness }},
+      conscientiousness: {{ d.profile.big5.conscientiousness }},
+      extraversion: {{ d.profile.big5.extraversion }},
+      agreeableness: {{ d.profile.big5.agreeableness }},
+      neuroticism: {{ d.profile.big5.neuroticism }}
+    }
+  }{% if not loop.last %},{% endif %}
+  {% endfor %}
+];
+
+const TRAIT_LABELS = ['Aggression', 'Consistency', 'Wet Ability', 'Tire Mgmt', 'Qualifying', 'Racecraft'];
+const TRAIT_KEYS = ['aggression', 'consistency', 'wet_ability', 'tire_mgmt', 'qualifying', 'racecraft'];
+
+// ── Radar chart drawing utility ─────────────────────────────────────────
+function drawRadar(canvas, dataPoints, options) {
+  // dataPoints: array of { values: [v1..v6], color, label }
+  // options: { size, showLabels, showValues, bgRings }
+  const dpr = window.devicePixelRatio || 1;
+  const size = options.size || 200;
+  const cx = size / 2;
+  const cy = size / 2;
+  const radius = size / 2 - (options.labelPad || 35);
+  const n = TRAIT_LABELS.length;
+
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, size, size);
+
+  // Angle offsets (start at top)
+  function angle(i) {
+    return (Math.PI * 2 * i / n) - Math.PI / 2;
+  }
+  function pointAt(i, pct) {
+    const a = angle(i);
+    return [cx + Math.cos(a) * radius * pct, cy + Math.sin(a) * radius * pct];
+  }
+
+  // Background rings
+  const rings = options.bgRings || [0.25, 0.5, 0.75, 1.0];
+  rings.forEach(r => {
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const [x, y] = pointAt(i, r);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Spokes
+  for (let i = 0; i < n; i++) {
+    const [x, y] = pointAt(i, 1);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Labels
+  if (options.showLabels !== false) {
+    ctx.fillStyle = '#8b949e';
+    ctx.font = (options.labelFont || '9px') + ' "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < n; i++) {
+      const a = angle(i);
+      const lx = cx + Math.cos(a) * (radius + (options.labelOffset || 16));
+      const ly = cy + Math.sin(a) * (radius + (options.labelOffset || 16));
+      const shortLabels = options.shortLabels
+        ? ['AGG', 'CON', 'WET', 'TIRE', 'QUAL', 'RACE']
+        : TRAIT_LABELS;
+      ctx.fillText(shortLabels[i], lx, ly);
+    }
+  }
+
+  // Data polygons
+  dataPoints.forEach(dp => {
+    const values = dp.values; // array of 6 values 0-100
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const pct = values[i] / 100;
+      const [x, y] = pointAt(i, pct);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = dp.color + (dp.fillAlpha || '20');
+    ctx.fill();
+    ctx.strokeStyle = dp.color;
+    ctx.lineWidth = dp.lineWidth || 1.5;
+    ctx.globalAlpha = dp.alpha || 0.7;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  });
+}
+
+// ── Grid radar (all drivers overlay) ────────────────────────────────────
+function drawGridRadar() {
+  const canvas = document.getElementById('grid-radar');
+  const container = canvas.parentElement;
+  const w = Math.min(container.clientWidth - 40, 600);
+
+  const dataPoints = DRIVERS.map(d => ({
+    values: TRAIT_KEYS.map(k => d.traits[k]),
+    color: d.teamColor,
+    fillAlpha: '08',
+    alpha: 0.5,
+    lineWidth: 1.5,
+    label: d.familyName
+  }));
+
+  drawRadar(canvas, dataPoints, {
+    size: w,
+    showLabels: true,
+    labelFont: '11px',
+    labelOffset: 22,
+    labelPad: 45,
+    shortLabels: false
+  });
+
+  // Legend
+  const legend = document.getElementById('grid-radar-legend');
+  legend.innerHTML = DRIVERS.map(d =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;color:#8b949e;">` +
+    `<span style="width:10px;height:10px;border-radius:50%;background:${d.teamColor};display:inline-block;"></span>` +
+    `${d.familyName}</span>`
+  ).join('');
+}
+
+drawGridRadar();
+window.addEventListener('resize', drawGridRadar);
+
+// ── Individual radar charts ─────────────────────────────────────────────
+DRIVERS.forEach(d => {
+  const canvas = document.getElementById('radar-' + d.id);
+  if (!canvas) return;
+  drawRadar(canvas, [{
+    values: TRAIT_KEYS.map(k => d.traits[k]),
+    color: d.teamColor,
+    fillAlpha: '30',
+    alpha: 0.9,
+    lineWidth: 2
+  }], {
+    size: 200,
+    showLabels: true,
+    shortLabels: true,
+    labelFont: '8px',
+    labelOffset: 14,
+    labelPad: 32
+  });
+});
+
+// ── Archetype summary table ──────────────────────────────────────────────
+(function buildArchetypeTable() {
+  const tbody = document.getElementById('archetype-table');
+  DRIVERS.forEach((d, i) => {
+    const entries = TRAIT_KEYS.map((k, j) => ({ name: TRAIT_LABELS[j], val: d.traits[k] }));
+    const topTrait = entries.reduce((best, e) => e.val > best.val ? e : best, entries[0]);
+    const bottomTrait = entries.reduce((worst, e) => e.val < worst.val ? e : worst, entries[0]);
+    tbody.innerHTML += `<tr>
+      <td>${i + 1}</td>
+      <td class="driver-name">${d.name}</td>
+      <td style="color:${d.teamColor};">${d.team}</td>
+      <td><span class="archetype-badge">${d.archetype}</span></td>
+      <td style="color:#3fb950;">${topTrait.name} (${topTrait.val})</td>
+      <td style="color:#f85149;">${bottomTrait.name} (${bottomTrait.val})</td>
+      <td>${Math.round(d.points)}</td>
+    </tr>`;
+  });
+})();
+
+// ── Cluster analysis ────────────────────────────────────────────────────
+(function buildClusters() {
+  const clusters = {
+    'Aggressive Drivers (aggression > 70)': { key: 'aggression', threshold: 70, color: '#f85149' },
+    'Consistency Masters (consistency > 75)': { key: 'consistency', threshold: 75, color: '#3fb950' },
+    'Wet Weather Specialists (wet ability > 75)': { key: 'wet_ability', threshold: 75, color: '#58a6ff' },
+    'Tire Whisperers (tire mgmt > 80)': { key: 'tire_mgmt', threshold: 80, color: '#d29922' },
+    'Qualifying Specialists (qualifying > 80)': { key: 'qualifying', threshold: 80, color: '#bb9af7' },
+    'Racecraft Elite (racecraft > 80)': { key: 'racecraft', threshold: 80, color: '#f0883e' }
+  };
+
+  const container = document.getElementById('cluster-section');
+  let html = '';
+
+  Object.entries(clusters).forEach(([title, cfg]) => {
+    const members = DRIVERS.filter(d => d.traits[cfg.key] >= cfg.threshold);
+    if (members.length === 0) return;
+    html += `<div class="cluster-group">`;
+    html += `<div class="cluster-title" style="color:${cfg.color};">${title}</div>`;
+    html += `<div class="cluster-tags">`;
+    members.sort((a, b) => b.traits[cfg.key] - a.traits[cfg.key]);
+    members.forEach(m => {
+      html += `<span class="cluster-tag">`;
+      html += `<span class="cluster-dot" style="background:${m.teamColor};"></span>`;
+      html += `${m.familyName} <span style="color:#8b949e;">${m.traits[cfg.key]}</span>`;
+      html += `</span>`;
+    });
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+})();
+</script>
+</body>
+</html>

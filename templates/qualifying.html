@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Grid vs Race Analysis</title>
+<meta name="description" content="Qualifying grid vs race finish analysis for the {{ data.year }} F1 season. Scatter plots, position-change heatmaps, and disruption index for every race.">
+<meta property="og:title" content="F1 {{ data.year }} — Grid vs Race Analysis">
+<meta property="og:description" content="Qualifying grid vs race finish analysis for the {{ data.year }} F1 season. Scatter plots, heatmaps, and disruption index.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/qualifying.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Grid vs Race Analysis">
+<meta name="twitter:description" content="Qualifying grid vs race finish analysis for the {{ data.year }} F1 season. Scatter plots, heatmaps, and disruption index.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .chart-container canvas { width: 100%; display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 8px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
+  .team-mclaren { color: #ff8700; }
+  .team-redbull { color: #3671C6; }
+  .team-alpine { color: #0090ff; }
+  .team-haas { color: #b6babd; }
+  .team-rb { color: #6692ff; }
+  .team-williams { color: #64c4ff; }
+  .team-audi { color: #00e701; }
+  .team-cadillac { color: #c0c0c0; }
+  .team-aston { color: #006f62; }
+
+  .delta-pos { color: #3fb950; }
+  .delta-neg { color: #f85149; }
+  .delta-zero { color: #8b949e; }
+
+  .heatmap-scroll { overflow-x: auto; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Grid vs Race Analysis</h1>
+  <div class="tagline">How much does qualifying position predict race results? Scatter plots, position-change heatmaps, and disruption indices for the {{ data.year }} season through Round {{ data.current_round }}.</div>
+  <div class="badges">
+    <span class="badge badge-blue">{{ data.qualifying|length }} Qualifying Sessions</span>
+    <span class="badge badge-green">{{ data.races|length }} Races</span>
+    <span class="badge badge-purple">Grid-to-Finish Analysis</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Summary Statistics</h2>
+  <p class="section-sub">Aggregate grid-to-finish performance across all races</p>
+  <div class="grid grid-4" id="stats-cards"></div>
+</div>
+
+<div class="section section-divider">
+  <h2>Grid vs Finish Scatter</h2>
+  <p class="section-sub">Each dot is one driver-race. Points below the y=x diagonal gained positions; above lost positions. Colored by team.</p>
+  <div class="chart-container">
+    <canvas id="scatter-chart" height="520"></canvas>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Position Change Heatmap</h2>
+  <p class="section-sub">Drivers (rows) vs races (columns). Green = positions gained, red = positions lost, gray = held position.</p>
+  <div class="chart-container heatmap-scroll">
+    <canvas id="heatmap-chart"></canvas>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Per-Driver Grid-to-Race Results</h2>
+  <p class="section-sub">Qualifying position, race finish, and delta for each driver at every round</p>
+  <div id="driver-tables"></div>
+</div>
+
+<div class="section section-divider">
+  <h2>Qualifying Consistency</h2>
+  <p class="section-sub">Standard deviation of (grid - finish) delta. Lower = qualifying position closely matches race finish.</p>
+  <div class="card">
+    <table id="consistency-table">
+      <thead><tr><th>Driver</th><th>Team</th><th>Avg Delta</th><th>Stdev Delta</th><th>Assessment</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Disruption Index</h2>
+  <p class="section-sub">How shuffled was the finishing order vs the grid? Kendall tau correlation: +1 = grid perfectly predicts finish, 0 = random, -1 = fully reversed.</p>
+  <div class="card">
+    <table id="disruption-table">
+      <thead><tr><th>Round</th><th>Race</th><th>Kendall Tau</th><th>Assessment</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  // --- Inject data from Jinja2 ---
+  const races = [
+    {% for race in data.races %}
+    {
+      round: {{ race.round }},
+      name: "{{ race.name|replace('"', '\\"') }}",
+      results: [
+        {% for r in race.results %}
+        {
+          position: {{ r.position if r.position else 99 }},
+          driver: "{{ r.driver|replace('"', '\\"') }}",
+          code: "{{ r.code }}",
+          team: "{{ r.team|replace('"', '\\"') }}",
+          team_id: "{{ r.team_id }}",
+          team_hex: "#{{ r.team_hex }}",
+          grid: {{ r.grid if r.grid else 0 }},
+          is_retired: {{ "true" if r.is_retired else "false" }},
+          is_dns: {{ "true" if r.is_dns else "false" }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const qualifying = [
+    {% for q in data.qualifying %}
+    {
+      round: {{ q.round }},
+      name: "{{ q.name|replace('"', '\\"') }}",
+      qualifying: [
+        {% for qr in q.qualifying %}
+        {
+          position: {{ qr.position }},
+          driver: "{{ qr.driver|replace('"', '\\"') }}",
+          code: "{{ qr.code }}",
+          team: "{{ qr.team|replace('"', '\\"') }}",
+          team_id: "{{ qr.team_id }}",
+          q1: "{{ qr.q1 }}",
+          q2: "{{ qr.q2 }}",
+          q3: "{{ qr.q3 }}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const driverStandings = [
+    {% for d in data.drivers %}
+    {
+      name: "{{ d.name|replace('"', '\\"') }}",
+      code: "{{ d.code }}",
+      team: "{{ d.team_display }}",
+      team_id: "{{ d.team_id }}",
+      team_hex: "#{{ d.team_hex }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  // Build a map of team_id -> hex color
+  const teamColors = {};
+  for (const d of driverStandings) {
+    teamColors[d.team_id] = d.team_hex;
+  }
+
+  // --- Build grid-finish pairs ---
+  // For each race, match qualifying grid to race finish by driver code
+  const qualByRound = {};
+  for (const q of qualifying) {
+    qualByRound[q.round] = {};
+    for (const qr of q.qualifying) {
+      qualByRound[q.round][qr.code] = qr.position;
+    }
+  }
+
+  const allPairs = []; // {code, driver, team, team_id, team_hex, grid, finish, delta, round, raceName}
+  const driverData = {}; // code -> {name, team, team_hex, rounds: [{round, grid, finish, delta}]}
+
+  for (const race of races) {
+    for (const r of race.results) {
+      let grid = parseInt(r.grid) || 0;
+      if (grid === 0 && qualByRound[race.round] && qualByRound[race.round][r.code]) {
+        grid = qualByRound[race.round][r.code];
+      }
+      if (grid === 0) continue; // skip DNS / no grid data
+      const finish = r.is_retired ? 20 : parseInt(r.position) || 20;
+      const delta = grid - finish; // positive = gained positions
+
+      const pair = {
+        code: r.code,
+        driver: r.driver,
+        team: r.team,
+        team_id: r.team_id,
+        team_hex: r.team_hex,
+        grid: grid,
+        finish: finish,
+        delta: delta,
+        round: race.round,
+        raceName: race.name,
+        isRetired: r.is_retired
+      };
+      allPairs.push(pair);
+
+      if (!driverData[r.code]) {
+        driverData[r.code] = {
+          name: r.driver,
+          code: r.code,
+          team: r.team,
+          team_id: r.team_id,
+          team_hex: r.team_hex,
+          rounds: []
+        };
+      }
+      driverData[r.code].rounds.push({
+        round: race.round,
+        raceName: race.name,
+        grid: grid,
+        finish: finish,
+        delta: delta,
+        isRetired: r.is_retired
+      });
+    }
+  }
+
+  // --- Summary Stats ---
+  const statsContainer = document.getElementById('stats-cards');
+
+  const avgDelta = allPairs.length > 0
+    ? (allPairs.reduce((s, p) => s + Math.abs(p.delta), 0) / allPairs.length)
+    : 0;
+
+  // Pole to win conversion
+  const poleStarts = allPairs.filter(p => p.grid === 1);
+  const poleWins = poleStarts.filter(p => p.finish === 1);
+  const poleConversion = poleStarts.length > 0 ? (poleWins.length / poleStarts.length * 100) : 0;
+
+  // Most positions gained (single race)
+  const bestGainer = allPairs.reduce((best, p) => p.delta > best.delta ? p : best, allPairs[0] || {delta: 0});
+
+  // Most positions gained on average
+  const driverAvgGain = {};
+  for (const [code, dd] of Object.entries(driverData)) {
+    const avg = dd.rounds.reduce((s, r) => s + r.delta, 0) / dd.rounds.length;
+    driverAvgGain[code] = { name: dd.name, team: dd.team, avg: avg };
+  }
+  const bestAvgGainer = Object.values(driverAvgGain).sort((a, b) => b.avg - a.avg)[0];
+
+  function addStatCard(title, value, label, colorClass) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-title">${title}</div>
+      <div class="stat-sm ${colorClass || ''}">${value}</div>
+      <div class="stat-label">${label}</div>
+    `;
+    statsContainer.appendChild(card);
+  }
+
+  addStatCard('Avg |Grid-Finish| Delta', avgDelta.toFixed(1) + ' pos', 'Average absolute position change per driver per race', 'warn');
+  addStatCard('Pole-to-Win Rate', poleConversion.toFixed(0) + '%', poleWins.length + ' wins from ' + poleStarts.length + ' pole starts', '');
+  addStatCard('Best Single Gain', bestGainer.delta ? ('+' + bestGainer.delta) : 'N/A',
+    bestGainer.driver ? (bestGainer.driver + ' at ' + bestGainer.raceName) : '', 'ok');
+  addStatCard('Best Avg Gainer', bestAvgGainer ? ('+' + bestAvgGainer.avg.toFixed(1) + '/race') : 'N/A',
+    bestAvgGainer ? bestAvgGainer.name : '', 'ok');
+
+  // --- Canvas helpers ---
+  const dpr = window.devicePixelRatio || 1;
+  function setupCanvas(canvas, width, height) {
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return ctx;
+  }
+
+  // --- Grid vs Finish Scatter ---
+  const scatterCanvas = document.getElementById('scatter-chart');
+  const scW = scatterCanvas.parentElement.clientWidth - 40;
+  const scH = 500;
+  scatterCanvas.style.height = scH + 'px';
+  const sc = setupCanvas(scatterCanvas, scW, scH);
+
+  const margin = { top: 30, right: 30, bottom: 50, left: 50 };
+  const plotW = scW - margin.left - margin.right;
+  const plotH = scH - margin.top - margin.bottom;
+  const maxPos = 20;
+
+  function gridToX(g) { return margin.left + (g - 0.5) / maxPos * plotW; }
+  function finToY(f) { return margin.top + (f - 0.5) / maxPos * plotH; }
+
+  // Axes
+  sc.strokeStyle = '#30363d';
+  sc.lineWidth = 1;
+  sc.beginPath();
+  sc.moveTo(margin.left, margin.top);
+  sc.lineTo(margin.left, scH - margin.bottom);
+  sc.lineTo(scW - margin.right, scH - margin.bottom);
+  sc.stroke();
+
+  // Axis labels
+  sc.font = '11px "SF Mono", "Fira Code", monospace';
+  sc.fillStyle = '#8b949e';
+  sc.textAlign = 'center';
+  sc.fillText('Grid Position', scW / 2, scH - 8);
+  sc.save();
+  sc.translate(14, scH / 2);
+  sc.rotate(-Math.PI / 2);
+  sc.fillText('Finish Position', 0, 0);
+  sc.restore();
+
+  // Tick marks
+  for (let i = 1; i <= maxPos; i += (maxPos <= 10 ? 1 : 2)) {
+    const x = gridToX(i);
+    const y = finToY(i);
+    sc.fillStyle = '#484f58';
+    sc.textAlign = 'center';
+    sc.textBaseline = 'top';
+    sc.fillText(i, x, scH - margin.bottom + 6);
+    sc.textAlign = 'right';
+    sc.textBaseline = 'middle';
+    sc.fillText(i, margin.left - 6, y);
+
+    // Grid lines
+    sc.strokeStyle = '#21262d';
+    sc.lineWidth = 0.5;
+    sc.beginPath();
+    sc.moveTo(margin.left, y);
+    sc.lineTo(scW - margin.right, y);
+    sc.stroke();
+    sc.beginPath();
+    sc.moveTo(x, margin.top);
+    sc.lineTo(x, scH - margin.bottom);
+    sc.stroke();
+  }
+
+  // y=x reference line (perfect grid-to-finish conversion)
+  sc.strokeStyle = '#58a6ff';
+  sc.lineWidth = 1.5;
+  sc.setLineDash([6, 4]);
+  sc.beginPath();
+  sc.moveTo(gridToX(1), finToY(1));
+  sc.lineTo(gridToX(maxPos), finToY(maxPos));
+  sc.stroke();
+  sc.setLineDash([]);
+
+  // Reference label
+  sc.fillStyle = '#58a6ff';
+  sc.font = '10px "SF Mono", "Fira Code", monospace';
+  sc.textAlign = 'left';
+  sc.fillText('y=x (no change)', gridToX(maxPos - 5), finToY(maxPos - 5) - 8);
+
+  // Zone labels
+  sc.fillStyle = 'rgba(63, 185, 80, 0.15)';
+  sc.font = '10px "SF Mono", "Fira Code", monospace';
+  sc.fillStyle = '#3fb950';
+  sc.globalAlpha = 0.5;
+  sc.textAlign = 'center';
+  sc.fillText('GAINED POSITIONS', gridToX(14), finToY(5));
+  sc.fillStyle = '#f85149';
+  sc.fillText('LOST POSITIONS', gridToX(5), finToY(16));
+  sc.globalAlpha = 1;
+
+  // Plot points
+  for (const p of allPairs) {
+    const x = gridToX(p.grid);
+    const y = finToY(p.finish);
+    sc.fillStyle = p.team_hex;
+    sc.globalAlpha = 0.75;
+    sc.beginPath();
+    sc.arc(x, y, 5, 0, Math.PI * 2);
+    sc.fill();
+    sc.globalAlpha = 1;
+
+    // Driver code label (only if not too crowded - show for top finishers)
+    if (p.finish <= 5 || Math.abs(p.delta) >= 5) {
+      sc.fillStyle = '#c9d1d9';
+      sc.font = '8px "SF Mono", "Fira Code", monospace';
+      sc.textAlign = 'left';
+      sc.fillText(p.code, x + 7, y + 3);
+    }
+  }
+
+  // --- Position Change Heatmap ---
+  const hmCanvas = document.getElementById('heatmap-chart');
+  const driverCodes = driverStandings.map(d => d.code);
+  const raceRounds = races.map(r => r.round);
+  const cellW = 60;
+  const cellH = 26;
+  const hmLabelW = 60;
+  const hmHeaderH = 50;
+  const hmW = hmLabelW + raceRounds.length * cellW + 20;
+  const hmH = hmHeaderH + driverCodes.length * cellH + 20;
+  hmCanvas.style.height = hmH + 'px';
+  hmCanvas.style.width = hmW + 'px';
+  const hm = setupCanvas(hmCanvas, hmW, hmH);
+
+  // Column headers (race rounds)
+  hm.font = '9px "SF Mono", "Fira Code", monospace';
+  hm.fillStyle = '#8b949e';
+  hm.textAlign = 'center';
+  raceRounds.forEach((rnd, ci) => {
+    const x = hmLabelW + ci * cellW + cellW / 2;
+    hm.save();
+    hm.translate(x, hmHeaderH - 6);
+    hm.rotate(-0.5);
+    hm.fillText('R' + rnd, 0, 0);
+    hm.restore();
+  });
+
+  // Build lookup: round -> code -> delta
+  const deltaLookup = {};
+  for (const p of allPairs) {
+    if (!deltaLookup[p.round]) deltaLookup[p.round] = {};
+    deltaLookup[p.round][p.code] = p.delta;
+  }
+
+  // Row labels + cells
+  driverCodes.forEach((code, ri) => {
+    const y = hmHeaderH + ri * cellH;
+
+    // Driver label
+    hm.fillStyle = '#c9d1d9';
+    hm.textAlign = 'right';
+    hm.textBaseline = 'middle';
+    hm.font = '10px "SF Mono", "Fira Code", monospace';
+    hm.fillText(code, hmLabelW - 6, y + cellH / 2);
+
+    raceRounds.forEach((rnd, ci) => {
+      const x = hmLabelW + ci * cellW;
+      const delta = deltaLookup[rnd] && deltaLookup[rnd][code];
+
+      // Cell background
+      if (delta === undefined || delta === null) {
+        hm.fillStyle = '#0d1117';
+      } else if (delta > 0) {
+        const intensity = Math.min(delta / 10, 1);
+        hm.fillStyle = `rgba(63, 185, 80, ${0.15 + intensity * 0.5})`;
+      } else if (delta < 0) {
+        const intensity = Math.min(Math.abs(delta) / 10, 1);
+        hm.fillStyle = `rgba(248, 81, 73, ${0.15 + intensity * 0.5})`;
+      } else {
+        hm.fillStyle = 'rgba(139, 148, 158, 0.1)';
+      }
+
+      hm.fillRect(x + 1, y + 1, cellW - 2, cellH - 2);
+
+      // Cell border
+      hm.strokeStyle = '#21262d';
+      hm.lineWidth = 0.5;
+      hm.strokeRect(x + 1, y + 1, cellW - 2, cellH - 2);
+
+      // Delta text
+      if (delta !== undefined && delta !== null) {
+        hm.fillStyle = delta > 0 ? '#3fb950' : delta < 0 ? '#f85149' : '#8b949e';
+        hm.font = '10px "SF Mono", "Fira Code", monospace';
+        hm.textAlign = 'center';
+        hm.textBaseline = 'middle';
+        const label = delta > 0 ? '+' + delta : delta === 0 ? '0' : '' + delta;
+        hm.fillText(label, x + cellW / 2, y + cellH / 2);
+      }
+    });
+  });
+
+  // --- Per-Driver Grid-to-Race Table ---
+  const driverTablesContainer = document.getElementById('driver-tables');
+
+  // Sort drivers by championship position
+  const sortedDriverCodes = driverStandings.map(d => d.code);
+
+  for (const code of sortedDriverCodes) {
+    const dd = driverData[code];
+    if (!dd || dd.rounds.length === 0) continue;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    let html = `<div class="card-title" style="color:${dd.team_hex}">${dd.name} &mdash; ${dd.team}</div>`;
+    html += `<table><thead><tr><th>Round</th><th>Race</th><th>Grid</th><th>Finish</th><th>Delta</th></tr></thead><tbody>`;
+
+    for (const r of dd.rounds) {
+      const deltaClass = r.delta > 0 ? 'delta-pos' : r.delta < 0 ? 'delta-neg' : 'delta-zero';
+      const deltaStr = r.delta > 0 ? '+' + r.delta : '' + r.delta;
+      const finishStr = r.isRetired ? 'RET' : r.finish;
+      html += `<tr>
+        <td>R${r.round}</td>
+        <td>${r.raceName.replace(' Grand Prix', ' GP')}</td>
+        <td>P${r.grid}</td>
+        <td>${r.isRetired ? '<span style="color:#f85149">RET</span>' : 'P' + r.finish}</td>
+        <td class="${deltaClass}">${deltaStr}</td>
+      </tr>`;
+    }
+
+    const avgDelta = dd.rounds.reduce((s, r) => s + r.delta, 0) / dd.rounds.length;
+    const avgClass = avgDelta > 0 ? 'delta-pos' : avgDelta < 0 ? 'delta-neg' : 'delta-zero';
+    html += `<tr style="border-top:1px solid #30363d;">
+      <td colspan="4" style="font-weight:600;color:#8b949e;">Average</td>
+      <td class="${avgClass}" style="font-weight:600;">${avgDelta > 0 ? '+' : ''}${avgDelta.toFixed(1)}</td>
+    </tr>`;
+
+    html += `</tbody></table>`;
+    card.innerHTML = html;
+    driverTablesContainer.appendChild(card);
+  }
+
+  // --- Qualifying Consistency Table ---
+  const consTbody = document.querySelector('#consistency-table tbody');
+  const consData = [];
+
+  for (const [code, dd] of Object.entries(driverData)) {
+    const deltas = dd.rounds.map(r => r.delta);
+    const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+    const variance = deltas.reduce((s, v) => s + (v - avg) * (v - avg), 0) / deltas.length;
+    const stdev = Math.sqrt(variance);
+    consData.push({
+      code: code,
+      name: dd.name,
+      team: dd.team,
+      team_hex: dd.team_hex,
+      avgDelta: avg,
+      stdev: stdev
+    });
+  }
+
+  consData.sort((a, b) => a.stdev - b.stdev);
+
+  for (const d of consData) {
+    const avgClass = d.avgDelta > 0 ? 'delta-pos' : d.avgDelta < 0 ? 'delta-neg' : 'delta-zero';
+    let assessment = '';
+    if (d.stdev < 2) assessment = '<span class="ok">Very Consistent</span>';
+    else if (d.stdev < 4) assessment = '<span class="warn">Moderate</span>';
+    else assessment = '<span class="neg">Volatile</span>';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="driver-name">${d.name}</td>
+      <td style="color:${d.team_hex}">${d.team}</td>
+      <td class="${avgClass}">${d.avgDelta > 0 ? '+' : ''}${d.avgDelta.toFixed(1)}</td>
+      <td>${d.stdev.toFixed(2)}</td>
+      <td>${assessment}</td>
+    `;
+    consTbody.appendChild(tr);
+  }
+
+  // --- Disruption Index (Kendall tau) ---
+  function kendallTau(a, b) {
+    // a and b are arrays of equal length
+    const n = a.length;
+    if (n < 2) return 0;
+    let concordant = 0, discordant = 0;
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        const aSign = Math.sign(a[i] - a[j]);
+        const bSign = Math.sign(b[i] - b[j]);
+        if (aSign * bSign > 0) concordant++;
+        else if (aSign * bSign < 0) discordant++;
+      }
+    }
+    const denom = n * (n - 1) / 2;
+    return denom === 0 ? 0 : (concordant - discordant) / denom;
+  }
+
+  const disTbody = document.querySelector('#disruption-table tbody');
+
+  for (const race of races) {
+    // Get grid and finish arrays for drivers who have grid data
+    const gridArr = [];
+    const finishArr = [];
+    for (const r of race.results) {
+      const grid = parseInt(r.grid) || 0;
+      if (grid === 0) continue;
+      const finish = r.is_retired ? 20 : (parseInt(r.position) || 20);
+      gridArr.push(grid);
+      finishArr.push(finish);
+    }
+
+    const tau = kendallTau(gridArr, finishArr);
+    let assessment = '';
+    if (tau > 0.8) assessment = '<span class="ok">Grid Held</span>';
+    else if (tau > 0.5) assessment = '<span class="warn">Some Shuffling</span>';
+    else if (tau > 0.2) assessment = '<span class="neg">Significant Disruption</span>';
+    else assessment = '<span class="neg" style="font-weight:700;">Chaos</span>';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>R${race.round}</td>
+      <td>${race.name}</td>
+      <td>${tau.toFixed(3)}</td>
+      <td>${assessment}</td>
+    `;
+    disTbody.appendChild(tr);
+  }
+
+})();
+</script>
+
+</body>
+</html>

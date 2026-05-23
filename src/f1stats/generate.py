@@ -4,6 +4,8 @@ from datetime import date, datetime
 from jinja2 import Environment, FileSystemLoader
 
 from . import api, static_data
+from . import coherence as coh
+from . import profiles as prof
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = ROOT / "templates"
@@ -101,6 +103,20 @@ def enrich_data(data: dict) -> dict:
     data["min_car_weight"] = static_data.MIN_CAR_WEIGHT
     data["min_driver_weight"] = static_data.MIN_DRIVER_WEIGHT
 
+    for d in data["drivers"]:
+        did = d.get("driver_id", "")
+        profile = prof.DRIVER_PROFILES.get(did, {})
+        d["profile"] = profile
+        budget_info = prof.TEAM_BUDGETS.get(d["team_id"], {})
+        d["team_budget_m"] = budget_info.get("budget_m")
+
+    for c in data["constructors"]:
+        budget_info = prof.TEAM_BUDGETS.get(c["team_id"], {})
+        c["budget_m"] = budget_info.get("budget_m")
+        c["staff"] = budget_info.get("staff")
+        c["factory"] = budget_info.get("factory", "")
+        c["pts_per_million"] = round(c["points"] / budget_info["budget_m"], 2) if budget_info.get("budget_m") and c["points"] else 0
+
     return data
 
 
@@ -114,6 +130,13 @@ PAGES = [
     "montecarlo.html",
     "entropy.html",
     "elo.html",
+    "nonlinear.html",
+    "coherence.html",
+    "prediction.html",
+    "economics.html",
+    "seasonality.html",
+    "profiles.html",
+    "qualifying.html",
 ]
 
 
@@ -124,6 +147,35 @@ def generate_all(year: int | None = None) -> None:
 
     print("Enriching data...")
     data = enrich_data(data)
+
+    print("Fetching historical standings (2010-2025)...")
+    historical = api.get_historical_standings()
+    hist_analysis = {}
+    for yr, hdata in historical.items():
+        pts = [d["points"] for d in hdata["standings"]]
+        hist_analysis[int(yr)] = {
+            "round": hdata["round"],
+            "standings": hdata["standings"],
+            "gini": round(coh.compute_gini(pts), 4),
+            "hhi": round(coh.compute_hhi(pts), 4),
+            "total_points": sum(pts),
+            "n_drivers": len(pts),
+        }
+    data["historical"] = hist_analysis
+
+    current_pts = [d["points"] for d in data["drivers"]]
+    data["gini"] = round(coh.compute_gini(current_pts), 4)
+    data["hhi"] = round(coh.compute_hhi(current_pts), 4)
+
+    print("Computing Δ.72 coherence scores...")
+    data["coherence"] = coh.compute_f1_coherence(data["cumulative_points"], data["drivers"])
+
+    print("Fetching next race info...")
+    data["next_race"] = api.get_next_race(data["year"], data["current_round"])
+
+    data["budgets"] = prof.TEAM_BUDGETS
+    data["circuit_types"] = prof.CIRCUIT_TYPES
+    data["driver_profiles"] = prof.DRIVER_PROFILES
 
     env = build_template_env()
     DOCS_DIR.mkdir(exist_ok=True)

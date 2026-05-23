@@ -1,7 +1,10 @@
+import json
 import httpx
 from datetime import date
+from pathlib import Path
 
 BASE = "https://api.jolpi.ca/ergast/f1"
+CACHE_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 
 
 def fetch_json(path: str) -> dict:
@@ -73,6 +76,7 @@ def get_season_data(year: int | None = None) -> dict:
             "name": race["raceName"],
             "date": race["date"],
             "circuit": race["Circuit"]["circuitName"],
+            "circuit_id": race["Circuit"].get("circuitId", ""),
             "location": race["Circuit"]["Location"].get("locality", ""),
             "country": race["Circuit"]["Location"].get("country", ""),
             "results": results,
@@ -89,6 +93,8 @@ def get_season_data(year: int | None = None) -> dict:
             "code": d.get("code", ""),
         }
 
+    qualifying = get_qualifying_data(year, current_round)
+
     return {
         "year": year,
         "current_round": current_round,
@@ -97,5 +103,97 @@ def get_season_data(year: int | None = None) -> dict:
         "constructors": constructors,
         "races": races,
         "driver_info": driver_info,
+        "qualifying": qualifying,
         "generated": date.today().isoformat(),
     }
+
+
+def get_qualifying_data(year: int, rounds: int) -> list[dict]:
+    results = []
+    for rnd in range(1, rounds + 1):
+        try:
+            data = fetch_json(f"{year}/{rnd}/qualifying.json")
+            races = data["MRData"]["RaceTable"]["Races"]
+            if not races:
+                continue
+            race = races[0]
+            qual_results = []
+            for q in race.get("QualifyingResults", []):
+                qual_results.append({
+                    "position": int(q["position"]),
+                    "driver": f"{q['Driver']['givenName']} {q['Driver']['familyName']}",
+                    "code": q["Driver"].get("code", ""),
+                    "team": q["Constructor"]["name"],
+                    "team_id": q["Constructor"]["constructorId"],
+                    "q1": q.get("Q1", ""),
+                    "q2": q.get("Q2", ""),
+                    "q3": q.get("Q3", ""),
+                })
+            results.append({
+                "round": rnd,
+                "name": race["raceName"],
+                "qualifying": qual_results,
+            })
+        except Exception:
+            continue
+    return results
+
+
+def get_historical_standings(years: list[int] | None = None) -> dict:
+    if years is None:
+        years = list(range(2010, 2026))
+
+    cache_file = CACHE_DIR / "historical.json"
+    cached = {}
+    if cache_file.exists():
+        cached = json.loads(cache_file.read_text())
+
+    result = {}
+    for year in years:
+        if str(year) in cached:
+            result[year] = cached[str(year)]
+            continue
+        try:
+            data = fetch_json(f"{year}/driverStandings.json")
+            sl = data["MRData"]["StandingsTable"]["StandingsLists"]
+            if not sl:
+                continue
+            standings = []
+            for d in sl[0]["DriverStandings"]:
+                standings.append({
+                    "position": int(d["position"]),
+                    "driver": f"{d['Driver']['givenName']} {d['Driver']['familyName']}",
+                    "points": float(d["points"]),
+                    "wins": int(d["wins"]),
+                    "team": d["Constructors"][0]["name"] if d["Constructors"] else "",
+                })
+            result[year] = {
+                "round": int(sl[0]["round"]),
+                "standings": standings,
+            }
+        except Exception:
+            continue
+
+    CACHE_DIR.mkdir(exist_ok=True)
+    cache_file.write_text(json.dumps({str(k): v for k, v in result.items()}, indent=2))
+    return result
+
+
+def get_next_race(year: int, current_round: int) -> dict | None:
+    try:
+        data = fetch_json(f"{year}.json")
+        races = data["MRData"]["RaceTable"]["Races"]
+        for race in races:
+            if int(race["round"]) == current_round + 1:
+                return {
+                    "round": int(race["round"]),
+                    "name": race["raceName"],
+                    "date": race["date"],
+                    "circuit": race["Circuit"]["circuitName"],
+                    "circuit_id": race["Circuit"]["circuitId"],
+                    "location": race["Circuit"]["Location"].get("locality", ""),
+                    "country": race["Circuit"]["Location"].get("country", ""),
+                }
+    except Exception:
+        pass
+    return None

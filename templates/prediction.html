@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Next Race Prediction</title>
+<meta name="description" content="Weighted prediction model for the next {{ data.year }} F1 Grand Prix. Current form, momentum, and consistency factors produce win and podium probabilities.">
+<meta property="og:title" content="F1 {{ data.year }} — Next Race Prediction">
+<meta property="og:description" content="Weighted prediction model for the next {{ data.year }} F1 Grand Prix. Win and podium probabilities from current-season form analysis.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/prediction.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Next Race Prediction">
+<meta name="twitter:description" content="Weighted prediction model for the next {{ data.year }} F1 Grand Prix. Win and podium probabilities from current-season form analysis.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .chart-container canvas { width: 100%; display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .pos-1 { color: #ffd700; font-weight: 700; }
+  .pos-2 { color: #c0c0c0; font-weight: 600; }
+  .pos-3 { color: #cd7f32; font-weight: 600; }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
+  .team-mclaren { color: #ff8700; }
+  .team-redbull { color: #3671C6; }
+  .team-alpine { color: #0090ff; }
+  .team-haas { color: #b6babd; }
+  .team-rb { color: #6692ff; }
+  .team-williams { color: #64c4ff; }
+  .team-audi { color: #00e701; }
+  .team-cadillac { color: #c0c0c0; }
+  .team-aston { color: #006f62; }
+
+  .prose { color: #c9d1d9; font-size: 13px; line-height: 1.8; }
+  .prose p { margin-bottom: 14px; }
+  .prose code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #f0f6fc; }
+  .prose h4 { color: #f0f6fc; font-size: 14px; margin: 20px 0 8px; }
+  .prose ul { margin: 8px 0 14px 20px; }
+  .prose .formula {
+    background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+    padding: 16px 20px; margin: 12px 0; font-size: 12px; color: #c9d1d9;
+    line-height: 1.8; overflow-x: auto;
+  }
+
+  .trend-up { color: #3fb950; }
+  .trend-down { color: #f85149; }
+  .trend-flat { color: #8b949e; }
+
+  .caveat {
+    background: #1c1530; border: 1px solid #2d2050; border-radius: 8px;
+    padding: 16px 20px; margin-top: 16px; font-size: 12px; color: #bb9af7; line-height: 1.7;
+  }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Next Race Prediction</h1>
+  {% if data.next_race %}
+  <div class="tagline">Round {{ data.next_race.round }} &mdash; {{ data.next_race.name }}<br>
+  {{ data.next_race.date }} &middot; {{ data.next_race.circuit }}{% if data.next_race.location %}, {{ data.next_race.location }}{% endif %}{% if data.next_race.country %}, {{ data.next_race.country }}{% endif %}</div>
+  <div class="badges">
+    <span class="badge badge-purple">Prediction Model v1</span>
+    <span class="badge badge-blue">{{ data.current_round }} Races Analyzed</span>
+    <span class="badge badge-amber">Client-Side Computation</span>
+  </div>
+  {% else %}
+  <div class="tagline">No upcoming race data available.</div>
+  {% endif %}
+</div>
+
+<div class="section">
+  <h2>Predicted Finishing Order</h2>
+  <p class="section-sub">Composite score from current form (50%), momentum (30%), and consistency (20%)</p>
+  <div class="card">
+    <table id="prediction-table">
+      <thead>
+        <tr><th>Pos</th><th>Driver</th><th>Team</th><th>Win %</th><th>Podium %</th><th>Points %</th><th>Score</th></tr>
+      </thead>
+      <tbody id="prediction-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Win Probability</h2>
+  <p class="section-sub">Horizontal bar chart of P(win) for each driver</p>
+  <div class="chart-container">
+    <canvas id="win-chart" height="600"></canvas>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Podium Probability</h2>
+  <p class="section-sub">Stacked bars: P(1st), P(2nd), P(3rd) for the top 10 contenders</p>
+  <div class="chart-container">
+    <canvas id="podium-chart" height="400"></canvas>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Form Indicators</h2>
+  <p class="section-sub">Who is trending up, who is trending down, and the biggest mover</p>
+  <div class="grid grid-3" id="form-cards"></div>
+</div>
+
+<div class="section section-divider">
+  <h2>Model Explanation</h2>
+  <p class="section-sub">How the prediction is computed</p>
+  <div class="card">
+    <div class="prose">
+      <h4>Three-Factor Weighted Model</h4>
+      <p>The prediction combines three signals extracted from the current season's race results into a single composite strength score for each driver. Scores are normalized to produce probability estimates.</p>
+
+      <h4>1. Current Form (weight = 0.50)</h4>
+      <p>Points per race across all completed rounds. This is the strongest signal: drivers scoring more points per start are generally faster.</p>
+      <div class="formula">
+        Form(d) = total_points(d) / races_entered(d)<br>
+        Normalized: form_norm(d) = Form(d) / max(Form)
+      </div>
+
+      <h4>2. Momentum (weight = 0.30)</h4>
+      <p>Linear regression slope of finishing positions across races. A negative slope (positions are decreasing, i.e., improving) gives a positive momentum score. This captures whether a driver is on an upswing or downswing.</p>
+      <div class="formula">
+        positions = [finish_pos_r1, finish_pos_r2, ..., finish_pos_rN]<br>
+        slope = linear_regression_slope(positions)<br>
+        Momentum(d) = -slope  (negative slope = improving)<br>
+        Normalized: momentum_norm(d) = (Momentum(d) - min) / (max - min)
+      </div>
+
+      <h4>3. Consistency (weight = 0.20)</h4>
+      <p>Inverse of the standard deviation of finishing positions. A driver who finishes in similar positions every race is more predictable and reliable.</p>
+      <div class="formula">
+        stdev = std_deviation(finishing_positions(d))<br>
+        Consistency(d) = 1 / (1 + stdev)<br>
+        Normalized: consistency_norm(d) = Consistency(d) / max(Consistency)
+      </div>
+
+      <h4>Composite Score &amp; Probabilities</h4>
+      <div class="formula">
+        S(d) = 0.50 * form_norm(d) + 0.30 * momentum_norm(d) + 0.20 * consistency_norm(d)<br>
+        P_win(d) = S(d)^3 / sum(S(i)^3)  &mdash; cubed to amplify separation<br>
+        P_podium(d) = S(d)^2 / sum(S(i)^2)  &mdash; squared for podium<br>
+        P_points(d) = S(d) / sum(S(i))  &mdash; linear for points finish
+      </div>
+
+      <h4>Limitations</h4>
+      <ul>
+        <li>No circuit-specific data &mdash; some tracks favor different cars and driving styles.</li>
+        <li>No qualifying pace &mdash; grid position is a strong predictor not yet incorporated.</li>
+        <li>Small sample &mdash; early in the season, a single anomalous result heavily skews momentum and consistency.</li>
+        <li>Retirements counted as P20 &mdash; mechanical DNFs distort form and momentum unfairly.</li>
+        <li>No team-order effects or weather forecasts.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <div class="caveat">
+    This model uses current season form only. With {{ data.current_round }} races of data, predictions carry significant uncertainty. Circuit-specific effects and qualifying pace are not yet factored.
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  // --- Inject race data from Jinja2 ---
+  const races = [
+    {% for race in data.races %}
+    {
+      round: {{ race.round }},
+      name: "{{ race.name|replace('"', '\\"') }}",
+      results: [
+        {% for r in race.results %}
+        {
+          position: {{ r.position if r.position else 99 }},
+          driver: "{{ r.driver|replace('"', '\\"') }}",
+          code: "{{ r.code }}",
+          team: "{{ r.team|replace('"', '\\"') }}",
+          team_id: "{{ r.team_id }}",
+          team_hex: "#{{ r.team_hex }}",
+          points: {{ r.points }},
+          status: "{{ r.status|replace('"', '\\"') }}",
+          grid: {{ r.grid if r.grid else 0 }},
+          is_retired: {{ "true" if r.is_retired else "false" }},
+          is_dns: {{ "true" if r.is_dns else "false" }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const driverStandings = [
+    {% for d in data.drivers %}
+    {
+      name: "{{ d.name|replace('"', '\\"') }}",
+      code: "{{ d.code }}",
+      team: "{{ d.team_display }}",
+      team_id: "{{ d.team_id }}",
+      team_hex: "#{{ d.team_hex }}",
+      points: {{ d.points }},
+      wins: {{ d.wins }},
+      position: {{ d.position }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  const totalRaces = races.length;
+  if (totalRaces === 0) return;
+
+  // --- Build per-driver race history ---
+  const driverMap = {};
+  for (const d of driverStandings) {
+    driverMap[d.code] = {
+      name: d.name,
+      code: d.code,
+      team: d.team,
+      team_id: d.team_id,
+      team_hex: d.team_hex,
+      totalPoints: d.points,
+      finishes: [],
+      pointsPerRace: []
+    };
+  }
+
+  for (const race of races) {
+    for (const r of race.results) {
+      if (!driverMap[r.code]) {
+        driverMap[r.code] = {
+          name: r.driver,
+          code: r.code,
+          team: r.team,
+          team_id: r.team_id,
+          team_hex: r.team_hex,
+          totalPoints: 0,
+          finishes: [],
+          pointsPerRace: []
+        };
+      }
+      const d = driverMap[r.code];
+      const finishPos = (r.is_retired || r.is_dns) ? 20 : r.position;
+      d.finishes.push(finishPos);
+      d.pointsPerRace.push(r.points);
+    }
+  }
+
+  // --- Compute factors ---
+  function linRegSlope(arr) {
+    const n = arr.length;
+    if (n < 2) return 0;
+    let sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (let i = 0; i < n; i++) {
+      sx += i; sy += arr[i]; sxx += i * i; sxy += i * arr[i];
+    }
+    const denom = n * sxx - sx * sx;
+    return denom === 0 ? 0 : (n * sxy - sx * sy) / denom;
+  }
+
+  function stdDev(arr) {
+    if (arr.length < 2) return 0;
+    const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+    const variance = arr.reduce((s, v) => s + (v - mean) * (v - mean), 0) / arr.length;
+    return Math.sqrt(variance);
+  }
+
+  const drivers = Object.values(driverMap).filter(d => d.finishes.length > 0);
+
+  // Factor 1: Current form (points per race)
+  for (const d of drivers) {
+    d.form = d.totalPoints / d.finishes.length;
+  }
+  const maxForm = Math.max(...drivers.map(d => d.form), 0.001);
+  for (const d of drivers) {
+    d.formNorm = d.form / maxForm;
+  }
+
+  // Factor 2: Momentum (negative slope of finishing positions = improving)
+  for (const d of drivers) {
+    d.momentum = -linRegSlope(d.finishes);
+  }
+  const momValues = drivers.map(d => d.momentum);
+  const minMom = Math.min(...momValues);
+  const maxMom = Math.max(...momValues);
+  const momRange = maxMom - minMom || 1;
+  for (const d of drivers) {
+    d.momentumNorm = (d.momentum - minMom) / momRange;
+  }
+
+  // Factor 3: Consistency (inverse of stdev of finishing positions)
+  for (const d of drivers) {
+    d.consistency = 1 / (1 + stdDev(d.finishes));
+  }
+  const maxCons = Math.max(...drivers.map(d => d.consistency), 0.001);
+  for (const d of drivers) {
+    d.consistencyNorm = d.consistency / maxCons;
+  }
+
+  // Composite score
+  for (const d of drivers) {
+    d.score = 0.50 * d.formNorm + 0.30 * d.momentumNorm + 0.20 * d.consistencyNorm;
+  }
+
+  // Probabilities
+  const sumScoreCubed = drivers.reduce((s, d) => s + Math.pow(d.score, 3), 0) || 1;
+  const sumScoreSquared = drivers.reduce((s, d) => s + Math.pow(d.score, 2), 0) || 1;
+  const sumScore = drivers.reduce((s, d) => s + d.score, 0) || 1;
+
+  for (const d of drivers) {
+    d.pWin = Math.pow(d.score, 3) / sumScoreCubed;
+    d.pPodium = Math.pow(d.score, 2) / sumScoreSquared;
+    d.pPoints = d.score / sumScore;
+  }
+
+  // Sort by composite score descending
+  drivers.sort((a, b) => b.score - a.score);
+
+  // --- Predicted finishing order table ---
+  const tbody = document.getElementById('prediction-body');
+  drivers.forEach((d, i) => {
+    const pos = i + 1;
+    const posClass = pos === 1 ? 'pos-1' : pos === 2 ? 'pos-2' : pos === 3 ? 'pos-3' : '';
+    const teamCss = 'team-' + d.team_id.replace(/[^a-z]/g, '');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="${posClass}">${pos}</td>
+      <td class="driver-name">${d.name}</td>
+      <td class="${teamCss}" style="color:${d.team_hex}">${d.team}</td>
+      <td>${(d.pWin * 100).toFixed(1)}%</td>
+      <td>${(d.pPodium * 100).toFixed(1)}%</td>
+      <td>${(d.pPoints * 100).toFixed(1)}%</td>
+      <td>${d.score.toFixed(3)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // --- Win Probability Bar Chart ---
+  const winCanvas = document.getElementById('win-chart');
+  const wCtx = winCanvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+
+  function setupCanvas(canvas, width, height) {
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return ctx;
+  }
+
+  const winWidth = winCanvas.parentElement.clientWidth - 40;
+  const barH = 24;
+  const barGap = 4;
+  const labelW = 60;
+  const winHeight = drivers.length * (barH + barGap) + 40;
+  winCanvas.style.height = winHeight + 'px';
+
+  const wc = setupCanvas(winCanvas, winWidth, winHeight);
+  wc.font = '11px "SF Mono", "Fira Code", monospace';
+
+  const maxWinProb = Math.max(...drivers.map(d => d.pWin));
+  const chartLeft = labelW + 10;
+  const chartWidth = winWidth - chartLeft - 20;
+
+  drivers.forEach((d, i) => {
+    const y = i * (barH + barGap) + 20;
+    // Label
+    wc.fillStyle = '#8b949e';
+    wc.textAlign = 'right';
+    wc.textBaseline = 'middle';
+    wc.fillText(d.code, labelW, y + barH / 2);
+
+    // Bar
+    const bw = maxWinProb > 0 ? (d.pWin / maxWinProb) * chartWidth : 0;
+    wc.fillStyle = d.team_hex;
+    wc.globalAlpha = 0.85;
+    wc.beginPath();
+    wc.roundRect(chartLeft, y, bw, barH, 3);
+    wc.fill();
+    wc.globalAlpha = 1;
+
+    // Percentage text
+    wc.fillStyle = '#c9d1d9';
+    wc.textAlign = 'left';
+    wc.fillText((d.pWin * 100).toFixed(1) + '%', chartLeft + bw + 6, y + barH / 2);
+  });
+
+  // --- Podium Probability Stacked Bar Chart ---
+  const podCanvas = document.getElementById('podium-chart');
+  const top10 = drivers.slice(0, 10);
+
+  // Estimate P(1st), P(2nd), P(3rd) separately using score powers
+  // P(1st) = pWin, P(2nd) ~ pPodium - pWin, P(3rd) ~ remainder
+  for (const d of top10) {
+    d.p1 = d.pWin;
+    d.p2 = Math.max(0, d.pPodium * 0.6 - d.pWin * 0.3);
+    d.p3 = Math.max(0, d.pPodium - d.p1 - d.p2);
+  }
+
+  const podWidth = podCanvas.parentElement.clientWidth - 40;
+  const podBarH = 30;
+  const podHeight = top10.length * (podBarH + 6) + 60;
+  podCanvas.style.height = podHeight + 'px';
+
+  const pc = setupCanvas(podCanvas, podWidth, podHeight);
+  pc.font = '11px "SF Mono", "Fira Code", monospace';
+
+  const podChartLeft = labelW + 10;
+  const podChartWidth = podWidth - podChartLeft - 80;
+  const maxPod = Math.max(...top10.map(d => d.p1 + d.p2 + d.p3));
+
+  // Legend
+  pc.fillStyle = '#ffd700'; pc.fillRect(podChartLeft, 2, 10, 10);
+  pc.fillStyle = '#8b949e'; pc.textAlign = 'left'; pc.fillText('P(1st)', podChartLeft + 14, 10);
+  pc.fillStyle = '#c0c0c0'; pc.fillRect(podChartLeft + 70, 2, 10, 10);
+  pc.fillStyle = '#8b949e'; pc.fillText('P(2nd)', podChartLeft + 84, 10);
+  pc.fillStyle = '#cd7f32'; pc.fillRect(podChartLeft + 140, 2, 10, 10);
+  pc.fillStyle = '#8b949e'; pc.fillText('P(3rd)', podChartLeft + 154, 10);
+
+  top10.forEach((d, i) => {
+    const y = i * (podBarH + 6) + 28;
+
+    pc.fillStyle = '#8b949e';
+    pc.textAlign = 'right';
+    pc.textBaseline = 'middle';
+    pc.fillText(d.code, labelW, y + podBarH / 2);
+
+    const scale = maxPod > 0 ? podChartWidth / maxPod : 0;
+    let x = podChartLeft;
+
+    // P(1st) - gold
+    const w1 = d.p1 * scale;
+    pc.fillStyle = '#ffd700';
+    pc.globalAlpha = 0.9;
+    pc.fillRect(x, y, w1, podBarH);
+    x += w1;
+
+    // P(2nd) - silver
+    const w2 = d.p2 * scale;
+    pc.fillStyle = '#c0c0c0';
+    pc.fillRect(x, y, w2, podBarH);
+    x += w2;
+
+    // P(3rd) - bronze
+    const w3 = d.p3 * scale;
+    pc.fillStyle = '#cd7f32';
+    pc.fillRect(x, y, w3, podBarH);
+    x += w3;
+
+    pc.globalAlpha = 1;
+
+    // Total podium %
+    const totalPod = (d.p1 + d.p2 + d.p3) * 100;
+    pc.fillStyle = '#c9d1d9';
+    pc.textAlign = 'left';
+    pc.fillText(totalPod.toFixed(1) + '%', x + 6, y + podBarH / 2);
+  });
+
+  // --- Form Indicator Cards ---
+  const formContainer = document.getElementById('form-cards');
+
+  // Trending up: best momentum
+  const trendingUp = drivers.filter(d => d.momentum > 0).sort((a, b) => b.momentum - a.momentum).slice(0, 3);
+  const trendingDown = drivers.filter(d => d.momentum < 0).sort((a, b) => a.momentum - b.momentum).slice(0, 3);
+
+  // Biggest mover: largest absolute momentum
+  const biggestMover = drivers.reduce((best, d) => Math.abs(d.momentum) > Math.abs(best.momentum) ? d : best, drivers[0]);
+
+  function makeFormCard(title, items, cssClass, icon) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    let html = `<div class="card-title">${icon} ${title}</div>`;
+    if (items.length === 0) {
+      html += `<div class="stat-label">No clear trend yet</div>`;
+    } else {
+      for (const d of items) {
+        const arrow = d.momentum > 0 ? '+' : '';
+        html += `<div style="margin-bottom:8px;">
+          <span class="driver-name">${d.name}</span>
+          <span class="${cssClass}" style="margin-left:8px;font-size:12px;">${arrow}${d.momentum.toFixed(2)} pos/race</span>
+          <div class="stat-label">${d.team}</div>
+        </div>`;
+      }
+    }
+    card.innerHTML = html;
+    return card;
+  }
+
+  formContainer.appendChild(makeFormCard('Trending Up', trendingUp, 'trend-up', '&#9650;'));
+  formContainer.appendChild(makeFormCard('Trending Down', trendingDown, 'trend-down', '&#9660;'));
+
+  const moverCard = document.createElement('div');
+  moverCard.className = 'card';
+  const moverDir = biggestMover.momentum > 0 ? 'trend-up' : biggestMover.momentum < 0 ? 'trend-down' : 'trend-flat';
+  const moverArrow = biggestMover.momentum > 0 ? '&#9650;' : biggestMover.momentum < 0 ? '&#9660;' : '&#9644;';
+  moverCard.innerHTML = `
+    <div class="card-title">${moverArrow} Biggest Mover</div>
+    <div class="stat-sm ${moverDir}">${biggestMover.name}</div>
+    <div class="stat-label">${biggestMover.team} &middot; ${biggestMover.momentum > 0 ? '+' : ''}${biggestMover.momentum.toFixed(2)} positions/race</div>
+    <div class="stat-label" style="margin-top:6px;">Score: ${biggestMover.score.toFixed(3)} &middot; Form: ${biggestMover.formNorm.toFixed(2)} &middot; Consistency: ${biggestMover.consistencyNorm.toFixed(2)}</div>
+  `;
+  formContainer.appendChild(moverCard);
+})();
+</script>
+
+</body>
+</html>

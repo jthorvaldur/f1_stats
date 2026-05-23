@@ -1,0 +1,2435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Grid vs Race Analysis</title>
+<meta name="description" content="Qualifying grid vs race finish analysis for the 2026 F1 season. Scatter plots, position-change heatmaps, and disruption index for every race.">
+<meta property="og:title" content="F1 2026 — Grid vs Race Analysis">
+<meta property="og:description" content="Qualifying grid vs race finish analysis for the 2026 F1 season. Scatter plots, heatmaps, and disruption index.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/qualifying.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — Grid vs Race Analysis">
+<meta name="twitter:description" content="Qualifying grid vs race finish analysis for the 2026 F1 season. Scatter plots, heatmaps, and disruption index.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .chart-container canvas { width: 100%; display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 8px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
+  .team-mclaren { color: #ff8700; }
+  .team-redbull { color: #3671C6; }
+  .team-alpine { color: #0090ff; }
+  .team-haas { color: #b6babd; }
+  .team-rb { color: #6692ff; }
+  .team-williams { color: #64c4ff; }
+  .team-audi { color: #00e701; }
+  .team-cadillac { color: #c0c0c0; }
+  .team-aston { color: #006f62; }
+
+  .delta-pos { color: #3fb950; }
+  .delta-neg { color: #f85149; }
+  .delta-zero { color: #8b949e; }
+
+  .heatmap-scroll { overflow-x: auto; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Grid vs Race Analysis</h1>
+  <div class="tagline">How much does qualifying position predict race results? Scatter plots, position-change heatmaps, and disruption indices for the 2026 season through Round 4.</div>
+  <div class="badges">
+    <span class="badge badge-blue">4 Qualifying Sessions</span>
+    <span class="badge badge-green">4 Races</span>
+    <span class="badge badge-purple">Grid-to-Finish Analysis</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Summary Statistics</h2>
+  <p class="section-sub">Aggregate grid-to-finish performance across all races</p>
+  <div class="grid grid-4" id="stats-cards"></div>
+</div>
+
+<div class="section section-divider">
+  <h2>Grid vs Finish Scatter</h2>
+  <p class="section-sub">Each dot is one driver-race. Points below the y=x diagonal gained positions; above lost positions. Colored by team.</p>
+  <div class="chart-container">
+    <canvas id="scatter-chart" height="520"></canvas>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Position Change Heatmap</h2>
+  <p class="section-sub">Drivers (rows) vs races (columns). Green = positions gained, red = positions lost, gray = held position.</p>
+  <div class="chart-container heatmap-scroll">
+    <canvas id="heatmap-chart"></canvas>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Per-Driver Grid-to-Race Results</h2>
+  <p class="section-sub">Qualifying position, race finish, and delta for each driver at every round</p>
+  <div id="driver-tables"></div>
+</div>
+
+<div class="section section-divider">
+  <h2>Qualifying Consistency</h2>
+  <p class="section-sub">Standard deviation of (grid - finish) delta. Lower = qualifying position closely matches race finish.</p>
+  <div class="card">
+    <table id="consistency-table">
+      <thead><tr><th>Driver</th><th>Team</th><th>Avg Delta</th><th>Stdev Delta</th><th>Assessment</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Disruption Index</h2>
+  <p class="section-sub">How shuffled was the finishing order vs the grid? Kendall tau correlation: +1 = grid perfectly predicts finish, 0 = random, -1 = fully reversed.</p>
+  <div class="card">
+    <table id="disruption-table">
+      <thead><tr><th>Round</th><th>Race</th><th>Kendall Tau</th><th>Assessment</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  // --- Inject data from Jinja2 ---
+  const races = [
+    {
+      round: 1,
+      name: "Australian Grand Prix",
+      results: [
+        {
+          position: 1,
+          driver: "George Russell",
+          code: "RUS",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 1,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 2,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 2,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 3,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 4,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 4,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 7,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 5,
+          driver: "Lando Norris",
+          code: "NOR",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 6,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 6,
+          driver: "Max Verstappen",
+          code: "VER",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 20,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 7,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 12,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 8,
+          driver: "Arvid Lindblad",
+          code: "LIN",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 9,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 9,
+          driver: "Gabriel Bortoleto",
+          code: "BOR",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 10,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 10,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 14,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 11,
+          driver: "Esteban Ocon",
+          code: "OCO",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 13,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 12,
+          driver: "Alexander Albon",
+          code: "ALB",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 15,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 13,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 8,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 14,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 16,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 15,
+          driver: "Carlos Sainz",
+          code: "SAI",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 21,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 16,
+          driver: "Sergio Pérez",
+          code: "PER",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          team_hex: "##c0c0c0",
+          grid: 18,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 17,
+          driver: "Lance Stroll",
+          code: "STR",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          team_hex: "##006f62",
+          grid: 22,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 18,
+          driver: "Fernando Alonso",
+          code: "ALO",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          team_hex: "##006f62",
+          grid: 17,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 19,
+          driver: "Valtteri Bottas",
+          code: "BOT",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          team_hex: "##c0c0c0",
+          grid: 19,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 20,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 3,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 21,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 5,
+          is_retired: true,
+          is_dns: true
+        },        {
+          position: 22,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 11,
+          is_retired: true,
+          is_dns: true
+        }      ]
+    },    {
+      round: 2,
+      name: "Chinese Grand Prix",
+      results: [
+        {
+          position: 1,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 1,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 2,
+          driver: "George Russell",
+          code: "RUS",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 2,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 3,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 3,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 4,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 4,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 5,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 10,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 6,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 7,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 7,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 14,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 8,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 9,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 9,
+          driver: "Carlos Sainz",
+          code: "SAI",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 17,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 10,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 12,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 11,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 11,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 12,
+          driver: "Arvid Lindblad",
+          code: "LIN",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 15,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 13,
+          driver: "Valtteri Bottas",
+          code: "BOT",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          team_hex: "##c0c0c0",
+          grid: 19,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 14,
+          driver: "Esteban Ocon",
+          code: "OCO",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 13,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 15,
+          driver: "Sergio Pérez",
+          code: "PER",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          team_hex: "##c0c0c0",
+          grid: 21,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 16,
+          driver: "Max Verstappen",
+          code: "VER",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 8,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 17,
+          driver: "Fernando Alonso",
+          code: "ALO",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          team_hex: "##006f62",
+          grid: 18,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 18,
+          driver: "Lance Stroll",
+          code: "STR",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          team_hex: "##006f62",
+          grid: 20,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 19,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 5,
+          is_retired: true,
+          is_dns: true
+        },        {
+          position: 20,
+          driver: "Lando Norris",
+          code: "NOR",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 6,
+          is_retired: true,
+          is_dns: true
+        },        {
+          position: 21,
+          driver: "Gabriel Bortoleto",
+          code: "BOR",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 16,
+          is_retired: true,
+          is_dns: true
+        },        {
+          position: 22,
+          driver: "Alexander Albon",
+          code: "ALB",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 22,
+          is_retired: true,
+          is_dns: true
+        }      ]
+    },    {
+      round: 3,
+      name: "Japanese Grand Prix",
+      results: [
+        {
+          position: 1,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 1,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 2,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 3,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 3,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 4,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 4,
+          driver: "George Russell",
+          code: "RUS",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 2,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 5,
+          driver: "Lando Norris",
+          code: "NOR",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 5,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 6,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 6,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 7,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 7,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 8,
+          driver: "Max Verstappen",
+          code: "VER",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 11,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 9,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 14,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 10,
+          driver: "Esteban Ocon",
+          code: "OCO",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 12,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 11,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 13,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 12,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 8,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 13,
+          driver: "Gabriel Bortoleto",
+          code: "BOR",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 9,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 14,
+          driver: "Arvid Lindblad",
+          code: "LIN",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 10,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 15,
+          driver: "Carlos Sainz",
+          code: "SAI",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 16,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 16,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 15,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 17,
+          driver: "Sergio Pérez",
+          code: "PER",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          team_hex: "##c0c0c0",
+          grid: 19,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 18,
+          driver: "Fernando Alonso",
+          code: "ALO",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          team_hex: "##006f62",
+          grid: 21,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 19,
+          driver: "Valtteri Bottas",
+          code: "BOT",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          team_hex: "##c0c0c0",
+          grid: 20,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 20,
+          driver: "Alexander Albon",
+          code: "ALB",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 17,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 21,
+          driver: "Lance Stroll",
+          code: "STR",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          team_hex: "##006f62",
+          grid: 22,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 22,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 18,
+          is_retired: true,
+          is_dns: false
+        }      ]
+    },    {
+      round: 4,
+      name: "Miami Grand Prix",
+      results: [
+        {
+          position: 1,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 1,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 2,
+          driver: "Lando Norris",
+          code: "NOR",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 4,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 3,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 7,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 4,
+          driver: "George Russell",
+          code: "RUS",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 5,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 5,
+          driver: "Max Verstappen",
+          code: "VER",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 2,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 6,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 6,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 7,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 8,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 8,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 3,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 9,
+          driver: "Carlos Sainz",
+          code: "SAI",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 13,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 10,
+          driver: "Alexander Albon",
+          code: "ALB",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 15,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 11,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 12,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 12,
+          driver: "Gabriel Bortoleto",
+          code: "BOR",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 21,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 13,
+          driver: "Esteban Ocon",
+          code: "OCO",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 14,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 14,
+          driver: "Arvid Lindblad",
+          code: "LIN",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 16,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 15,
+          driver: "Fernando Alonso",
+          code: "ALO",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          team_hex: "##006f62",
+          grid: 17,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 16,
+          driver: "Sergio Pérez",
+          code: "PER",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          team_hex: "##c0c0c0",
+          grid: 20,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 17,
+          driver: "Lance Stroll",
+          code: "STR",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          team_hex: "##006f62",
+          grid: 18,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 18,
+          driver: "Valtteri Bottas",
+          code: "BOT",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          team_hex: "##c0c0c0",
+          grid: 19,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 19,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 10,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 20,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 11,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 21,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 9,
+          is_retired: true,
+          is_dns: false
+        },        {
+          position: 22,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 22,
+          is_retired: true,
+          is_dns: false
+        }      ]
+    }  ];
+
+  const qualifying = [
+    {
+      round: 1,
+      name: "Australian Grand Prix",
+      qualifying: [
+        {
+          position: 1,
+          driver: "George Russell",
+          code: "RUS",
+          team: "Mercedes",
+          team_id: "mercedes",
+          q1: "1:19.507",
+          q2: "1:18.934",
+          q3: "1:18.518"
+        },        {
+          position: 2,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          q1: "1:20.120",
+          q2: "1:19.435",
+          q3: "1:18.811"
+        },        {
+          position: 3,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          q1: "1:20.023",
+          q2: "1:19.653",
+          q3: "1:19.303"
+        },        {
+          position: 4,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          q1: "1:20.226",
+          q2: "1:19.357",
+          q3: "1:19.327"
+        },        {
+          position: 5,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          q1: "1:19.664",
+          q2: "1:19.525",
+          q3: "1:19.380"
+        },        {
+          position: 6,
+          driver: "Lando Norris",
+          code: "NOR",
+          team: "McLaren",
+          team_id: "mclaren",
+          q1: "1:20.010",
+          q2: "1:19.882",
+          q3: "1:19.475"
+        },        {
+          position: 7,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          q1: "1:19.811",
+          q2: "1:19.921",
+          q3: "1:19.478"
+        },        {
+          position: 8,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          q1: "1:20.491",
+          q2: "1:20.144",
+          q3: "1:19.994"
+        },        {
+          position: 9,
+          driver: "Arvid Lindblad",
+          code: "LIN",
+          team: "RB F1 Team",
+          team_id: "rb",
+          q1: "1:20.409",
+          q2: "1:19.971",
+          q3: "1:21.247"
+        },        {
+          position: 10,
+          driver: "Gabriel Bortoleto",
+          code: "BOR",
+          team: "Audi",
+          team_id: "audi",
+          q1: "1:20.495",
+          q2: "1:20.221",
+          q3: ""
+        },        {
+          position: 11,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          q1: "1:21.024",
+          q2: "1:20.303",
+          q3: ""
+        },        {
+          position: 12,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          q1: "1:21.247",
+          q2: "1:20.311",
+          q3: ""
+        },        {
+          position: 13,
+          driver: "Esteban Ocon",
+          code: "OCO",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          q1: "1:20.759",
+          q2: "1:20.491",
+          q3: ""
+        },        {
+          position: 14,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          q1: "1:21.138",
+          q2: "1:20.501",
+          q3: ""
+        },        {
+          position: 15,
+          driver: "Alexander Albon",
+          code: "ALB",
+          team: "Williams",
+          team_id: "williams",
+          q1: "1:21.051",
+          q2: "1:20.941",
+          q3: ""
+        },        {
+          position: 16,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          q1: "1:21.200",
+          q2: "1:21.270",
+          q3: ""
+        },        {
+          position: 17,
+          driver: "Fernando Alonso",
+          code: "ALO",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          q1: "1:21.969",
+          q2: "",
+          q3: ""
+        },        {
+          position: 18,
+          driver: "Sergio Pérez",
+          code: "PER",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          q1: "1:22.605",
+          q2: "",
+          q3: ""
+        },        {
+          position: 19,
+          driver: "Valtteri Bottas",
+          code: "BOT",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          q1: "1:23.244",
+          q2: "",
+          q3: ""
+        }      ]
+    },    {
+      round: 2,
+      name: "Chinese Grand Prix",
+      qualifying: [
+        {
+          position: 1,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          q1: "1:33.305",
+          q2: "1:32.443",
+          q3: "1:32.064"
+        },        {
+          position: 2,
+          driver: "George Russell",
+          code: "RUS",
+          team: "Mercedes",
+          team_id: "mercedes",
+          q1: "1:33.262",
+          q2: "1:32.523",
+          q3: "1:32.286"
+        },        {
+          position: 3,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          q1: "1:33.522",
+          q2: "1:32.567",
+          q3: "1:32.415"
+        },        {
+          position: 4,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          q1: "1:33.175",
+          q2: "1:32.486",
+          q3: "1:32.428"
+        },        {
+          position: 5,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          q1: "1:33.590",
+          q2: "1:33.130",
+          q3: "1:32.550"
+        },        {
+          position: 6,
+          driver: "Lando Norris",
+          code: "NOR",
+          team: "McLaren",
+          team_id: "mclaren",
+          q1: "1:33.535",
+          q2: "1:32.910",
+          q3: "1:32.608"
+        },        {
+          position: 7,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          q1: "1:33.788",
+          q2: "1:33.003",
+          q3: "1:32.873"
+        },        {
+          position: 8,
+          driver: "Max Verstappen",
+          code: "VER",
+          team: "Red Bull",
+          team_id: "red_bull",
+          q1: "1:33.417",
+          q2: "1:33.098",
+          q3: "1:33.002"
+        },        {
+          position: 9,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          q1: "1:33.632",
+          q2: "1:33.352",
+          q3: "1:33.121"
+        },        {
+          position: 10,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          q1: "1:33.687",
+          q2: "1:33.197",
+          q3: "1:33.292"
+        },        {
+          position: 11,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          q1: "1:34.116",
+          q2: "1:33.354",
+          q3: ""
+        },        {
+          position: 12,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          q1: "1:33.634",
+          q2: "1:33.357",
+          q3: ""
+        },        {
+          position: 13,
+          driver: "Esteban Ocon",
+          code: "OCO",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          q1: "1:33.974",
+          q2: "1:33.538",
+          q3: ""
+        },        {
+          position: 14,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          q1: "1:34.139",
+          q2: "1:33.765",
+          q3: ""
+        },        {
+          position: 15,
+          driver: "Arvid Lindblad",
+          code: "LIN",
+          team: "RB F1 Team",
+          team_id: "rb",
+          q1: "1:33.906",
+          q2: "1:33.784",
+          q3: ""
+        },        {
+          position: 16,
+          driver: "Gabriel Bortoleto",
+          code: "BOR",
+          team: "Audi",
+          team_id: "audi",
+          q1: "1:33.549",
+          q2: "1:33.965",
+          q3: ""
+        },        {
+          position: 17,
+          driver: "Carlos Sainz",
+          code: "SAI",
+          team: "Williams",
+          team_id: "williams",
+          q1: "1:34.317",
+          q2: "",
+          q3: ""
+        },        {
+          position: 18,
+          driver: "Alexander Albon",
+          code: "ALB",
+          team: "Williams",
+          team_id: "williams",
+          q1: "1:34.772",
+          q2: "",
+          q3: ""
+        },        {
+          position: 19,
+          driver: "Fernando Alonso",
+          code: "ALO",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          q1: "1:35.203",
+          q2: "",
+          q3: ""
+        },        {
+          position: 20,
+          driver: "Valtteri Bottas",
+          code: "BOT",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          q1: "1:35.436",
+          q2: "",
+          q3: ""
+        },        {
+          position: 21,
+          driver: "Lance Stroll",
+          code: "STR",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          q1: "1:35.995",
+          q2: "",
+          q3: ""
+        },        {
+          position: 22,
+          driver: "Sergio Pérez",
+          code: "PER",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          q1: "1:36.906",
+          q2: "",
+          q3: ""
+        }      ]
+    },    {
+      round: 3,
+      name: "Japanese Grand Prix",
+      qualifying: [
+        {
+          position: 1,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          q1: "1:30.035",
+          q2: "1:29.048",
+          q3: "1:28.778"
+        },        {
+          position: 2,
+          driver: "George Russell",
+          code: "RUS",
+          team: "Mercedes",
+          team_id: "mercedes",
+          q1: "1:29.967",
+          q2: "1:29.686",
+          q3: "1:29.076"
+        },        {
+          position: 3,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          q1: "1:30.200",
+          q2: "1:29.451",
+          q3: "1:29.132"
+        },        {
+          position: 4,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          q1: "1:29.915",
+          q2: "1:29.303",
+          q3: "1:29.405"
+        },        {
+          position: 5,
+          driver: "Lando Norris",
+          code: "NOR",
+          team: "McLaren",
+          team_id: "mclaren",
+          q1: "1:30.401",
+          q2: "1:29.795",
+          q3: "1:29.409"
+        },        {
+          position: 6,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          q1: "1:30.309",
+          q2: "1:29.589",
+          q3: "1:29.567"
+        },        {
+          position: 7,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          q1: "1:30.584",
+          q2: "1:29.874",
+          q3: "1:29.691"
+        },        {
+          position: 8,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          q1: "1:30.662",
+          q2: "1:30.104",
+          q3: "1:29.978"
+        },        {
+          position: 9,
+          driver: "Gabriel Bortoleto",
+          code: "BOR",
+          team: "Audi",
+          team_id: "audi",
+          q1: "1:30.359",
+          q2: "1:29.990",
+          q3: "1:30.274"
+        },        {
+          position: 10,
+          driver: "Arvid Lindblad",
+          code: "LIN",
+          team: "RB F1 Team",
+          team_id: "rb",
+          q1: "1:30.781",
+          q2: "1:30.109",
+          q3: "1:30.319"
+        },        {
+          position: 11,
+          driver: "Max Verstappen",
+          code: "VER",
+          team: "Red Bull",
+          team_id: "red_bull",
+          q1: "1:30.519",
+          q2: "1:30.262",
+          q3: ""
+        },        {
+          position: 12,
+          driver: "Esteban Ocon",
+          code: "OCO",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          q1: "1:30.915",
+          q2: "1:30.309",
+          q3: ""
+        },        {
+          position: 13,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          q1: "1:30.358",
+          q2: "1:30.387",
+          q3: ""
+        },        {
+          position: 14,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          q1: "1:30.657",
+          q2: "1:30.495",
+          q3: ""
+        },        {
+          position: 15,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          q1: "1:30.931",
+          q2: "1:30.627",
+          q3: ""
+        },        {
+          position: 16,
+          driver: "Carlos Sainz",
+          code: "SAI",
+          team: "Williams",
+          team_id: "williams",
+          q1: "1:30.927",
+          q2: "1:31.033",
+          q3: ""
+        },        {
+          position: 17,
+          driver: "Alexander Albon",
+          code: "ALB",
+          team: "Williams",
+          team_id: "williams",
+          q1: "1:31.088",
+          q2: "",
+          q3: ""
+        },        {
+          position: 18,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          q1: "1:31.090",
+          q2: "",
+          q3: ""
+        },        {
+          position: 19,
+          driver: "Sergio Pérez",
+          code: "PER",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          q1: "1:32.206",
+          q2: "",
+          q3: ""
+        },        {
+          position: 20,
+          driver: "Valtteri Bottas",
+          code: "BOT",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          q1: "1:32.330",
+          q2: "",
+          q3: ""
+        },        {
+          position: 21,
+          driver: "Fernando Alonso",
+          code: "ALO",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          q1: "1:32.646",
+          q2: "",
+          q3: ""
+        },        {
+          position: 22,
+          driver: "Lance Stroll",
+          code: "STR",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          q1: "1:32.920",
+          q2: "",
+          q3: ""
+        }      ]
+    },    {
+      round: 4,
+      name: "Miami Grand Prix",
+      qualifying: [
+        {
+          position: 1,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          q1: "1:28.653",
+          q2: "1:28.289",
+          q3: "1:27.798"
+        },        {
+          position: 2,
+          driver: "Max Verstappen",
+          code: "VER",
+          team: "Red Bull",
+          team_id: "red_bull",
+          q1: "1:29.099",
+          q2: "1:28.116",
+          q3: "1:27.964"
+        },        {
+          position: 3,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          q1: "1:28.938",
+          q2: "1:28.315",
+          q3: "1:28.143"
+        },        {
+          position: 4,
+          driver: "Lando Norris",
+          code: "NOR",
+          team: "McLaren",
+          team_id: "mclaren",
+          q1: "1:29.183",
+          q2: "1:28.920",
+          q3: "1:28.183"
+        },        {
+          position: 5,
+          driver: "George Russell",
+          code: "RUS",
+          team: "Mercedes",
+          team_id: "mercedes",
+          q1: "1:29.492",
+          q2: "1:28.477",
+          q3: "1:28.197"
+        },        {
+          position: 6,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          q1: "1:29.483",
+          q2: "1:28.477",
+          q3: "1:28.319"
+        },        {
+          position: 7,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          q1: "1:29.920",
+          q2: "1:28.332",
+          q3: "1:28.500"
+        },        {
+          position: 8,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          q1: "1:29.584",
+          q2: "1:28.975",
+          q3: "1:28.762"
+        },        {
+          position: 9,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          q1: "1:29.914",
+          q2: "1:29.070",
+          q3: "1:28.810"
+        },        {
+          position: 10,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          q1: "1:29.645",
+          q2: "1:29.439",
+          q3: ""
+        },        {
+          position: 11,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          q1: "1:29.595",
+          q2: "1:29.499",
+          q3: ""
+        },        {
+          position: 12,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          q1: "1:29.340",
+          q2: "1:29.567",
+          q3: ""
+        },        {
+          position: 13,
+          driver: "Carlos Sainz",
+          code: "SAI",
+          team: "Williams",
+          team_id: "williams",
+          q1: "1:29.540",
+          q2: "1:29.568",
+          q3: ""
+        },        {
+          position: 14,
+          driver: "Esteban Ocon",
+          code: "OCO",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          q1: "1:29.838",
+          q2: "1:29.772",
+          q3: ""
+        },        {
+          position: 15,
+          driver: "Alexander Albon",
+          code: "ALB",
+          team: "Williams",
+          team_id: "williams",
+          q1: "1:29.720",
+          q2: "1:29.946",
+          q3: ""
+        },        {
+          position: 16,
+          driver: "Arvid Lindblad",
+          code: "LIN",
+          team: "RB F1 Team",
+          team_id: "rb",
+          q1: "1:30.133",
+          q2: "",
+          q3: ""
+        },        {
+          position: 17,
+          driver: "Fernando Alonso",
+          code: "ALO",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          q1: "1:31.098",
+          q2: "",
+          q3: ""
+        },        {
+          position: 18,
+          driver: "Lance Stroll",
+          code: "STR",
+          team: "Aston Martin",
+          team_id: "aston_martin",
+          q1: "1:31.164",
+          q2: "",
+          q3: ""
+        },        {
+          position: 19,
+          driver: "Valtteri Bottas",
+          code: "BOT",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          q1: "1:31.629",
+          q2: "",
+          q3: ""
+        },        {
+          position: 20,
+          driver: "Sergio Pérez",
+          code: "PER",
+          team: "Cadillac F1 Team",
+          team_id: "cadillac",
+          q1: "1:31.967",
+          q2: "",
+          q3: ""
+        },        {
+          position: 21,
+          driver: "Gabriel Bortoleto",
+          code: "BOR",
+          team: "Audi",
+          team_id: "audi",
+          q1: "1:33.737",
+          q2: "",
+          q3: ""
+        },        {
+          position: 22,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          q1: "",
+          q2: "1:28.941",
+          q3: "1:28.789"
+        }      ]
+    }  ];
+
+  const driverStandings = [
+    {
+      name: "Andrea Kimi Antonelli",
+      code: "ANT",
+      team: "Mercedes",
+      team_id: "mercedes",
+      team_hex: "##00d2be"
+    },    {
+      name: "George Russell",
+      code: "RUS",
+      team: "Mercedes",
+      team_id: "mercedes",
+      team_hex: "##00d2be"
+    },    {
+      name: "Charles Leclerc",
+      code: "LEC",
+      team: "Ferrari",
+      team_id: "ferrari",
+      team_hex: "##dc143c"
+    },    {
+      name: "Lando Norris",
+      code: "NOR",
+      team: "McLaren",
+      team_id: "mclaren",
+      team_hex: "##ff8700"
+    },    {
+      name: "Lewis Hamilton",
+      code: "HAM",
+      team: "Ferrari",
+      team_id: "ferrari",
+      team_hex: "##dc143c"
+    },    {
+      name: "Oscar Piastri",
+      code: "PIA",
+      team: "McLaren",
+      team_id: "mclaren",
+      team_hex: "##ff8700"
+    },    {
+      name: "Max Verstappen",
+      code: "VER",
+      team: "Red Bull",
+      team_id: "red_bull",
+      team_hex: "##3671C6"
+    },    {
+      name: "Oliver Bearman",
+      code: "BEA",
+      team: "Haas",
+      team_id: "haas",
+      team_hex: "##b6babd"
+    },    {
+      name: "Pierre Gasly",
+      code: "GAS",
+      team: "Alpine",
+      team_id: "alpine",
+      team_hex: "##0090ff"
+    },    {
+      name: "Liam Lawson",
+      code: "LAW",
+      team: "RB",
+      team_id: "rb",
+      team_hex: "##6692ff"
+    },    {
+      name: "Franco Colapinto",
+      code: "COL",
+      team: "Alpine",
+      team_id: "alpine",
+      team_hex: "##0090ff"
+    },    {
+      name: "Arvid Lindblad",
+      code: "LIN",
+      team: "RB",
+      team_id: "rb",
+      team_hex: "##6692ff"
+    },    {
+      name: "Isack Hadjar",
+      code: "HAD",
+      team: "Red Bull",
+      team_id: "red_bull",
+      team_hex: "##3671C6"
+    },    {
+      name: "Carlos Sainz",
+      code: "SAI",
+      team: "Williams",
+      team_id: "williams",
+      team_hex: "##64c4ff"
+    },    {
+      name: "Gabriel Bortoleto",
+      code: "BOR",
+      team: "Audi",
+      team_id: "audi",
+      team_hex: "##00e701"
+    },    {
+      name: "Esteban Ocon",
+      code: "OCO",
+      team: "Haas",
+      team_id: "haas",
+      team_hex: "##b6babd"
+    },    {
+      name: "Alexander Albon",
+      code: "ALB",
+      team: "Williams",
+      team_id: "williams",
+      team_hex: "##64c4ff"
+    },    {
+      name: "Nico Hülkenberg",
+      code: "HUL",
+      team: "Audi",
+      team_id: "audi",
+      team_hex: "##00e701"
+    },    {
+      name: "Valtteri Bottas",
+      code: "BOT",
+      team: "Cadillac",
+      team_id: "cadillac",
+      team_hex: "##c0c0c0"
+    },    {
+      name: "Sergio Pérez",
+      code: "PER",
+      team: "Cadillac",
+      team_id: "cadillac",
+      team_hex: "##c0c0c0"
+    },    {
+      name: "Fernando Alonso",
+      code: "ALO",
+      team: "Aston Martin",
+      team_id: "aston_martin",
+      team_hex: "##006f62"
+    },    {
+      name: "Lance Stroll",
+      code: "STR",
+      team: "Aston Martin",
+      team_id: "aston_martin",
+      team_hex: "##006f62"
+    }  ];
+
+  // Build a map of team_id -> hex color
+  const teamColors = {};
+  for (const d of driverStandings) {
+    teamColors[d.team_id] = d.team_hex;
+  }
+
+  // --- Build grid-finish pairs ---
+  // For each race, match qualifying grid to race finish by driver code
+  const qualByRound = {};
+  for (const q of qualifying) {
+    qualByRound[q.round] = {};
+    for (const qr of q.qualifying) {
+      qualByRound[q.round][qr.code] = qr.position;
+    }
+  }
+
+  const allPairs = []; // {code, driver, team, team_id, team_hex, grid, finish, delta, round, raceName}
+  const driverData = {}; // code -> {name, team, team_hex, rounds: [{round, grid, finish, delta}]}
+
+  for (const race of races) {
+    for (const r of race.results) {
+      let grid = parseInt(r.grid) || 0;
+      if (grid === 0 && qualByRound[race.round] && qualByRound[race.round][r.code]) {
+        grid = qualByRound[race.round][r.code];
+      }
+      if (grid === 0) continue; // skip DNS / no grid data
+      const finish = r.is_retired ? 20 : parseInt(r.position) || 20;
+      const delta = grid - finish; // positive = gained positions
+
+      const pair = {
+        code: r.code,
+        driver: r.driver,
+        team: r.team,
+        team_id: r.team_id,
+        team_hex: r.team_hex,
+        grid: grid,
+        finish: finish,
+        delta: delta,
+        round: race.round,
+        raceName: race.name,
+        isRetired: r.is_retired
+      };
+      allPairs.push(pair);
+
+      if (!driverData[r.code]) {
+        driverData[r.code] = {
+          name: r.driver,
+          code: r.code,
+          team: r.team,
+          team_id: r.team_id,
+          team_hex: r.team_hex,
+          rounds: []
+        };
+      }
+      driverData[r.code].rounds.push({
+        round: race.round,
+        raceName: race.name,
+        grid: grid,
+        finish: finish,
+        delta: delta,
+        isRetired: r.is_retired
+      });
+    }
+  }
+
+  // --- Summary Stats ---
+  const statsContainer = document.getElementById('stats-cards');
+
+  const avgDelta = allPairs.length > 0
+    ? (allPairs.reduce((s, p) => s + Math.abs(p.delta), 0) / allPairs.length)
+    : 0;
+
+  // Pole to win conversion
+  const poleStarts = allPairs.filter(p => p.grid === 1);
+  const poleWins = poleStarts.filter(p => p.finish === 1);
+  const poleConversion = poleStarts.length > 0 ? (poleWins.length / poleStarts.length * 100) : 0;
+
+  // Most positions gained (single race)
+  const bestGainer = allPairs.reduce((best, p) => p.delta > best.delta ? p : best, allPairs[0] || {delta: 0});
+
+  // Most positions gained on average
+  const driverAvgGain = {};
+  for (const [code, dd] of Object.entries(driverData)) {
+    const avg = dd.rounds.reduce((s, r) => s + r.delta, 0) / dd.rounds.length;
+    driverAvgGain[code] = { name: dd.name, team: dd.team, avg: avg };
+  }
+  const bestAvgGainer = Object.values(driverAvgGain).sort((a, b) => b.avg - a.avg)[0];
+
+  function addStatCard(title, value, label, colorClass) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-title">${title}</div>
+      <div class="stat-sm ${colorClass || ''}">${value}</div>
+      <div class="stat-label">${label}</div>
+    `;
+    statsContainer.appendChild(card);
+  }
+
+  addStatCard('Avg |Grid-Finish| Delta', avgDelta.toFixed(1) + ' pos', 'Average absolute position change per driver per race', 'warn');
+  addStatCard('Pole-to-Win Rate', poleConversion.toFixed(0) + '%', poleWins.length + ' wins from ' + poleStarts.length + ' pole starts', '');
+  addStatCard('Best Single Gain', bestGainer.delta ? ('+' + bestGainer.delta) : 'N/A',
+    bestGainer.driver ? (bestGainer.driver + ' at ' + bestGainer.raceName) : '', 'ok');
+  addStatCard('Best Avg Gainer', bestAvgGainer ? ('+' + bestAvgGainer.avg.toFixed(1) + '/race') : 'N/A',
+    bestAvgGainer ? bestAvgGainer.name : '', 'ok');
+
+  // --- Canvas helpers ---
+  const dpr = window.devicePixelRatio || 1;
+  function setupCanvas(canvas, width, height) {
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return ctx;
+  }
+
+  // --- Grid vs Finish Scatter ---
+  const scatterCanvas = document.getElementById('scatter-chart');
+  const scW = scatterCanvas.parentElement.clientWidth - 40;
+  const scH = 500;
+  scatterCanvas.style.height = scH + 'px';
+  const sc = setupCanvas(scatterCanvas, scW, scH);
+
+  const margin = { top: 30, right: 30, bottom: 50, left: 50 };
+  const plotW = scW - margin.left - margin.right;
+  const plotH = scH - margin.top - margin.bottom;
+  const maxPos = 20;
+
+  function gridToX(g) { return margin.left + (g - 0.5) / maxPos * plotW; }
+  function finToY(f) { return margin.top + (f - 0.5) / maxPos * plotH; }
+
+  // Axes
+  sc.strokeStyle = '#30363d';
+  sc.lineWidth = 1;
+  sc.beginPath();
+  sc.moveTo(margin.left, margin.top);
+  sc.lineTo(margin.left, scH - margin.bottom);
+  sc.lineTo(scW - margin.right, scH - margin.bottom);
+  sc.stroke();
+
+  // Axis labels
+  sc.font = '11px "SF Mono", "Fira Code", monospace';
+  sc.fillStyle = '#8b949e';
+  sc.textAlign = 'center';
+  sc.fillText('Grid Position', scW / 2, scH - 8);
+  sc.save();
+  sc.translate(14, scH / 2);
+  sc.rotate(-Math.PI / 2);
+  sc.fillText('Finish Position', 0, 0);
+  sc.restore();
+
+  // Tick marks
+  for (let i = 1; i <= maxPos; i += (maxPos <= 10 ? 1 : 2)) {
+    const x = gridToX(i);
+    const y = finToY(i);
+    sc.fillStyle = '#484f58';
+    sc.textAlign = 'center';
+    sc.textBaseline = 'top';
+    sc.fillText(i, x, scH - margin.bottom + 6);
+    sc.textAlign = 'right';
+    sc.textBaseline = 'middle';
+    sc.fillText(i, margin.left - 6, y);
+
+    // Grid lines
+    sc.strokeStyle = '#21262d';
+    sc.lineWidth = 0.5;
+    sc.beginPath();
+    sc.moveTo(margin.left, y);
+    sc.lineTo(scW - margin.right, y);
+    sc.stroke();
+    sc.beginPath();
+    sc.moveTo(x, margin.top);
+    sc.lineTo(x, scH - margin.bottom);
+    sc.stroke();
+  }
+
+  // y=x reference line (perfect grid-to-finish conversion)
+  sc.strokeStyle = '#58a6ff';
+  sc.lineWidth = 1.5;
+  sc.setLineDash([6, 4]);
+  sc.beginPath();
+  sc.moveTo(gridToX(1), finToY(1));
+  sc.lineTo(gridToX(maxPos), finToY(maxPos));
+  sc.stroke();
+  sc.setLineDash([]);
+
+  // Reference label
+  sc.fillStyle = '#58a6ff';
+  sc.font = '10px "SF Mono", "Fira Code", monospace';
+  sc.textAlign = 'left';
+  sc.fillText('y=x (no change)', gridToX(maxPos - 5), finToY(maxPos - 5) - 8);
+
+  // Zone labels
+  sc.fillStyle = 'rgba(63, 185, 80, 0.15)';
+  sc.font = '10px "SF Mono", "Fira Code", monospace';
+  sc.fillStyle = '#3fb950';
+  sc.globalAlpha = 0.5;
+  sc.textAlign = 'center';
+  sc.fillText('GAINED POSITIONS', gridToX(14), finToY(5));
+  sc.fillStyle = '#f85149';
+  sc.fillText('LOST POSITIONS', gridToX(5), finToY(16));
+  sc.globalAlpha = 1;
+
+  // Plot points
+  for (const p of allPairs) {
+    const x = gridToX(p.grid);
+    const y = finToY(p.finish);
+    sc.fillStyle = p.team_hex;
+    sc.globalAlpha = 0.75;
+    sc.beginPath();
+    sc.arc(x, y, 5, 0, Math.PI * 2);
+    sc.fill();
+    sc.globalAlpha = 1;
+
+    // Driver code label (only if not too crowded - show for top finishers)
+    if (p.finish <= 5 || Math.abs(p.delta) >= 5) {
+      sc.fillStyle = '#c9d1d9';
+      sc.font = '8px "SF Mono", "Fira Code", monospace';
+      sc.textAlign = 'left';
+      sc.fillText(p.code, x + 7, y + 3);
+    }
+  }
+
+  // --- Position Change Heatmap ---
+  const hmCanvas = document.getElementById('heatmap-chart');
+  const driverCodes = driverStandings.map(d => d.code);
+  const raceRounds = races.map(r => r.round);
+  const cellW = 60;
+  const cellH = 26;
+  const hmLabelW = 60;
+  const hmHeaderH = 50;
+  const hmW = hmLabelW + raceRounds.length * cellW + 20;
+  const hmH = hmHeaderH + driverCodes.length * cellH + 20;
+  hmCanvas.style.height = hmH + 'px';
+  hmCanvas.style.width = hmW + 'px';
+  const hm = setupCanvas(hmCanvas, hmW, hmH);
+
+  // Column headers (race rounds)
+  hm.font = '9px "SF Mono", "Fira Code", monospace';
+  hm.fillStyle = '#8b949e';
+  hm.textAlign = 'center';
+  raceRounds.forEach((rnd, ci) => {
+    const x = hmLabelW + ci * cellW + cellW / 2;
+    hm.save();
+    hm.translate(x, hmHeaderH - 6);
+    hm.rotate(-0.5);
+    hm.fillText('R' + rnd, 0, 0);
+    hm.restore();
+  });
+
+  // Build lookup: round -> code -> delta
+  const deltaLookup = {};
+  for (const p of allPairs) {
+    if (!deltaLookup[p.round]) deltaLookup[p.round] = {};
+    deltaLookup[p.round][p.code] = p.delta;
+  }
+
+  // Row labels + cells
+  driverCodes.forEach((code, ri) => {
+    const y = hmHeaderH + ri * cellH;
+
+    // Driver label
+    hm.fillStyle = '#c9d1d9';
+    hm.textAlign = 'right';
+    hm.textBaseline = 'middle';
+    hm.font = '10px "SF Mono", "Fira Code", monospace';
+    hm.fillText(code, hmLabelW - 6, y + cellH / 2);
+
+    raceRounds.forEach((rnd, ci) => {
+      const x = hmLabelW + ci * cellW;
+      const delta = deltaLookup[rnd] && deltaLookup[rnd][code];
+
+      // Cell background
+      if (delta === undefined || delta === null) {
+        hm.fillStyle = '#0d1117';
+      } else if (delta > 0) {
+        const intensity = Math.min(delta / 10, 1);
+        hm.fillStyle = `rgba(63, 185, 80, ${0.15 + intensity * 0.5})`;
+      } else if (delta < 0) {
+        const intensity = Math.min(Math.abs(delta) / 10, 1);
+        hm.fillStyle = `rgba(248, 81, 73, ${0.15 + intensity * 0.5})`;
+      } else {
+        hm.fillStyle = 'rgba(139, 148, 158, 0.1)';
+      }
+
+      hm.fillRect(x + 1, y + 1, cellW - 2, cellH - 2);
+
+      // Cell border
+      hm.strokeStyle = '#21262d';
+      hm.lineWidth = 0.5;
+      hm.strokeRect(x + 1, y + 1, cellW - 2, cellH - 2);
+
+      // Delta text
+      if (delta !== undefined && delta !== null) {
+        hm.fillStyle = delta > 0 ? '#3fb950' : delta < 0 ? '#f85149' : '#8b949e';
+        hm.font = '10px "SF Mono", "Fira Code", monospace';
+        hm.textAlign = 'center';
+        hm.textBaseline = 'middle';
+        const label = delta > 0 ? '+' + delta : delta === 0 ? '0' : '' + delta;
+        hm.fillText(label, x + cellW / 2, y + cellH / 2);
+      }
+    });
+  });
+
+  // --- Per-Driver Grid-to-Race Table ---
+  const driverTablesContainer = document.getElementById('driver-tables');
+
+  // Sort drivers by championship position
+  const sortedDriverCodes = driverStandings.map(d => d.code);
+
+  for (const code of sortedDriverCodes) {
+    const dd = driverData[code];
+    if (!dd || dd.rounds.length === 0) continue;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    let html = `<div class="card-title" style="color:${dd.team_hex}">${dd.name} &mdash; ${dd.team}</div>`;
+    html += `<table><thead><tr><th>Round</th><th>Race</th><th>Grid</th><th>Finish</th><th>Delta</th></tr></thead><tbody>`;
+
+    for (const r of dd.rounds) {
+      const deltaClass = r.delta > 0 ? 'delta-pos' : r.delta < 0 ? 'delta-neg' : 'delta-zero';
+      const deltaStr = r.delta > 0 ? '+' + r.delta : '' + r.delta;
+      const finishStr = r.isRetired ? 'RET' : r.finish;
+      html += `<tr>
+        <td>R${r.round}</td>
+        <td>${r.raceName.replace(' Grand Prix', ' GP')}</td>
+        <td>P${r.grid}</td>
+        <td>${r.isRetired ? '<span style="color:#f85149">RET</span>' : 'P' + r.finish}</td>
+        <td class="${deltaClass}">${deltaStr}</td>
+      </tr>`;
+    }
+
+    const avgDelta = dd.rounds.reduce((s, r) => s + r.delta, 0) / dd.rounds.length;
+    const avgClass = avgDelta > 0 ? 'delta-pos' : avgDelta < 0 ? 'delta-neg' : 'delta-zero';
+    html += `<tr style="border-top:1px solid #30363d;">
+      <td colspan="4" style="font-weight:600;color:#8b949e;">Average</td>
+      <td class="${avgClass}" style="font-weight:600;">${avgDelta > 0 ? '+' : ''}${avgDelta.toFixed(1)}</td>
+    </tr>`;
+
+    html += `</tbody></table>`;
+    card.innerHTML = html;
+    driverTablesContainer.appendChild(card);
+  }
+
+  // --- Qualifying Consistency Table ---
+  const consTbody = document.querySelector('#consistency-table tbody');
+  const consData = [];
+
+  for (const [code, dd] of Object.entries(driverData)) {
+    const deltas = dd.rounds.map(r => r.delta);
+    const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+    const variance = deltas.reduce((s, v) => s + (v - avg) * (v - avg), 0) / deltas.length;
+    const stdev = Math.sqrt(variance);
+    consData.push({
+      code: code,
+      name: dd.name,
+      team: dd.team,
+      team_hex: dd.team_hex,
+      avgDelta: avg,
+      stdev: stdev
+    });
+  }
+
+  consData.sort((a, b) => a.stdev - b.stdev);
+
+  for (const d of consData) {
+    const avgClass = d.avgDelta > 0 ? 'delta-pos' : d.avgDelta < 0 ? 'delta-neg' : 'delta-zero';
+    let assessment = '';
+    if (d.stdev < 2) assessment = '<span class="ok">Very Consistent</span>';
+    else if (d.stdev < 4) assessment = '<span class="warn">Moderate</span>';
+    else assessment = '<span class="neg">Volatile</span>';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="driver-name">${d.name}</td>
+      <td style="color:${d.team_hex}">${d.team}</td>
+      <td class="${avgClass}">${d.avgDelta > 0 ? '+' : ''}${d.avgDelta.toFixed(1)}</td>
+      <td>${d.stdev.toFixed(2)}</td>
+      <td>${assessment}</td>
+    `;
+    consTbody.appendChild(tr);
+  }
+
+  // --- Disruption Index (Kendall tau) ---
+  function kendallTau(a, b) {
+    // a and b are arrays of equal length
+    const n = a.length;
+    if (n < 2) return 0;
+    let concordant = 0, discordant = 0;
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        const aSign = Math.sign(a[i] - a[j]);
+        const bSign = Math.sign(b[i] - b[j]);
+        if (aSign * bSign > 0) concordant++;
+        else if (aSign * bSign < 0) discordant++;
+      }
+    }
+    const denom = n * (n - 1) / 2;
+    return denom === 0 ? 0 : (concordant - discordant) / denom;
+  }
+
+  const disTbody = document.querySelector('#disruption-table tbody');
+
+  for (const race of races) {
+    // Get grid and finish arrays for drivers who have grid data
+    const gridArr = [];
+    const finishArr = [];
+    for (const r of race.results) {
+      const grid = parseInt(r.grid) || 0;
+      if (grid === 0) continue;
+      const finish = r.is_retired ? 20 : (parseInt(r.position) || 20);
+      gridArr.push(grid);
+      finishArr.push(finish);
+    }
+
+    const tau = kendallTau(gridArr, finishArr);
+    let assessment = '';
+    if (tau > 0.8) assessment = '<span class="ok">Grid Held</span>';
+    else if (tau > 0.5) assessment = '<span class="warn">Some Shuffling</span>';
+    else if (tau > 0.2) assessment = '<span class="neg">Significant Disruption</span>';
+    else assessment = '<span class="neg" style="font-weight:700;">Chaos</span>';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>R${race.round}</td>
+      <td>${race.name}</td>
+      <td>${tau.toFixed(3)}</td>
+      <td>${assessment}</td>
+    `;
+    disTbody.appendChild(tr);
+  }
+
+})();
+</script>
+
+</body>
+</html>

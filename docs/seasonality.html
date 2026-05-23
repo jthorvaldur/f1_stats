@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Track DNA &amp; Circuit Seasonality</title>
+<meta name="description" content="How circuit characteristics shape team and driver performance in the 2026 F1 season. Track type analysis, team specialization, and driver circuit preferences.">
+<meta property="og:title" content="F1 2026 — Track DNA & Circuit Seasonality">
+<meta property="og:description" content="How circuit characteristics shape team and driver performance in the 2026 F1 season. Track type analysis and team specialization.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/seasonality.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — Track DNA & Circuit Seasonality">
+<meta name="twitter:description" content="How circuit characteristics shape team and driver performance in the 2026 F1 season.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .chart-container canvas { width: 100%; display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
+  .team-mclaren { color: #ff8700; }
+  .team-redbull { color: #3671C6; }
+  .team-alpine { color: #0090ff; }
+  .team-haas { color: #b6babd; }
+  .team-rb { color: #6692ff; }
+  .team-williams { color: #64c4ff; }
+  .team-audi { color: #00e701; }
+  .team-cadillac { color: #c0c0c0; }
+  .team-aston { color: #006f62; }
+
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .type-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .type-street { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .type-permanent { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .type-street-park { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+
+  .demand-bar { display: inline-block; height: 8px; border-radius: 4px; vertical-align: middle; }
+
+  .race-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .race-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .race-card-name { color: #f0f6fc; font-size: 14px; font-weight: 600; }
+  .race-card-round { color: #8b949e; font-size: 11px; }
+  .race-card-dna { display: flex; gap: 16px; margin-bottom: 12px; font-size: 11px; color: #8b949e; flex-wrap: wrap; }
+  .race-card-dna span { display: flex; align-items: center; gap: 4px; }
+
+  .callout {
+    border-left: 3px solid; padding: 12px 16px; margin: 16px 0;
+    font-size: 12px; line-height: 1.7; background: rgba(255,255,255,0.02);
+    border-radius: 0 8px 8px 0;
+  }
+  .callout-amber { border-color: #d29922; }
+  .callout-blue { border-color: #58a6ff; }
+  .callout-green { border-color: #3fb950; }
+
+  .next-race-box {
+    background: #0d1830;
+    border: 1px solid #1b2d4a;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .methodology {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 12px;
+    color: #8b949e;
+    line-height: 1.8;
+  }
+  .methodology p { margin-bottom: 10px; }
+  .methodology strong { color: #c9d1d9; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a class="back-link" href="index.html">&larr; back to overview</a>
+  <h1>Track DNA</h1>
+  <div class="tagline">How circuit characteristics shape team and driver performance across the 2026 season. Power circuits, downforce tracks, and street fights.</div>
+  <div class="badges">
+    <span class="badge badge-green">23 Circuits Classified</span>
+    <span class="badge badge-blue">4 Races Complete</span>
+    <span class="badge badge-amber">3 Track Types</span>
+    <span class="badge badge-purple">Early-Season Indicators</span>
+  </div>
+</div>
+
+<!-- Circuit classification table -->
+<div class="section">
+  <h2>Circuit Classification</h2>
+  <p class="section-sub">Every classified circuit with type, power demand, downforce demand, and overtaking opportunity</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Circuit</th>
+          <th>Type</th>
+          <th>Power</th>
+          <th>Downforce</th>
+          <th>Overtaking</th>
+        </tr>
+      </thead>
+      <tbody id="circuit-table"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Race results by circuit type -->
+<div class="section section-divider">
+  <h2>2026 Races vs. Circuit Type</h2>
+  <p class="section-sub">How each completed race's circuit DNA shaped the results</p>
+  <div class="grid grid-2" id="race-cards"></div>
+</div>
+
+<!-- Team performance by track type (grouped bar chart) -->
+<div class="section section-divider">
+  <h2>Team Performance by Track Type</h2>
+  <p class="section-sub">Average points per race by track type for the top teams &mdash; reveals specialization patterns</p>
+  <div class="chart-container">
+    <canvas id="team-type-chart"></canvas>
+  </div>
+  <div id="team-type-legend" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:11px;"></div>
+</div>
+
+<!-- Driver circuit preference -->
+<div class="section section-divider">
+  <h2>Driver Circuit Preference</h2>
+  <p class="section-sub">Grid-to-finish improvement by track type &mdash; which drivers thrive on which circuits?</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Driver</th>
+          <th>Team</th>
+          <th>Permanent (avg delta)</th>
+          <th>Street (avg delta)</th>
+          <th>Street-Park (avg delta)</th>
+          <th>Best Type</th>
+        </tr>
+      </thead>
+      <tbody id="driver-pref-table"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Upcoming calendar analysis -->
+<div class="section section-divider">
+  <h2>Next Race Analysis</h2>
+  <p class="section-sub">Predicted team form based on circuit DNA</p>
+  <div class="next-race-box" id="next-race-section"></div>
+</div>
+
+<!-- Caveat -->
+<div class="section section-divider">
+  <h2>Statistical Caveat</h2>
+  <p class="section-sub">Interpreting early-season data</p>
+  <div class="methodology">
+    <p>
+      <strong>With only 4 races and 3 track types, statistical power is limited.</strong>
+      Some track types may have only 1-2 data points. All findings here are framed as
+      <strong>early indicators</strong>, not conclusions. Patterns may invert as the season progresses
+      and more circuits are visited.
+    </p>
+    <p>
+      <strong>Confounders:</strong> Team development trajectories, weather, driver errors, reliability,
+      and strategic decisions all contribute to results beyond circuit characteristics. A team's strong
+      showing at a street circuit may reflect an upgrade package introduced that weekend, not a
+      genuine street-circuit advantage.
+    </p>
+    <p>
+      <strong>Circuit classification</strong> is based on publicly available FIA circuit data and
+      established categorizations. Power, downforce, and overtaking values are normalized estimates
+      (0-1 scale) based on top speeds, corner counts, and historical passing data.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+// ── Data (injected from Jinja2) ─────────────────────────────────────────
+const CIRCUIT_TYPES = {"albert_park": {"type": "street-park", "power": 0.5, "downforce": 0.6, "overtaking": 0.5}, "shanghai": {"type": "permanent", "power": 0.7, "downforce": 0.5, "overtaking": 0.7}, "suzuka": {"type": "permanent", "power": 0.6, "downforce": 0.9, "overtaking": 0.3}, "miami": {"type": "street-park", "power": 0.6, "downforce": 0.5, "overtaking": 0.6}, "monaco": {"type": "street", "power": 0.2, "downforce": 0.9, "overtaking": 0.1}, "silverstone": {"type": "permanent", "power": 0.7, "downforce": 0.8, "overtaking": 0.6}, "spa": {"type": "permanent", "power": 0.8, "downforce": 0.7, "overtaking": 0.7}, "monza": {"type": "permanent", "power": 0.95, "downforce": 0.2, "overtaking": 0.8}, "singapore": {"type": "street", "power": 0.3, "downforce": 0.8, "overtaking": 0.3}, "interlagos": {"type": "permanent", "power": 0.6, "downforce": 0.6, "overtaking": 0.7}, "jeddah": {"type": "street", "power": 0.8, "downforce": 0.5, "overtaking": 0.5}, "bahrain": {"type": "permanent", "power": 0.6, "downforce": 0.6, "overtaking": 0.6}, "red_bull_ring": {"type": "permanent", "power": 0.7, "downforce": 0.5, "overtaking": 0.5}, "hungaroring": {"type": "permanent", "power": 0.3, "downforce": 0.8, "overtaking": 0.2}, "zandvoort": {"type": "permanent", "power": 0.4, "downforce": 0.7, "overtaking": 0.3}, "baku": {"type": "street", "power": 0.8, "downforce": 0.4, "overtaking": 0.6}, "americas": {"type": "permanent", "power": 0.6, "downforce": 0.7, "overtaking": 0.6}, "las_vegas": {"type": "street", "power": 0.8, "downforce": 0.4, "overtaking": 0.6}, "losail": {"type": "permanent", "power": 0.7, "downforce": 0.6, "overtaking": 0.5}, "yas_marina": {"type": "permanent", "power": 0.5, "downforce": 0.6, "overtaking": 0.5}, "imola": {"type": "permanent", "power": 0.5, "downforce": 0.7, "overtaking": 0.3}, "barcelona": {"type": "permanent", "power": 0.6, "downforce": 0.7, "overtaking": 0.4}, "portimao": {"type": "permanent", "power": 0.6, "downforce": 0.6, "overtaking": 0.5}};
+
+const RACES = [
+  {
+    round: 1,
+    name: 'Australian Grand Prix',
+    circuit: 'Albert Park Grand Prix Circuit',
+    circuitId: 'albert_park',
+    results: [
+      {
+        driver: 'George Russell',
+        team: 'Mercedes',
+        teamId: 'mercedes',
+        teamColor: '##00d2be',
+        position: 1,
+        grid: 1,
+        points: 25.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Andrea Kimi Antonelli',
+        team: 'Mercedes',
+        teamId: 'mercedes',
+        teamColor: '##00d2be',
+        position: 2,
+        grid: 2,
+        points: 18.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Charles Leclerc',
+        team: 'Ferrari',
+        teamId: 'ferrari',
+        teamColor: '##dc143c',
+        position: 3,
+        grid: 4,
+        points: 15.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lewis Hamilton',
+        team: 'Ferrari',
+        teamId: 'ferrari',
+        teamColor: '##dc143c',
+        position: 4,
+        grid: 7,
+        points: 12.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lando Norris',
+        team: 'McLaren',
+        teamId: 'mclaren',
+        teamColor: '##ff8700',
+        position: 5,
+        grid: 6,
+        points: 10.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Max Verstappen',
+        team: 'Red Bull',
+        teamId: 'red_bull',
+        teamColor: '##3671C6',
+        position: 6,
+        grid: 20,
+        points: 8.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Oliver Bearman',
+        team: 'Haas F1 Team',
+        teamId: 'haas',
+        teamColor: '##b6babd',
+        position: 7,
+        grid: 12,
+        points: 6.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Arvid Lindblad',
+        team: 'RB F1 Team',
+        teamId: 'rb',
+        teamColor: '##6692ff',
+        position: 8,
+        grid: 9,
+        points: 4.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Gabriel Bortoleto',
+        team: 'Audi',
+        teamId: 'audi',
+        teamColor: '##00e701',
+        position: 9,
+        grid: 10,
+        points: 2.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Pierre Gasly',
+        team: 'Alpine F1 Team',
+        teamId: 'alpine',
+        teamColor: '##0090ff',
+        position: 10,
+        grid: 14,
+        points: 1.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Esteban Ocon',
+        team: 'Haas F1 Team',
+        teamId: 'haas',
+        teamColor: '##b6babd',
+        position: 11,
+        grid: 13,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Alexander Albon',
+        team: 'Williams',
+        teamId: 'williams',
+        teamColor: '##64c4ff',
+        position: 12,
+        grid: 15,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Liam Lawson',
+        team: 'RB F1 Team',
+        teamId: 'rb',
+        teamColor: '##6692ff',
+        position: 13,
+        grid: 8,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Franco Colapinto',
+        team: 'Alpine F1 Team',
+        teamId: 'alpine',
+        teamColor: '##0090ff',
+        position: 14,
+        grid: 16,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Carlos Sainz',
+        team: 'Williams',
+        teamId: 'williams',
+        teamColor: '##64c4ff',
+        position: 15,
+        grid: 21,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Sergio Pérez',
+        team: 'Cadillac F1 Team',
+        teamId: 'cadillac',
+        teamColor: '##c0c0c0',
+        position: 16,
+        grid: 18,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lance Stroll',
+        team: 'Aston Martin',
+        teamId: 'aston_martin',
+        teamColor: '##006f62',
+        position: 17,
+        grid: 22,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Fernando Alonso',
+        team: 'Aston Martin',
+        teamId: 'aston_martin',
+        teamColor: '##006f62',
+        position: 18,
+        grid: 17,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Valtteri Bottas',
+        team: 'Cadillac F1 Team',
+        teamId: 'cadillac',
+        teamColor: '##c0c0c0',
+        position: 19,
+        grid: 19,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Isack Hadjar',
+        team: 'Red Bull',
+        teamId: 'red_bull',
+        teamColor: '##3671C6',
+        position: 20,
+        grid: 3,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Oscar Piastri',
+        team: 'McLaren',
+        teamId: 'mclaren',
+        teamColor: '##ff8700',
+        position: 21,
+        grid: 5,
+        points: 0.0,
+        isRetired: true,
+        isDNS: true
+      },      {
+        driver: 'Nico Hülkenberg',
+        team: 'Audi',
+        teamId: 'audi',
+        teamColor: '##00e701',
+        position: 22,
+        grid: 11,
+        points: 0.0,
+        isRetired: true,
+        isDNS: true
+      }    ]
+  },  {
+    round: 2,
+    name: 'Chinese Grand Prix',
+    circuit: 'Shanghai International Circuit',
+    circuitId: 'shanghai',
+    results: [
+      {
+        driver: 'Andrea Kimi Antonelli',
+        team: 'Mercedes',
+        teamId: 'mercedes',
+        teamColor: '##00d2be',
+        position: 1,
+        grid: 1,
+        points: 25.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'George Russell',
+        team: 'Mercedes',
+        teamId: 'mercedes',
+        teamColor: '##00d2be',
+        position: 2,
+        grid: 2,
+        points: 18.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lewis Hamilton',
+        team: 'Ferrari',
+        teamId: 'ferrari',
+        teamColor: '##dc143c',
+        position: 3,
+        grid: 3,
+        points: 15.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Charles Leclerc',
+        team: 'Ferrari',
+        teamId: 'ferrari',
+        teamColor: '##dc143c',
+        position: 4,
+        grid: 4,
+        points: 12.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Oliver Bearman',
+        team: 'Haas F1 Team',
+        teamId: 'haas',
+        teamColor: '##b6babd',
+        position: 5,
+        grid: 10,
+        points: 10.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Pierre Gasly',
+        team: 'Alpine F1 Team',
+        teamId: 'alpine',
+        teamColor: '##0090ff',
+        position: 6,
+        grid: 7,
+        points: 8.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Liam Lawson',
+        team: 'RB F1 Team',
+        teamId: 'rb',
+        teamColor: '##6692ff',
+        position: 7,
+        grid: 14,
+        points: 6.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Isack Hadjar',
+        team: 'Red Bull',
+        teamId: 'red_bull',
+        teamColor: '##3671C6',
+        position: 8,
+        grid: 9,
+        points: 4.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Carlos Sainz',
+        team: 'Williams',
+        teamId: 'williams',
+        teamColor: '##64c4ff',
+        position: 9,
+        grid: 17,
+        points: 2.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Franco Colapinto',
+        team: 'Alpine F1 Team',
+        teamId: 'alpine',
+        teamColor: '##0090ff',
+        position: 10,
+        grid: 12,
+        points: 1.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Nico Hülkenberg',
+        team: 'Audi',
+        teamId: 'audi',
+        teamColor: '##00e701',
+        position: 11,
+        grid: 11,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Arvid Lindblad',
+        team: 'RB F1 Team',
+        teamId: 'rb',
+        teamColor: '##6692ff',
+        position: 12,
+        grid: 15,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Valtteri Bottas',
+        team: 'Cadillac F1 Team',
+        teamId: 'cadillac',
+        teamColor: '##c0c0c0',
+        position: 13,
+        grid: 19,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Esteban Ocon',
+        team: 'Haas F1 Team',
+        teamId: 'haas',
+        teamColor: '##b6babd',
+        position: 14,
+        grid: 13,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Sergio Pérez',
+        team: 'Cadillac F1 Team',
+        teamId: 'cadillac',
+        teamColor: '##c0c0c0',
+        position: 15,
+        grid: 21,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Max Verstappen',
+        team: 'Red Bull',
+        teamId: 'red_bull',
+        teamColor: '##3671C6',
+        position: 16,
+        grid: 8,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Fernando Alonso',
+        team: 'Aston Martin',
+        teamId: 'aston_martin',
+        teamColor: '##006f62',
+        position: 17,
+        grid: 18,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Lance Stroll',
+        team: 'Aston Martin',
+        teamId: 'aston_martin',
+        teamColor: '##006f62',
+        position: 18,
+        grid: 20,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Oscar Piastri',
+        team: 'McLaren',
+        teamId: 'mclaren',
+        teamColor: '##ff8700',
+        position: 19,
+        grid: 5,
+        points: 0.0,
+        isRetired: true,
+        isDNS: true
+      },      {
+        driver: 'Lando Norris',
+        team: 'McLaren',
+        teamId: 'mclaren',
+        teamColor: '##ff8700',
+        position: 20,
+        grid: 6,
+        points: 0.0,
+        isRetired: true,
+        isDNS: true
+      },      {
+        driver: 'Gabriel Bortoleto',
+        team: 'Audi',
+        teamId: 'audi',
+        teamColor: '##00e701',
+        position: 21,
+        grid: 16,
+        points: 0.0,
+        isRetired: true,
+        isDNS: true
+      },      {
+        driver: 'Alexander Albon',
+        team: 'Williams',
+        teamId: 'williams',
+        teamColor: '##64c4ff',
+        position: 22,
+        grid: 22,
+        points: 0.0,
+        isRetired: true,
+        isDNS: true
+      }    ]
+  },  {
+    round: 3,
+    name: 'Japanese Grand Prix',
+    circuit: 'Suzuka Circuit',
+    circuitId: 'suzuka',
+    results: [
+      {
+        driver: 'Andrea Kimi Antonelli',
+        team: 'Mercedes',
+        teamId: 'mercedes',
+        teamColor: '##00d2be',
+        position: 1,
+        grid: 1,
+        points: 25.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Oscar Piastri',
+        team: 'McLaren',
+        teamId: 'mclaren',
+        teamColor: '##ff8700',
+        position: 2,
+        grid: 3,
+        points: 18.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Charles Leclerc',
+        team: 'Ferrari',
+        teamId: 'ferrari',
+        teamColor: '##dc143c',
+        position: 3,
+        grid: 4,
+        points: 15.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'George Russell',
+        team: 'Mercedes',
+        teamId: 'mercedes',
+        teamColor: '##00d2be',
+        position: 4,
+        grid: 2,
+        points: 12.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lando Norris',
+        team: 'McLaren',
+        teamId: 'mclaren',
+        teamColor: '##ff8700',
+        position: 5,
+        grid: 5,
+        points: 10.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lewis Hamilton',
+        team: 'Ferrari',
+        teamId: 'ferrari',
+        teamColor: '##dc143c',
+        position: 6,
+        grid: 6,
+        points: 8.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Pierre Gasly',
+        team: 'Alpine F1 Team',
+        teamId: 'alpine',
+        teamColor: '##0090ff',
+        position: 7,
+        grid: 7,
+        points: 6.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Max Verstappen',
+        team: 'Red Bull',
+        teamId: 'red_bull',
+        teamColor: '##3671C6',
+        position: 8,
+        grid: 11,
+        points: 4.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Liam Lawson',
+        team: 'RB F1 Team',
+        teamId: 'rb',
+        teamColor: '##6692ff',
+        position: 9,
+        grid: 14,
+        points: 2.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Esteban Ocon',
+        team: 'Haas F1 Team',
+        teamId: 'haas',
+        teamColor: '##b6babd',
+        position: 10,
+        grid: 12,
+        points: 1.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Nico Hülkenberg',
+        team: 'Audi',
+        teamId: 'audi',
+        teamColor: '##00e701',
+        position: 11,
+        grid: 13,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Isack Hadjar',
+        team: 'Red Bull',
+        teamId: 'red_bull',
+        teamColor: '##3671C6',
+        position: 12,
+        grid: 8,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Gabriel Bortoleto',
+        team: 'Audi',
+        teamId: 'audi',
+        teamColor: '##00e701',
+        position: 13,
+        grid: 9,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Arvid Lindblad',
+        team: 'RB F1 Team',
+        teamId: 'rb',
+        teamColor: '##6692ff',
+        position: 14,
+        grid: 10,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Carlos Sainz',
+        team: 'Williams',
+        teamId: 'williams',
+        teamColor: '##64c4ff',
+        position: 15,
+        grid: 16,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Franco Colapinto',
+        team: 'Alpine F1 Team',
+        teamId: 'alpine',
+        teamColor: '##0090ff',
+        position: 16,
+        grid: 15,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Sergio Pérez',
+        team: 'Cadillac F1 Team',
+        teamId: 'cadillac',
+        teamColor: '##c0c0c0',
+        position: 17,
+        grid: 19,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Fernando Alonso',
+        team: 'Aston Martin',
+        teamId: 'aston_martin',
+        teamColor: '##006f62',
+        position: 18,
+        grid: 21,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Valtteri Bottas',
+        team: 'Cadillac F1 Team',
+        teamId: 'cadillac',
+        teamColor: '##c0c0c0',
+        position: 19,
+        grid: 20,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Alexander Albon',
+        team: 'Williams',
+        teamId: 'williams',
+        teamColor: '##64c4ff',
+        position: 20,
+        grid: 17,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lance Stroll',
+        team: 'Aston Martin',
+        teamId: 'aston_martin',
+        teamColor: '##006f62',
+        position: 21,
+        grid: 22,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Oliver Bearman',
+        team: 'Haas F1 Team',
+        teamId: 'haas',
+        teamColor: '##b6babd',
+        position: 22,
+        grid: 18,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      }    ]
+  },  {
+    round: 4,
+    name: 'Miami Grand Prix',
+    circuit: 'Miami International Autodrome',
+    circuitId: 'miami',
+    results: [
+      {
+        driver: 'Andrea Kimi Antonelli',
+        team: 'Mercedes',
+        teamId: 'mercedes',
+        teamColor: '##00d2be',
+        position: 1,
+        grid: 1,
+        points: 25.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lando Norris',
+        team: 'McLaren',
+        teamId: 'mclaren',
+        teamColor: '##ff8700',
+        position: 2,
+        grid: 4,
+        points: 18.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Oscar Piastri',
+        team: 'McLaren',
+        teamId: 'mclaren',
+        teamColor: '##ff8700',
+        position: 3,
+        grid: 7,
+        points: 15.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'George Russell',
+        team: 'Mercedes',
+        teamId: 'mercedes',
+        teamColor: '##00d2be',
+        position: 4,
+        grid: 5,
+        points: 12.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Max Verstappen',
+        team: 'Red Bull',
+        teamId: 'red_bull',
+        teamColor: '##3671C6',
+        position: 5,
+        grid: 2,
+        points: 10.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lewis Hamilton',
+        team: 'Ferrari',
+        teamId: 'ferrari',
+        teamColor: '##dc143c',
+        position: 6,
+        grid: 6,
+        points: 8.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Franco Colapinto',
+        team: 'Alpine F1 Team',
+        teamId: 'alpine',
+        teamColor: '##0090ff',
+        position: 7,
+        grid: 8,
+        points: 6.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Charles Leclerc',
+        team: 'Ferrari',
+        teamId: 'ferrari',
+        teamColor: '##dc143c',
+        position: 8,
+        grid: 3,
+        points: 4.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Carlos Sainz',
+        team: 'Williams',
+        teamId: 'williams',
+        teamColor: '##64c4ff',
+        position: 9,
+        grid: 13,
+        points: 2.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Alexander Albon',
+        team: 'Williams',
+        teamId: 'williams',
+        teamColor: '##64c4ff',
+        position: 10,
+        grid: 15,
+        points: 1.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Oliver Bearman',
+        team: 'Haas F1 Team',
+        teamId: 'haas',
+        teamColor: '##b6babd',
+        position: 11,
+        grid: 12,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Gabriel Bortoleto',
+        team: 'Audi',
+        teamId: 'audi',
+        teamColor: '##00e701',
+        position: 12,
+        grid: 21,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Esteban Ocon',
+        team: 'Haas F1 Team',
+        teamId: 'haas',
+        teamColor: '##b6babd',
+        position: 13,
+        grid: 14,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Arvid Lindblad',
+        team: 'RB F1 Team',
+        teamId: 'rb',
+        teamColor: '##6692ff',
+        position: 14,
+        grid: 16,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Fernando Alonso',
+        team: 'Aston Martin',
+        teamId: 'aston_martin',
+        teamColor: '##006f62',
+        position: 15,
+        grid: 17,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Sergio Pérez',
+        team: 'Cadillac F1 Team',
+        teamId: 'cadillac',
+        teamColor: '##c0c0c0',
+        position: 16,
+        grid: 20,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Lance Stroll',
+        team: 'Aston Martin',
+        teamId: 'aston_martin',
+        teamColor: '##006f62',
+        position: 17,
+        grid: 18,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Valtteri Bottas',
+        team: 'Cadillac F1 Team',
+        teamId: 'cadillac',
+        teamColor: '##c0c0c0',
+        position: 18,
+        grid: 19,
+        points: 0.0,
+        isRetired: false,
+        isDNS: false
+      },      {
+        driver: 'Nico Hülkenberg',
+        team: 'Audi',
+        teamId: 'audi',
+        teamColor: '##00e701',
+        position: 19,
+        grid: 10,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Liam Lawson',
+        team: 'RB F1 Team',
+        teamId: 'rb',
+        teamColor: '##6692ff',
+        position: 20,
+        grid: 11,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Pierre Gasly',
+        team: 'Alpine F1 Team',
+        teamId: 'alpine',
+        teamColor: '##0090ff',
+        position: 21,
+        grid: 9,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      },      {
+        driver: 'Isack Hadjar',
+        team: 'Red Bull',
+        teamId: 'red_bull',
+        teamColor: '##3671C6',
+        position: 22,
+        grid: 22,
+        points: 0.0,
+        isRetired: true,
+        isDNS: false
+      }    ]
+  }];
+
+const CONSTRUCTORS = [
+  {
+    teamId: 'mercedes',
+    name: 'Mercedes',
+    color: '##00d2be',
+    points: 180.0
+  },  {
+    teamId: 'ferrari',
+    name: 'Ferrari',
+    color: '##dc143c',
+    points: 110.0
+  },  {
+    teamId: 'mclaren',
+    name: 'McLaren',
+    color: '##ff8700',
+    points: 94.0
+  },  {
+    teamId: 'red_bull',
+    name: 'Red Bull',
+    color: '##3671C6',
+    points: 30.0
+  },  {
+    teamId: 'alpine',
+    name: 'Alpine',
+    color: '##0090ff',
+    points: 23.0
+  },  {
+    teamId: 'haas',
+    name: 'Haas',
+    color: '##b6babd',
+    points: 18.0
+  },  {
+    teamId: 'rb',
+    name: 'RB',
+    color: '##6692ff',
+    points: 14.0
+  },  {
+    teamId: 'williams',
+    name: 'Williams',
+    color: '##64c4ff',
+    points: 5.0
+  },  {
+    teamId: 'audi',
+    name: 'Audi',
+    color: '##00e701',
+    points: 2.0
+  },  {
+    teamId: 'cadillac',
+    name: 'Cadillac',
+    color: '##c0c0c0',
+    points: 0.0
+  },  {
+    teamId: 'aston_martin',
+    name: 'Aston Martin',
+    color: '##006f62',
+    points: 0.0
+  }];
+
+const NEXT_RACE = {
+  name: 'Canadian Grand Prix',
+  circuit: 'Circuit Gilles Villeneuve',
+  circuitId: 'villeneuve',
+  date: '2026-05-24',
+  round: 5
+};
+
+const TYPE_COLORS = {
+  'permanent': '#3fb950',
+  'street': '#f85149',
+  'street-park': '#d29922'
+};
+
+const TYPE_CSS = {
+  'permanent': 'type-permanent',
+  'street': 'type-street',
+  'street-park': 'type-street-park'
+};
+
+// ── Helper: match race circuit to circuit_types key ─────────────────────
+function findCircuitType(race) {
+  // Try circuitId first, then fuzzy match circuit name
+  if (race.circuitId && CIRCUIT_TYPES[race.circuitId]) {
+    return { id: race.circuitId, ...CIRCUIT_TYPES[race.circuitId] };
+  }
+  const name = (race.circuit || race.name || '').toLowerCase();
+  for (const [cid, cdata] of Object.entries(CIRCUIT_TYPES)) {
+    const idWords = cid.replace(/_/g, ' ');
+    if (name.includes(idWords) || name.includes(cid)) {
+      return { id: cid, ...cdata };
+    }
+  }
+  // Try partial matching
+  for (const [cid, cdata] of Object.entries(CIRCUIT_TYPES)) {
+    const parts = cid.split('_');
+    if (parts.some(p => p.length > 3 && name.includes(p))) {
+      return { id: cid, ...cdata };
+    }
+  }
+  return null;
+}
+
+// ── Circuit classification table ────────────────────────────────────────
+(function buildCircuitTable() {
+  const tbody = document.getElementById('circuit-table');
+  const sorted = Object.entries(CIRCUIT_TYPES).sort((a, b) => a[0].localeCompare(b[0]));
+
+  function demandBar(val, color) {
+    const w = Math.round(val * 100);
+    return `<span class="demand-bar" style="width:${w}px;background:${color};"></span> <span style="font-size:10px;color:#8b949e;">${(val * 100).toFixed(0)}%</span>`;
+  }
+
+  sorted.forEach(([cid, c]) => {
+    const displayName = cid.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const typeCss = TYPE_CSS[c.type] || '';
+    tbody.innerHTML += `<tr>
+      <td class="driver-name">${displayName}</td>
+      <td><span class="type-badge ${typeCss}">${c.type}</span></td>
+      <td>${demandBar(c.power, '#f85149')}</td>
+      <td>${demandBar(c.downforce, '#58a6ff')}</td>
+      <td>${demandBar(c.overtaking, '#3fb950')}</td>
+    </tr>`;
+  });
+})();
+
+// ── Race cards by circuit type ──────────────────────────────────────────
+(function buildRaceCards() {
+  const container = document.getElementById('race-cards');
+  RACES.forEach(race => {
+    const ct = findCircuitType(race);
+    const typeBadge = ct
+      ? `<span class="type-badge ${TYPE_CSS[ct.type] || ''}">${ct.type}</span>`
+      : `<span class="type-badge" style="background:#21262d;color:#8b949e;border:1px solid #30363d;">unknown</span>`;
+
+    const dnaHtml = ct ? `
+      <div class="race-card-dna">
+        <span>Power: <span class="demand-bar" style="width:${ct.power * 60}px;background:#f85149;"></span> ${(ct.power * 100).toFixed(0)}%</span>
+        <span>Downforce: <span class="demand-bar" style="width:${ct.downforce * 60}px;background:#58a6ff;"></span> ${(ct.downforce * 100).toFixed(0)}%</span>
+        <span>Overtaking: <span class="demand-bar" style="width:${ct.overtaking * 60}px;background:#3fb950;"></span> ${(ct.overtaking * 100).toFixed(0)}%</span>
+      </div>` : '';
+
+    // Top 5 finishers
+    const top5 = race.results.filter(r => !r.isDNS).slice(0, 5);
+    const top5Html = top5.map((r, i) => {
+      const posClass = i === 0 ? 'color:#ffd700;font-weight:700;' : i === 1 ? 'color:#c0c0c0;font-weight:600;' : i === 2 ? 'color:#cd7f32;font-weight:600;' : '';
+      return `<tr>
+        <td style="${posClass}">${r.position}</td>
+        <td class="driver-name">${r.driver}</td>
+        <td style="color:${r.teamColor};">${r.team}</td>
+        <td>${r.points}</td>
+        <td style="color:${r.grid > 0 && r.position < r.grid ? '#3fb950' : r.grid > 0 && r.position > r.grid ? '#f85149' : '#8b949e'};">${r.grid > 0 ? (r.grid - r.position > 0 ? '+' : '') + (r.grid - r.position) : '-'}</td>
+      </tr>`;
+    }).join('');
+
+    container.innerHTML += `
+    <div class="race-card">
+      <div class="race-card-header">
+        <span class="race-card-name">${race.name}</span>
+        <span class="race-card-round">R${race.round}</span>
+        ${typeBadge}
+      </div>
+      ${dnaHtml}
+      <table>
+        <thead><tr><th>Pos</th><th>Driver</th><th>Team</th><th>Pts</th><th>Delta</th></tr></thead>
+        <tbody>${top5Html}</tbody>
+      </table>
+    </div>`;
+  });
+})();
+
+// ── Team performance by track type (grouped bar chart) ──────────────────
+function drawTeamTypeChart() {
+  const canvas = document.getElementById('team-type-chart');
+  const dpr = window.devicePixelRatio || 1;
+
+  // Compute avg points per team per track type
+  const trackTypes = ['permanent', 'street', 'street-park'];
+  const teamPoints = {}; // teamId -> { type -> { total, count } }
+
+  RACES.forEach(race => {
+    const ct = findCircuitType(race);
+    if (!ct) return;
+    race.results.forEach(r => {
+      if (!teamPoints[r.teamId]) teamPoints[r.teamId] = {};
+      if (!teamPoints[r.teamId][ct.type]) teamPoints[r.teamId][ct.type] = { total: 0, count: 0 };
+      teamPoints[r.teamId][ct.type].total += r.points;
+      teamPoints[r.teamId][ct.type].count = Math.max(teamPoints[r.teamId][ct.type].count, 1);
+    });
+    // Set count per team per type (count races, not drivers)
+    const seenTeams = new Set();
+    race.results.forEach(r => {
+      if (!seenTeams.has(r.teamId)) {
+        seenTeams.add(r.teamId);
+      }
+    });
+  });
+
+  // Recount: for each team + type, count how many races of that type
+  const raceCounts = {}; // type -> count
+  RACES.forEach(race => {
+    const ct = findCircuitType(race);
+    if (!ct) return;
+    raceCounts[ct.type] = (raceCounts[ct.type] || 0) + 1;
+  });
+
+  // Pick top 6 teams by total points
+  const topTeams = CONSTRUCTORS.slice(0, 6);
+  const topTeamIds = topTeams.map(t => t.teamId);
+
+  // Compute averages
+  const avgData = {}; // teamId -> { type -> avgPts }
+  topTeamIds.forEach(tid => {
+    avgData[tid] = {};
+    trackTypes.forEach(tt => {
+      const d = teamPoints[tid] && teamPoints[tid][tt];
+      const rCount = raceCounts[tt] || 1;
+      avgData[tid][tt] = d ? d.total / rCount : 0;
+    });
+  });
+
+  // Chart dimensions
+  const padTop = 40, padBottom = 60, padLeft = 50, padRight = 30;
+  const w = canvas.parentElement.clientWidth - 40;
+  const h = 400;
+  const chartW = w - padLeft - padRight;
+  const chartH = h - padTop - padBottom;
+
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  // Find max avg for scale
+  let maxAvg = 0;
+  topTeamIds.forEach(tid => {
+    trackTypes.forEach(tt => {
+      if (avgData[tid][tt] > maxAvg) maxAvg = avgData[tid][tt];
+    });
+  });
+  maxAvg = Math.ceil(maxAvg / 5) * 5 || 10;
+
+  // Y scale
+  function yPos(val) {
+    return padTop + chartH - (val / maxAvg) * chartH;
+  }
+
+  // Grid lines
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#484f58';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'right';
+  const ySteps = 5;
+  for (let i = 0; i <= ySteps; i++) {
+    const val = (maxAvg / ySteps) * i;
+    const y = yPos(val);
+    ctx.beginPath();
+    ctx.moveTo(padLeft, y);
+    ctx.lineTo(w - padRight, y);
+    ctx.stroke();
+    ctx.fillText(val.toFixed(0), padLeft - 8, y + 4);
+  }
+
+  // Y axis label
+  ctx.save();
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.translate(12, padTop + chartH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('Avg Points / Race', 0, 0);
+  ctx.restore();
+
+  // Grouped bars
+  const groupW = chartW / trackTypes.length;
+  const barW = Math.min(groupW / (topTeams.length + 1), 20);
+  const totalBarsW = barW * topTeams.length;
+
+  trackTypes.forEach((tt, gi) => {
+    const groupX = padLeft + gi * groupW + (groupW - totalBarsW) / 2;
+
+    // Group label
+    ctx.fillStyle = TYPE_COLORS[tt] || '#8b949e';
+    ctx.font = 'bold 11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(tt, padLeft + gi * groupW + groupW / 2, h - padBottom + 20);
+
+    // Race count label
+    ctx.fillStyle = '#484f58';
+    ctx.font = '9px "SF Mono", "Fira Code", monospace';
+    ctx.fillText(`(${raceCounts[tt] || 0} race${(raceCounts[tt] || 0) !== 1 ? 's' : ''})`, padLeft + gi * groupW + groupW / 2, h - padBottom + 34);
+
+    topTeams.forEach((team, ti) => {
+      const x = groupX + ti * barW;
+      const val = avgData[team.teamId][tt] || 0;
+      const barH = (val / maxAvg) * chartH;
+      const y = yPos(val);
+
+      ctx.fillStyle = team.color;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW - 2, barH, [3, 3, 0, 0]);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Value on top
+      if (val > 0) {
+        ctx.fillStyle = '#c9d1d9';
+        ctx.font = '8px "SF Mono", "Fira Code", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(val.toFixed(1), x + (barW - 2) / 2, y - 4);
+      }
+    });
+  });
+
+  // Legend
+  const legend = document.getElementById('team-type-legend');
+  legend.innerHTML = topTeams.map(t =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;color:#8b949e;">` +
+    `<span style="width:10px;height:10px;border-radius:2px;background:${t.color};display:inline-block;"></span>` +
+    `${t.name}</span>`
+  ).join('');
+}
+
+drawTeamTypeChart();
+window.addEventListener('resize', drawTeamTypeChart);
+
+// ── Driver circuit preference ───────────────────────────────────────────
+(function buildDriverPrefTable() {
+  const tbody = document.getElementById('driver-pref-table');
+  const trackTypes = ['permanent', 'street', 'street-park'];
+
+  // Compute grid-to-finish delta per driver per track type
+  const driverDeltas = {}; // driver -> { type -> { totalDelta, count } }
+  const driverMeta = {}; // driver -> { team, teamColor }
+
+  RACES.forEach(race => {
+    const ct = findCircuitType(race);
+    if (!ct) return;
+    race.results.forEach(r => {
+      if (r.isRetired || r.isDNS || r.grid <= 0) return;
+      if (!driverDeltas[r.driver]) driverDeltas[r.driver] = {};
+      if (!driverDeltas[r.driver][ct.type]) driverDeltas[r.driver][ct.type] = { totalDelta: 0, count: 0 };
+      driverDeltas[r.driver][ct.type].totalDelta += (r.grid - r.position);
+      driverDeltas[r.driver][ct.type].count += 1;
+      driverMeta[r.driver] = { team: r.team, teamColor: r.teamColor };
+    });
+  });
+
+  // Sort by total positive delta
+  const drivers = Object.keys(driverDeltas).sort((a, b) => {
+    const sumA = trackTypes.reduce((s, tt) => s + (driverDeltas[a][tt] ? driverDeltas[a][tt].totalDelta : 0), 0);
+    const sumB = trackTypes.reduce((s, tt) => s + (driverDeltas[b][tt] ? driverDeltas[b][tt].totalDelta : 0), 0);
+    return sumB - sumA;
+  });
+
+  drivers.forEach(driver => {
+    const meta = driverMeta[driver] || {};
+    let bestType = '-';
+    let bestAvg = -999;
+
+    const cells = trackTypes.map(tt => {
+      const d = driverDeltas[driver][tt];
+      if (!d || d.count === 0) return '<td style="color:#484f58;">-</td>';
+      const avg = d.totalDelta / d.count;
+      if (avg > bestAvg) { bestAvg = avg; bestType = tt; }
+      const color = avg > 0 ? '#3fb950' : avg < 0 ? '#f85149' : '#8b949e';
+      return `<td style="color:${color};">${avg > 0 ? '+' : ''}${avg.toFixed(1)}</td>`;
+    }).join('');
+
+    const typeBadge = bestAvg > -999
+      ? `<span class="type-badge ${TYPE_CSS[bestType] || ''}">${bestType}</span>`
+      : '-';
+
+    tbody.innerHTML += `<tr>
+      <td class="driver-name">${driver}</td>
+      <td style="color:${meta.teamColor || '#8b949e'};">${meta.team || '-'}</td>
+      ${cells}
+      <td>${typeBadge}</td>
+    </tr>`;
+  });
+})();
+
+// ── Next race analysis ──────────────────────────────────────────────────
+(function buildNextRace() {
+  if (!NEXT_RACE || !NEXT_RACE.name) return;
+  const section = document.getElementById('next-race-section');
+  const ct = NEXT_RACE.circuitId ? (CIRCUIT_TYPES[NEXT_RACE.circuitId] || null) : null;
+
+  // Try to find circuit type by name if circuitId didn't match
+  let circuitData = ct;
+  if (!circuitData) {
+    const name = (NEXT_RACE.circuit || NEXT_RACE.name || '').toLowerCase();
+    for (const [cid, cdata] of Object.entries(CIRCUIT_TYPES)) {
+      const parts = cid.replace(/_/g, ' ');
+      if (name.includes(parts) || name.includes(cid)) {
+        circuitData = cdata;
+        break;
+      }
+      const idParts = cid.split('_');
+      if (idParts.some(p => p.length > 3 && name.includes(p))) {
+        circuitData = cdata;
+        break;
+      }
+    }
+  }
+
+  if (!circuitData) {
+    section.innerHTML = `
+      <div style="font-size:14px;color:#f0f6fc;font-weight:600;margin-bottom:8px;">R${NEXT_RACE.round}: ${NEXT_RACE.name}</div>
+      <div style="font-size:12px;color:#8b949e;">Circuit classification not available. No team prediction possible.</div>
+    `;
+    return;
+  }
+
+  const trackTypes = ['permanent', 'street', 'street-park'];
+  const typeBadge = `<span class="type-badge ${TYPE_CSS[circuitData.type] || ''}">${circuitData.type}</span>`;
+
+  // Find teams that performed best on this track type
+  const teamAvg = {};
+  RACES.forEach(race => {
+    const rct = findCircuitType(race);
+    if (!rct || rct.type !== circuitData.type) return;
+    race.results.forEach(r => {
+      if (!teamAvg[r.teamId]) teamAvg[r.teamId] = { total: 0, count: 0, color: r.teamColor, team: r.team };
+      teamAvg[r.teamId].total += r.points;
+    });
+    const seen = new Set();
+    race.results.forEach(r => {
+      if (!seen.has(r.teamId)) {
+        seen.add(r.teamId);
+        teamAvg[r.teamId].count++;
+      }
+    });
+  });
+
+  const ranked = Object.entries(teamAvg)
+    .map(([tid, d]) => ({ teamId: tid, avg: d.count > 0 ? d.total / d.count : 0, ...d }))
+    .sort((a, b) => b.avg - a.avg)
+    .slice(0, 5);
+
+  const favoritesHtml = ranked.length > 0
+    ? ranked.map((t, i) => `<span style="color:${t.color};font-weight:${i === 0 ? '700' : '400'};">${t.team} (${t.avg.toFixed(1)} avg pts)</span>`).join(' &middot; ')
+    : '<span style="color:#8b949e;">No data for this track type yet</span>';
+
+  section.innerHTML = `
+    <div style="font-size:16px;color:#f0f6fc;font-weight:600;margin-bottom:4px;">R${NEXT_RACE.round}: ${NEXT_RACE.name}</div>
+    <div style="font-size:12px;color:#8b949e;margin-bottom:12px;">${NEXT_RACE.date || ''} &middot; ${NEXT_RACE.circuit || ''}</div>
+    <div style="margin-bottom:12px;">
+      ${typeBadge}
+      <span style="font-size:11px;color:#8b949e;margin-left:8px;">
+        Power ${(circuitData.power * 100).toFixed(0)}% &middot;
+        Downforce ${(circuitData.downforce * 100).toFixed(0)}% &middot;
+        Overtaking ${(circuitData.overtaking * 100).toFixed(0)}%
+      </span>
+    </div>
+    <div style="font-size:12px;color:#8b949e;margin-bottom:6px;">
+      <strong style="color:#c9d1d9;">Favored teams (based on ${circuitData.type} track history):</strong>
+    </div>
+    <div style="font-size:12px;line-height:2;">${favoritesHtml}</div>
+    <div class="callout callout-amber" style="margin-top:16px;">
+      Prediction based on ${Object.values(teamAvg).reduce((s, t) => Math.max(s, t.count), 0)} ${circuitData.type} race(s) this season. Treat as directional only.
+    </div>
+  `;
+})();
+</script>
+</body>
+</html>

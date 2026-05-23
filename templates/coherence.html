@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Coherence Analysis</title>
+<meta name="description" content="Coherence analysis of the {{ data.year }} F1 championship using the Delta.72 framework. Measuring system stability, pattern retention, and recovery dynamics across the grid.">
+<meta property="og:title" content="F1 {{ data.year }} — Coherence Analysis">
+<meta property="og:description" content="First application of the Delta.72 coherence framework to Formula 1 championship dynamics. System stability, driver coherence, and regime classification.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/coherence.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Coherence Analysis">
+<meta name="twitter:description" content="Delta.72 coherence framework applied to the {{ data.year }} F1 championship. System regime detection, driver stability analysis, and recovery dynamics.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { position: relative; width: 100%; height: 480px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8b949e; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+
+  .formula {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 18px;
+    color: #f0f6fc;
+    text-align: center;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .formula .var { color: #58a6ff; font-style: italic; }
+  .formula .op { color: #8b949e; }
+  .formula .fn { color: #d2a8ff; }
+  .formula-note {
+    font-size: 12px;
+    color: #8b949e;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .explainer { font-size: 13px; color: #c9d1d9; line-height: 1.7; max-width: 800px; }
+  .explainer p { margin-bottom: 12px; }
+  .explainer strong { color: #f0f6fc; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-orange { background: #2a1500; color: #db6d28; border: 1px solid #4a2500; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .regime-coherent { color: #3fb950; }
+  .regime-distorted { color: #d29922; }
+  .regime-fragmented { color: #db6d28; }
+  .regime-collapse { color: #f85149; }
+
+  .callout {
+    background: #161b22;
+    border-left: 3px solid #58a6ff;
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-size: 13px;
+    color: #c9d1d9;
+    line-height: 1.7;
+  }
+  .callout strong { color: #f0f6fc; }
+  .callout em { color: #8b949e; font-style: normal; }
+
+  .gauge-container { position: relative; width: 100%; max-width: 500px; height: 280px; margin: 0 auto; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .chart-container { height: 360px; }
+    .formula { font-size: 14px; padding: 14px 16px; }
+    table { font-size: 11px; }
+    th, td { padding: 6px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>&Delta;.72 Coherence Analysis</h1>
+  <div class="tagline">
+    First application of the <a href="https://coherenceengine.org" target="_blank" rel="noopener">&Delta;.72 coherence framework</a> to Formula 1 championship dynamics.
+    Measuring whether the {{ data.year }} season is evolving as a stable system or collapsing into noise.
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION 1: THE FRAMEWORK
+     ============================================================ -->
+<div class="section">
+  <h2>The Framework</h2>
+  <p class="section-sub">Coherence as a ratio of signal to distortion</p>
+  <div class="card">
+    <div class="explainer">
+      <p>The &Delta;.72 coherence framework measures how well a system retains its organizing pattern over time. Originally developed for industrial instability detection, it decomposes any time-evolving signal into five fundamental operators and computes a single coherence score:</p>
+    </div>
+    <div class="formula">
+      <span class="var">&Delta;</span> <span class="op">=</span>
+      <span class="op">(</span><span class="var">P</span> <span class="op">&middot;</span> <span class="var">A</span> <span class="op">&middot;</span> <span class="var">R</span><span class="op">)</span>
+      <span class="op">/</span>
+      <span class="op">(</span><span class="var">D</span> <span class="op">+</span> <span class="var">N</span><span class="op">)</span>
+    </div>
+    <div class="formula-note">where P, A, R are signal-preserving operators and D, N are signal-destroying operators</div>
+
+    <div style="margin-top: 24px;" class="grid grid-2">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #3fb950;">Signal-Preserving (Numerator)</div>
+        <div class="explainer">
+          <p><strong>P &mdash; Pattern Retention.</strong> Correlation between the observed trajectory and the linear baseline. High P means the driver's cumulative points track their expected trend line. A driver who scores consistently has P near 1.</p>
+          <p><strong>A &mdash; Phase Alignment.</strong> Temporal consistency measured via lag-1 autocorrelation of residuals. High A means deviations from baseline are smooth, not random. The system remembers where it was.</p>
+          <p><strong>R &mdash; Recovery.</strong> Ability to return toward the baseline after a deviation. High R means perturbations are corrected &mdash; a bad race is followed by a good one.</p>
+        </div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #f85149;">Signal-Destroying (Denominator)</div>
+        <div class="explainer">
+          <p><strong>D &mdash; Drift.</strong> Mean absolute deviation from the baseline trajectory. High D means the driver has moved far from their expected path &mdash; the signal is no longer where it started.</p>
+          <p><strong>N &mdash; Noise Amplification.</strong> Normalized variance of residuals. High N means the deviations are erratic and growing. The system is amplifying disturbances rather than damping them.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Extended Operators</h3>
+    <div class="grid grid-2" style="margin-top: 8px;">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #bb9af7;">&#x1D4DC; &mdash; Memory-of-Attractor</div>
+        <div class="stat-label">How strongly the system remembers its baseline. High &#x1D4DC; means the trajectory is gravitationally bound to its expected path &mdash; perturbations decay. Low &#x1D4DC; means the system has forgotten where it was going.</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #bb9af7;">&#x1D4E6; &mdash; Windowed Recovery</div>
+        <div class="stat-label">How quickly the system recovers from disruption over a rolling window. High &#x1D4E6; means the championship standings restabilize rapidly after unexpected results. Low &#x1D4E6; means disruptions propagate and amplify.</div>
+      </div>
+    </div>
+
+    <h3>Regime Thresholds</h3>
+    <div class="grid grid-4" style="margin-top: 8px;">
+      <div class="card" style="background: #0d1117; border-left: 3px solid #3fb950;">
+        <div class="card-title regime-coherent">&Delta; &ge; 0.72 &mdash; Coherent</div>
+        <div class="stat-label">The system is stable. Drivers are performing predictably relative to their baselines. The championship has a clear, self-reinforcing structure.</div>
+      </div>
+      <div class="card" style="background: #0d1117; border-left: 3px solid #d29922;">
+        <div class="card-title regime-distorted">&Delta; &ge; 0.55 &mdash; Distorted</div>
+        <div class="stat-label">Moderate deviation from baseline. Some drivers are diverging from expected trajectories. The system is stressed but retains organizing structure.</div>
+      </div>
+      <div class="card" style="background: #0d1117; border-left: 3px solid #db6d28;">
+        <div class="card-title regime-fragmented">&Delta; &ge; 0.35 &mdash; Fragmented</div>
+        <div class="stat-label">Significant loss of pattern. Multiple drivers have decoupled from their baselines. Noise is competing with signal. The championship narrative is fracturing.</div>
+      </div>
+      <div class="card" style="background: #0d1117; border-left: 3px solid #f85149;">
+        <div class="card-title regime-collapse">&Delta; &lt; 0.35 &mdash; Collapse</div>
+        <div class="stat-label">The organizing pattern has broken down. Extreme volatility or extreme domination &mdash; the system has lost its attractor. Signal is indistinguishable from noise.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION 2: SYSTEM-LEVEL STATS
+     ============================================================ -->
+<div class="section section-divider">
+  <h2>System-Level Coherence</h2>
+  <p class="section-sub">{{ data.year }} championship after Round {{ data.current_round }}</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">System &Delta;</div>
+      <div class="stat" id="systemDelta">--</div>
+      <div class="stat-label">coherence score</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Regime</div>
+      <div class="stat-sm" id="systemRegime">--</div>
+      <div class="stat-label">system classification</div>
+    </div>
+    <div class="card">
+      <div class="card-title">System &#x1D4DC;</div>
+      <div class="stat-sm" id="systemM">--</div>
+      <div class="stat-label">memory-of-attractor</div>
+    </div>
+    <div class="card">
+      <div class="card-title">System &#x1D4E6;</div>
+      <div class="stat-sm" id="systemW">--</div>
+      <div class="stat-label">windowed recovery</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION 3: SYSTEM COHERENCE GAUGE
+     ============================================================ -->
+<div class="section section-divider">
+  <h2>System Coherence Gauge</h2>
+  <p class="section-sub">Semi-circular gauge showing the championship's position within coherence regimes</p>
+  <div class="card">
+    <div class="gauge-container">
+      <canvas id="gaugeChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION 4: PER-DRIVER COHERENCE TABLE
+     ============================================================ -->
+<div class="section section-divider">
+  <h2>Per-Driver Coherence</h2>
+  <p class="section-sub">Individual driver &Delta; scores, sorted by coherence (descending). Drivers with insufficient data are excluded.</p>
+  <div class="card" style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Driver</th>
+          <th>Team</th>
+          <th>&Delta;</th>
+          <th>Regime</th>
+          <th>P</th>
+          <th>A</th>
+          <th>R</th>
+          <th>D</th>
+          <th>N</th>
+          <th>&#x1D4DC;</th>
+          <th>&#x1D4E6;</th>
+        </tr>
+      </thead>
+      <tbody id="driverTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION 5: DRIVER COHERENCE BAR CHART
+     ============================================================ -->
+<div class="section section-divider">
+  <h2>Driver Coherence Comparison</h2>
+  <p class="section-sub">Horizontal bars showing each driver's &Delta; score, colored by regime classification</p>
+  <div class="card">
+    <div class="chart-container" id="barChartContainer" style="height: 520px;">
+      <canvas id="barChart"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background: #3fb950;"></div>Coherent (&ge; 0.72)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #d29922;"></div>Distorted (&ge; 0.55)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #db6d28;"></div>Fragmented (&ge; 0.35)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #f85149;"></div>Collapse (&lt; 0.35)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION 6: POINTS TRAJECTORY CHART
+     ============================================================ -->
+<div class="section section-divider">
+  <h2>Points Trajectory vs. Baseline</h2>
+  <p class="section-sub">Cumulative points (solid) against linear baseline (dashed) for the top 6 drivers. The gap between signal and baseline is the coherence measurement.</p>
+  <div class="card">
+    <div class="chart-container" style="height: 500px;">
+      <canvas id="trajectoryChart"></canvas>
+    </div>
+    <div class="legend" id="trajectoryLegend"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION 7: INTERPRETATION
+     ============================================================ -->
+<div class="section section-divider">
+  <h2>Interpretation</h2>
+  <p class="section-sub">What the coherence analysis reveals about the {{ data.year }} championship</p>
+  <div class="card">
+    <div class="explainer" id="interpretationBlock">
+      <p id="regimeExplainer"></p>
+      <p><strong>What does &#x1D4DC; (Memory-of-Attractor) mean for F1?</strong>
+      High &#x1D4DC; means teams and drivers tend to return to their expected performance level after disruptions &mdash; a DNF or a lucky result doesn't permanently alter the standings trajectory. The championship "remembers" the competitive order. Low &#x1D4DC; means disruptions stick: a single bad weekend can permanently reshape the championship narrative.</p>
+      <p><strong>What does &#x1D4E6; (Windowed Recovery) mean?</strong>
+      &#x1D4E6; measures how quickly the standings restabilize after a shock. High &#x1D4E6; means a surprise result (a backmarker podium, a frontrunner DNF) is absorbed within a few races. Low &#x1D4E6; means the aftershocks propagate &mdash; one disruption cascades into a sustained shift in the competitive landscape.</p>
+      <p><strong>A coherent championship (&Delta; &ge; 0.72) means drivers are performing predictably relative to their baselines.</strong> The organizing pattern holds: frontrunners stay at the front, midfield battles remain structured, and the points distribution follows its expected trajectory. <strong>A collapsed championship means extreme volatility or domination</strong> &mdash; the system has lost its organizing pattern. Either one driver has so thoroughly dominated that the rest of the field carries no signal, or results have become so chaotic that no stable hierarchy exists.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SECTION 8: CALLOUT
+     ============================================================ -->
+<div class="section section-divider">
+  <div class="callout">
+    <strong>This is the first application of the &Delta;.72 coherence framework to Formula 1 championship dynamics.</strong><br><br>
+    The framework was developed for industrial instability detection &mdash; identifying the moment a complex system transitions from stable operation to structural failure. A collapsing F1 championship shares mathematical structure with a failing turbine: both are systems where pattern retention, phase alignment, and recovery capacity degrade as the system approaches a critical transition.
+    <br><br>
+    <em>The same operators that detect bearing wear in rotating machinery can detect the moment a championship fight turns into a procession.</em>
+    <br><br>
+    Learn more at <a href="https://coherenceengine.org" target="_blank" rel="noopener">coherenceengine.org</a>.
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Framework: <a href="https://coherenceengine.org" target="_blank" rel="noopener">&Delta;.72 Coherence Engine</a> &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+// ============================================================
+// DATA: Injected from Jinja2
+// ============================================================
+const coherenceData = {{ data.coherence | tojson }};
+const systemDelta = coherenceData.system_delta;
+const systemRegime = coherenceData.system_regime;
+const systemM = coherenceData.system_M;
+const systemW = coherenceData.system_W;
+const drivers = coherenceData.drivers;
+const currentYear = {{ data.year }};
+const currentRound = {{ data.current_round }};
+
+// ============================================================
+// UTILITY: Regime colors and badges
+// ============================================================
+function regimeColor(regime) {
+  switch (regime) {
+    case 'Coherent':   return '#3fb950';
+    case 'Distorted':  return '#d29922';
+    case 'Fragmented': return '#db6d28';
+    case 'Collapse':   return '#f85149';
+    default:           return '#8b949e';
+  }
+}
+
+function regimeBadgeClass(regime) {
+  switch (regime) {
+    case 'Coherent':   return 'badge-green';
+    case 'Distorted':  return 'badge-amber';
+    case 'Fragmented': return 'badge-orange';
+    case 'Collapse':   return 'badge-red';
+    default:           return 'badge-blue';
+  }
+}
+
+function regimeCssClass(regime) {
+  switch (regime) {
+    case 'Coherent':   return 'regime-coherent';
+    case 'Distorted':  return 'regime-distorted';
+    case 'Fragmented': return 'regime-fragmented';
+    case 'Collapse':   return 'regime-collapse';
+    default:           return '';
+  }
+}
+
+function formatVal(v, decimals) {
+  if (v === null || v === undefined) return '--';
+  return v.toFixed(decimals !== undefined ? decimals : 4);
+}
+
+// ============================================================
+// SECTION 2: System-level stats
+// ============================================================
+const deltaEl = document.getElementById('systemDelta');
+deltaEl.textContent = formatVal(systemDelta, 4);
+deltaEl.style.color = regimeColor(systemRegime);
+
+const regimeEl = document.getElementById('systemRegime');
+regimeEl.textContent = systemRegime;
+regimeEl.style.color = regimeColor(systemRegime);
+
+const mEl = document.getElementById('systemM');
+mEl.textContent = formatVal(systemM, 4);
+
+const wEl = document.getElementById('systemW');
+wEl.textContent = formatVal(systemW, 4);
+
+// ============================================================
+// SECTION 4: Per-driver table
+// ============================================================
+const validDrivers = drivers.filter(d => d.delta !== null && d.delta !== undefined);
+validDrivers.sort((a, b) => b.delta - a.delta);
+
+const driverTbody = document.getElementById('driverTable');
+validDrivers.forEach(d => {
+  const tr = document.createElement('tr');
+  const color = regimeColor(d.regime);
+  const badgeCls = regimeBadgeClass(d.regime);
+  tr.innerHTML =
+    '<td class="driver-name">' + d.name + '</td>' +
+    '<td style="color:' + (d.team_hex || '#8b949e') + ';">' + (d.team || '') + '</td>' +
+    '<td style="color:' + color + '; font-weight:600;">' + formatVal(d.delta, 4) + '</td>' +
+    '<td><span class="badge ' + badgeCls + '">' + d.regime + '</span></td>' +
+    '<td>' + formatVal(d.P, 3) + '</td>' +
+    '<td>' + formatVal(d.A, 3) + '</td>' +
+    '<td>' + formatVal(d.R, 3) + '</td>' +
+    '<td>' + formatVal(d.D, 3) + '</td>' +
+    '<td>' + formatVal(d.N, 3) + '</td>' +
+    '<td>' + formatVal(d.M, 4) + '</td>' +
+    '<td>' + formatVal(d.W, 4) + '</td>';
+  driverTbody.appendChild(tr);
+});
+
+// ============================================================
+// SECTION 7: Dynamic interpretation text
+// ============================================================
+(function() {
+  var el = document.getElementById('regimeExplainer');
+  var txt = '<strong>Why is the ' + currentYear + ' championship in the "' + systemRegime + '" regime?</strong> ';
+  if (systemRegime === 'Coherent') {
+    txt += 'The system-level &Delta; of ' + formatVal(systemDelta, 4) + ' indicates that drivers are performing consistently relative to their expected baselines. The championship has a clear competitive hierarchy that is being reinforced race after race. Points trajectories are tracking their linear baselines with high fidelity &mdash; the signal is strong and the noise is contained.';
+  } else if (systemRegime === 'Distorted') {
+    txt += 'The system-level &Delta; of ' + formatVal(systemDelta, 4) + ' shows the championship is under stress. Some drivers have begun to deviate from their expected trajectories, but the overall structure is still recognizable. The competitive order is bending but has not broken &mdash; recovery is still possible, but the system is approaching a critical threshold.';
+  } else if (systemRegime === 'Fragmented') {
+    txt += 'The system-level &Delta; of ' + formatVal(systemDelta, 4) + ' reveals significant fragmentation. Multiple drivers have decoupled from their baseline trajectories. The championship narrative is fracturing &mdash; the expected competitive order is no longer a reliable predictor of results. Noise is competing with signal at the system level.';
+  } else {
+    txt += 'The system-level &Delta; of ' + formatVal(systemDelta, 4) + ' indicates the championship has entered structural collapse. The organizing pattern has broken down entirely. This can mean extreme domination (one driver so far ahead the rest carry no signal) or extreme chaos (results are indistinguishable from noise). Either way, the system has lost its attractor.';
+  }
+  el.innerHTML = txt;
+})();
+
+// ============================================================
+// CHART: System Coherence Gauge
+// ============================================================
+function drawGauge() {
+  var canvas = document.getElementById('gaugeChart');
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  var W = rect.width;
+  var H = rect.height;
+
+  var cx = W / 2;
+  var cy = H * 0.78;
+  var radius = Math.min(W * 0.4, H * 0.6);
+  var innerRadius = radius * 0.7;
+  var startAngle = Math.PI;
+  var endAngle = 2 * Math.PI;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Regime zones: Collapse [0, 0.35], Fragmented [0.35, 0.55], Distorted [0.55, 0.72], Coherent [0.72, 1.0]
+  var zones = [
+    { start: 0, end: 0.35, color: '#f85149', label: 'Collapse' },
+    { start: 0.35, end: 0.55, color: '#db6d28', label: 'Fragmented' },
+    { start: 0.55, end: 0.72, color: '#d29922', label: 'Distorted' },
+    { start: 0.72, end: 1.0, color: '#3fb950', label: 'Coherent' }
+  ];
+
+  zones.forEach(function(z) {
+    var a0 = startAngle + (endAngle - startAngle) * z.start;
+    var a1 = startAngle + (endAngle - startAngle) * z.end;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, a0, a1, false);
+    ctx.arc(cx, cy, innerRadius, a1, a0, true);
+    ctx.closePath();
+    ctx.fillStyle = z.color;
+    ctx.globalAlpha = 0.25;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Zone border
+    ctx.strokeStyle = z.color;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, a0, a1, false);
+    ctx.stroke();
+
+    // Zone label
+    var midAngle = (a0 + a1) / 2;
+    var labelR = radius + 18;
+    var lx = cx + Math.cos(midAngle) * labelR;
+    var ly = cy + Math.sin(midAngle) * labelR;
+    ctx.fillStyle = z.color;
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(z.label, lx, ly);
+  });
+
+  // Tick marks
+  for (var i = 0; i <= 10; i++) {
+    var val = i / 10;
+    var angle = startAngle + (endAngle - startAngle) * val;
+    var outerX = cx + Math.cos(angle) * radius;
+    var outerY = cy + Math.sin(angle) * radius;
+    var tickLen = (i % 5 === 0) ? 12 : 6;
+    var innerX = cx + Math.cos(angle) * (radius - tickLen);
+    var innerY = cy + Math.sin(angle) * (radius - tickLen);
+    ctx.strokeStyle = '#8b949e';
+    ctx.lineWidth = (i % 5 === 0) ? 2 : 1;
+    ctx.beginPath();
+    ctx.moveTo(outerX, outerY);
+    ctx.lineTo(innerX, innerY);
+    ctx.stroke();
+
+    if (i % 2 === 0) {
+      var numR = innerRadius - 14;
+      var nx = cx + Math.cos(angle) * numR;
+      var ny = cy + Math.sin(angle) * numR;
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(val.toFixed(1), nx, ny);
+    }
+  }
+
+  // Needle
+  var needleVal = Math.max(0, Math.min(1, systemDelta));
+  var needleAngle = startAngle + (endAngle - startAngle) * needleVal;
+  var needleLen = radius * 0.85;
+  var needleX = cx + Math.cos(needleAngle) * needleLen;
+  var needleY = cy + Math.sin(needleAngle) * needleLen;
+
+  // Needle shadow
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(needleX + 1, needleY + 1);
+  ctx.stroke();
+
+  // Needle body
+  ctx.strokeStyle = '#f0f6fc';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(needleX, needleY);
+  ctx.stroke();
+
+  // Needle tip
+  ctx.beginPath();
+  ctx.arc(needleX, needleY, 4, 0, Math.PI * 2);
+  ctx.fillStyle = regimeColor(systemRegime);
+  ctx.fill();
+
+  // Center hub
+  ctx.beginPath();
+  ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+  ctx.fillStyle = '#161b22';
+  ctx.fill();
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Value text below hub
+  ctx.fillStyle = regimeColor(systemRegime);
+  ctx.font = 'bold 24px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText(formatVal(systemDelta, 4), cx, cy + 16);
+
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.fillText(systemRegime, cx, cy + 44);
+}
+
+// ============================================================
+// CHART: Driver Coherence Bar Chart
+// ============================================================
+function drawBarChart() {
+  var canvas = document.getElementById('barChart');
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var container = document.getElementById('barChartContainer');
+  var rect = container.getBoundingClientRect();
+
+  // Dynamically resize container based on number of drivers
+  var numDrivers = validDrivers.length;
+  var barHeight = 28;
+  var barGap = 8;
+  var neededHeight = 60 + numDrivers * (barHeight + barGap) + 50;
+  container.style.height = Math.max(neededHeight, 400) + 'px';
+
+  // Re-read rect after resize
+  rect = container.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  var W = rect.width;
+  var H = rect.height;
+
+  var pad = { top: 30, right: 80, bottom: 40, left: 140 };
+  var chartW = W - pad.left - pad.right;
+  var chartH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background regime zones (vertical bands)
+  var zones = [
+    { start: 0, end: 0.35, color: '#f85149' },
+    { start: 0.35, end: 0.55, color: '#db6d28' },
+    { start: 0.55, end: 0.72, color: '#d29922' },
+    { start: 0.72, end: 1.0, color: '#3fb950' }
+  ];
+
+  zones.forEach(function(z) {
+    var x0 = pad.left + chartW * z.start;
+    var x1 = pad.left + chartW * z.end;
+    ctx.fillStyle = z.color;
+    ctx.globalAlpha = 0.06;
+    ctx.fillRect(x0, pad.top, x1 - x0, chartH);
+    ctx.globalAlpha = 1;
+
+    // Zone boundary line
+    if (z.start > 0) {
+      ctx.strokeStyle = z.color;
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(x0, pad.top);
+      ctx.lineTo(x0, H - pad.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+    }
+  });
+
+  // Axis
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, H - pad.bottom);
+  ctx.lineTo(W - pad.right, H - pad.bottom);
+  ctx.stroke();
+
+  // X-axis ticks
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  for (var i = 0; i <= 10; i++) {
+    var x = pad.left + (chartW * i / 10);
+    var val = (i / 10).toFixed(1);
+    ctx.fillText(val, x, H - pad.bottom + 18);
+    if (i > 0) {
+      ctx.strokeStyle = '#21262d';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, H - pad.bottom);
+      ctx.stroke();
+    }
+  }
+
+  // X-axis label
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Δ Coherence Score', W / 2, H - 5);
+
+  // Bars
+  var gap = Math.max(4, (chartH - barHeight * numDrivers) / (numDrivers + 1));
+  var actualBarH = Math.min(barHeight, (chartH - gap * (numDrivers + 1)) / numDrivers);
+
+  validDrivers.forEach(function(d, idx) {
+    var y = pad.top + gap + idx * (actualBarH + gap);
+    var barW = Math.max(2, chartW * Math.min(d.delta, 1));
+    var color = regimeColor(d.regime);
+
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    ctx.roundRect(pad.left, y, barW, actualBarH, 3);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Driver name
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(d.family_name || d.name, pad.left - 10, y + actualBarH / 2);
+
+    // Value label
+    ctx.fillStyle = color;
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(formatVal(d.delta, 4), pad.left + barW + 8, y + actualBarH / 2);
+  });
+}
+
+// ============================================================
+// CHART: Points Trajectory vs. Baseline
+// ============================================================
+function drawTrajectoryChart() {
+  var canvas = document.getElementById('trajectoryChart');
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  var W = rect.width;
+  var H = rect.height;
+
+  var pad = { top: 40, right: 30, bottom: 50, left: 70 };
+  var chartW = W - pad.left - pad.right;
+  var chartH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Get top 6 drivers with trajectory data
+  var top6 = validDrivers.filter(function(d) {
+    return d.points_trajectory && d.points_trajectory.length > 1;
+  }).slice(0, 6);
+
+  if (top6.length === 0) {
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '14px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Insufficient trajectory data', W / 2, H / 2);
+    return;
+  }
+
+  // Find max points across all trajectories
+  var maxPts = 0;
+  var maxRounds = 0;
+  top6.forEach(function(d) {
+    var traj = d.points_trajectory;
+    maxRounds = Math.max(maxRounds, traj.length);
+    traj.forEach(function(p) { if (p > maxPts) maxPts = p; });
+  });
+  maxPts = Math.ceil(maxPts * 1.1);
+  if (maxPts === 0) maxPts = 100;
+
+  // Grid lines
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  var ySteps = 5;
+  for (var i = 0; i <= ySteps; i++) {
+    var y = pad.top + chartH - (chartH * i / ySteps);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(Math.round(maxPts * i / ySteps), pad.left - 8, y);
+  }
+
+  // X-axis ticks (rounds)
+  for (var r = 0; r < maxRounds; r++) {
+    var x = pad.left + (r / Math.max(maxRounds - 1, 1)) * chartW;
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('R' + (r + 1), x, H - pad.bottom + 8);
+  }
+
+  // Axes
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, H - pad.bottom);
+  ctx.lineTo(W - pad.right, H - pad.bottom);
+  ctx.stroke();
+
+  // Y-axis label
+  ctx.save();
+  ctx.translate(15, pad.top + chartH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Cumulative Points', 0, 0);
+  ctx.restore();
+
+  // Build legend
+  var legendEl = document.getElementById('trajectoryLegend');
+  legendEl.innerHTML = '';
+
+  // Draw each driver's trajectory + baseline
+  var palette = ['#58a6ff', '#3fb950', '#f85149', '#d29922', '#bb9af7', '#db6d28'];
+  top6.forEach(function(d, dIdx) {
+    var traj = d.points_trajectory;
+    var nPts = traj.length;
+    var color = d.team_hex || palette[dIdx % palette.length];
+
+    // Compute linear baseline: line from 0 to final value
+    var finalVal = traj[nPts - 1];
+    var baselineSlope = finalVal / (nPts - 1 || 1);
+
+    // Draw baseline (dashed)
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = 0.35;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    for (var i = 0; i < nPts; i++) {
+      var x = pad.left + (i / Math.max(nPts - 1, 1)) * chartW;
+      var baseY = baselineSlope * i;
+      var y = pad.top + chartH - (baseY / maxPts) * chartH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    // Draw actual trajectory (solid)
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (var i = 0; i < nPts; i++) {
+      var x = pad.left + (i / Math.max(nPts - 1, 1)) * chartW;
+      var y = pad.top + chartH - (traj[i] / maxPts) * chartH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // End dot
+    var lastX = pad.left + ((nPts - 1) / Math.max(nPts - 1, 1)) * chartW;
+    var lastY = pad.top + chartH - (traj[nPts - 1] / maxPts) * chartH;
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // End label
+    ctx.fillStyle = color;
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(d.family_name || d.name, lastX + 8, lastY);
+
+    // Legend item
+    var item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = '<div class="legend-dot" style="background:' + color + ';"></div>' + (d.family_name || d.name) + ' (Δ ' + formatVal(d.delta, 3) + ')';
+    legendEl.appendChild(item);
+  });
+}
+
+// ============================================================
+// DRAW ALL
+// ============================================================
+function drawAll() {
+  drawGauge();
+  drawBarChart();
+  drawTrajectoryChart();
+}
+
+drawAll();
+window.addEventListener('resize', drawAll);
+</script>
+
+</body>
+</html>

@@ -28,7 +28,29 @@
       "debut_year": 2025,
       "debut_age": 18,
       "f1_seasons": 2,
-      "progress_pct": 100
+      "progress_pct": 100,
+      "profile": {
+        "archetype": "The Prodigy",
+        "big5": {
+          "openness": 85,
+          "conscientiousness": 70,
+          "extraversion": 60,
+          "agreeableness": 65,
+          "neuroticism": 30
+        },
+        "driving_style": "Smooth, precise, instinctive. Exceptional car control from karting pedigree. Makes complex maneuvers look effortless. Adapts to conditions faster than peers \u2014 his wet-weather FP2 at Monza 2024 was the moment Mercedes committed.",
+        "risk_profile": "Calculated risk-taker. Pushes limits in qualifying but races with maturity beyond his years. Low crash rate relative to pace.",
+        "team_dynamics": "Thrives as lead driver. Respectful of Russell but clearly the faster driver from race one. No ego conflicts \u2014 focused inward.",
+        "traits": {
+          "aggression": 65,
+          "consistency": 80,
+          "wet_ability": 90,
+          "tire_mgmt": 75,
+          "qualifying": 90,
+          "racecraft": 80
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 2,
@@ -55,7 +77,29 @@
       "debut_year": 2019,
       "debut_age": 21,
       "f1_seasons": 8,
-      "progress_pct": 80
+      "progress_pct": 80,
+      "profile": {
+        "archetype": "The Analyst",
+        "big5": {
+          "openness": 70,
+          "conscientiousness": 90,
+          "extraversion": 75,
+          "agreeableness": 55,
+          "neuroticism": 35
+        },
+        "driving_style": "Methodical, data-driven, technically exceptional. Maximizes every situation. Known for extracting pace from difficult positions and exceptional tire management.",
+        "risk_profile": "Strategic risk management. Picks battles carefully. Will sacrifice a position now to gain later. Occasionally overdrives when frustrated.",
+        "team_dynamics": "Natural team leader. Strong communicator, politically astute within the paddock. Handles being second driver with professional grace.",
+        "traits": {
+          "aggression": 55,
+          "consistency": 85,
+          "wet_ability": 75,
+          "tire_mgmt": 90,
+          "qualifying": 85,
+          "racecraft": 75
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 3,
@@ -82,7 +126,29 @@
       "debut_year": 2018,
       "debut_age": 20,
       "f1_seasons": 9,
-      "progress_pct": 59
+      "progress_pct": 59,
+      "profile": {
+        "archetype": "The Romantic",
+        "big5": {
+          "openness": 90,
+          "conscientiousness": 65,
+          "extraversion": 55,
+          "agreeableness": 70,
+          "neuroticism": 50
+        },
+        "driving_style": "Emotional, raw pace in qualifying. Beautiful one-lap speed but historically prone to strategic missteps and team miscommunication. The artist who can produce moments of brilliance.",
+        "risk_profile": "High-risk, high-reward. Will attempt overtakes others wouldn't. Occasionally costly \u2014 Imola 2022, France 2022. But the upside is electric.",
+        "team_dynamics": "Comfortable as team leader at Ferrari. Deep emotional bond with the team and Maranello. Can be frustrated by team strategy calls.",
+        "traits": {
+          "aggression": 75,
+          "consistency": 65,
+          "wet_ability": 70,
+          "tire_mgmt": 65,
+          "qualifying": 95,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 4,
@@ -109,7 +175,29 @@
       "debut_year": 2019,
       "debut_age": 19,
       "f1_seasons": 8,
-      "progress_pct": 51
+      "progress_pct": 51,
+      "profile": {
+        "archetype": "The Perfectionist",
+        "big5": {
+          "openness": 80,
+          "conscientiousness": 85,
+          "extraversion": 70,
+          "agreeableness": 75,
+          "neuroticism": 55
+        },
+        "driving_style": "Technically gifted with exceptional smoothness. Manages tires brilliantly and excels in changing conditions. Has overcome early-career tendency to crack under championship pressure.",
+        "risk_profile": "Conservative in wheel-to-wheel but fast in clear air. The 2025 championship showed he can handle pressure. Start-line performance historically weak but improving.",
+        "team_dynamics": "Strong partnership with McLaren. Loyal, well-integrated. Constructive feedback loop with engineers. Healthy competition with Piastri.",
+        "traits": {
+          "aggression": 50,
+          "consistency": 85,
+          "wet_ability": 85,
+          "tire_mgmt": 90,
+          "qualifying": 85,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 5,
@@ -136,7 +224,29 @@
       "debut_year": 2007,
       "debut_age": 22,
       "f1_seasons": 20,
-      "progress_pct": 51
+      "progress_pct": 51,
+      "profile": {
+        "archetype": "The Legend",
+        "big5": {
+          "openness": 75,
+          "conscientiousness": 80,
+          "extraversion": 65,
+          "agreeableness": 60,
+          "neuroticism": 40
+        },
+        "driving_style": "Adaptive genius. Has reinvented his driving style multiple times across eras. Exceptional in the wet, legendary overtaker, supreme tire management. In his 20th season \u2014 reflexes marginally slower but racecraft unmatched.",
+        "risk_profile": "Mature risk assessment from 20 years of experience. Knows when to push and when to bank points. Rarely makes unforced errors at this stage.",
+        "team_dynamics": "The mentoring phase. At Ferrari to win a championship with the Scuderia \u2014 the last great challenge. Relationship with Leclerc is respectful but competitive.",
+        "traits": {
+          "aggression": 60,
+          "consistency": 80,
+          "wet_ability": 95,
+          "tire_mgmt": 95,
+          "qualifying": 80,
+          "racecraft": 95
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 6,
@@ -163,7 +273,29 @@
       "debut_year": 2023,
       "debut_age": 21,
       "f1_seasons": 4,
-      "progress_pct": 43
+      "progress_pct": 43,
+      "profile": {
+        "archetype": "The Ice Man",
+        "big5": {
+          "openness": 55,
+          "conscientiousness": 90,
+          "extraversion": 35,
+          "agreeableness": 50,
+          "neuroticism": 20
+        },
+        "driving_style": "Cold, clinical efficiency. Rarely makes mistakes, rarely produces highlight-reel moments. Wins by being faster, not flashier. Reminiscent of peak R\u00e4ikk\u00f6nen \u2014 just gets the job done.",
+        "risk_profile": "Low emotional variance. Doesn't get rattled, doesn't get euphoric. Consistent performance regardless of circumstances. This is his superpower.",
+        "team_dynamics": "Independent. Doesn't need team politics or emotional support. Professional relationship with Norris \u2014 respects the hierarchy but will challenge when faster.",
+        "traits": {
+          "aggression": 45,
+          "consistency": 92,
+          "wet_ability": 70,
+          "tire_mgmt": 80,
+          "qualifying": 80,
+          "racecraft": 75
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 7,
@@ -190,7 +322,29 @@
       "debut_year": 2015,
       "debut_age": 17,
       "f1_seasons": 12,
-      "progress_pct": 26
+      "progress_pct": 26,
+      "profile": {
+        "archetype": "The Apex Predator",
+        "big5": {
+          "openness": 60,
+          "conscientiousness": 75,
+          "extraversion": 45,
+          "agreeableness": 30,
+          "neuroticism": 25
+        },
+        "driving_style": "Aggressive, uncompromising, supernaturally fast. Brakes later, turns in harder, and exits faster than anyone. In a lesser car in 2026, the raw speed is still visible but results don't follow.",
+        "risk_profile": "Famously aggressive in wheel-to-wheel combat. 'I'm not here to finish second.' Will push the rules to their absolute limit. The stewards know him by name.",
+        "team_dynamics": "Demands the team build around him. In 2026, Red Bull's car isn't competitive enough \u2014 this creates visible frustration. Loyalty to Red Bull is being tested.",
+        "traits": {
+          "aggression": 95,
+          "consistency": 80,
+          "wet_ability": 90,
+          "tire_mgmt": 75,
+          "qualifying": 90,
+          "racecraft": 90
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 8,
@@ -217,7 +371,29 @@
       "debut_year": 2024,
       "debut_age": 18,
       "f1_seasons": 3,
-      "progress_pct": 17
+      "progress_pct": 17,
+      "profile": {
+        "archetype": "The Grinder",
+        "big5": {
+          "openness": 65,
+          "conscientiousness": 85,
+          "extraversion": 50,
+          "agreeableness": 70,
+          "neuroticism": 35
+        },
+        "driving_style": "Dependable, mature beyond his years. Proved himself with exceptional substitute drives in 2024. Extracts maximum from midfield machinery. Strong race pace, improving qualifying.",
+        "risk_profile": "Conservative for his age. Understands that finishing is scoring. Builds confidence through consistent results rather than heroic moves.",
+        "team_dynamics": "Low-maintenance driver. Gives clear feedback, doesn't create drama. The kind of driver team principals love working with.",
+        "traits": {
+          "aggression": 50,
+          "consistency": 75,
+          "wet_ability": 65,
+          "tire_mgmt": 70,
+          "qualifying": 65,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 115
     },
     {
       "position": 9,
@@ -244,7 +420,29 @@
       "debut_year": 2017,
       "debut_age": 21,
       "f1_seasons": 10,
-      "progress_pct": 16
+      "progress_pct": 16,
+      "profile": {
+        "archetype": "The Survivor",
+        "big5": {
+          "openness": 70,
+          "conscientiousness": 75,
+          "extraversion": 65,
+          "agreeableness": 60,
+          "neuroticism": 45
+        },
+        "driving_style": "Quick and committed. Rebuilt his career after the traumatic Red Bull demotion. Best in high-speed corners where commitment matters. Sometimes lacks pace in slow-speed sections.",
+        "risk_profile": "Measured aggression. Lost close friend Anthoine Hubert at Spa 2019 \u2014 this shapes his risk calculus. Pushes hard but knows the limits.",
+        "team_dynamics": "Natural team leader at Alpine. Brings experience and development direction. Good relationship with Colapinto.",
+        "traits": {
+          "aggression": 60,
+          "consistency": 70,
+          "wet_ability": 65,
+          "tire_mgmt": 70,
+          "qualifying": 75,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 130
     },
     {
       "position": 10,
@@ -271,7 +469,29 @@
       "debut_year": 2023,
       "debut_age": 21,
       "f1_seasons": 4,
-      "progress_pct": 10
+      "progress_pct": 10,
+      "profile": {
+        "archetype": "The Dark Horse",
+        "big5": {
+          "openness": 65,
+          "conscientiousness": 80,
+          "extraversion": 55,
+          "agreeableness": 50,
+          "neuroticism": 30
+        },
+        "driving_style": "Aggressive debut style that drew Verstappen comparisons. Strong racecraft, willing to fight for position. Raw and occasionally rough around the edges but the speed is genuine.",
+        "risk_profile": "High aggression tempered by a calm demeanor. Doesn't get flustered in combat. The broken hand at Zandvoort 2023 showed his toughness.",
+        "team_dynamics": "Comfortable as the junior in the Red Bull system. Learning rapidly. Political skills still developing.",
+        "traits": {
+          "aggression": 75,
+          "consistency": 65,
+          "wet_ability": 60,
+          "tire_mgmt": 60,
+          "qualifying": 70,
+          "racecraft": 75
+        }
+      },
+      "team_budget_m": 125
     },
     {
       "position": 11,
@@ -298,7 +518,29 @@
       "debut_year": 2024,
       "debut_age": 20,
       "f1_seasons": 3,
-      "progress_pct": 7
+      "progress_pct": 7,
+      "profile": {
+        "archetype": "The Showman",
+        "big5": {
+          "openness": 85,
+          "conscientiousness": 60,
+          "extraversion": 90,
+          "agreeableness": 75,
+          "neuroticism": 45
+        },
+        "driving_style": "Flamboyant, emotional, fast. Burst onto the scene at Williams 2024 with stunning pace. Occasionally pushes too hard \u2014 the crashes at Las Vegas and Brazil 2024. Raw talent with rough edges.",
+        "risk_profile": "High risk tolerance. The Argentine passion is real \u2014 hero or zero. Maturing in 2026 but still prone to spectacular incidents.",
+        "team_dynamics": "Massive fanbase (Argentine F1 renaissance). Brings energy and sponsorship. Alpine sees long-term potential if discipline improves.",
+        "traits": {
+          "aggression": 80,
+          "consistency": 55,
+          "wet_ability": 55,
+          "tire_mgmt": 55,
+          "qualifying": 70,
+          "racecraft": 65
+        }
+      },
+      "team_budget_m": 130
     },
     {
       "position": 12,
@@ -325,7 +567,29 @@
       "debut_year": 2026,
       "debut_age": 18,
       "f1_seasons": 1,
-      "progress_pct": 4
+      "progress_pct": 4,
+      "profile": {
+        "archetype": "The Rookie",
+        "big5": {
+          "openness": 70,
+          "conscientiousness": 75,
+          "extraversion": 45,
+          "agreeableness": 65,
+          "neuroticism": 35
+        },
+        "driving_style": "The youngest driver on the grid at 18. Red Bull junior with exceptional junior formula results. Still adapting to F1 machinery. Flashes of speed interspersed with learning moments.",
+        "risk_profile": "Learning risk calibration in real-time. Protected by team expectations \u2014 no pressure to deliver immediately. Growing race by race.",
+        "team_dynamics": "Absorbing everything from the Red Bull ecosystem. Paired with Lawson as mentor figure at RB.",
+        "traits": {
+          "aggression": 55,
+          "consistency": 55,
+          "wet_ability": 50,
+          "tire_mgmt": 50,
+          "qualifying": 65,
+          "racecraft": 55
+        }
+      },
+      "team_budget_m": 125
     },
     {
       "position": 13,
@@ -352,7 +616,29 @@
       "debut_year": 2025,
       "debut_age": 20,
       "f1_seasons": 2,
-      "progress_pct": 4
+      "progress_pct": 4,
+      "profile": {
+        "archetype": "The Calculator",
+        "big5": {
+          "openness": 60,
+          "conscientiousness": 85,
+          "extraversion": 40,
+          "agreeableness": 55,
+          "neuroticism": 30
+        },
+        "driving_style": "Cerebral approach to racing. Excellent at reading races and making positions through strategy rather than brute force. Strong in F2, adapting to F1 pace requirements.",
+        "risk_profile": "Calculated. Prefers to race with his head rather than his heart. Rarely makes contact-related errors.",
+        "team_dynamics": "Quiet, professional. Let his results speak. Comfortable in the Red Bull environment despite the pressure.",
+        "traits": {
+          "aggression": 40,
+          "consistency": 75,
+          "wet_ability": 60,
+          "tire_mgmt": 70,
+          "qualifying": 65,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 14,
@@ -379,7 +665,29 @@
       "debut_year": 2015,
       "debut_age": 20,
       "f1_seasons": 12,
-      "progress_pct": 4
+      "progress_pct": 4,
+      "profile": {
+        "archetype": "The Warrior",
+        "big5": {
+          "openness": 55,
+          "conscientiousness": 90,
+          "extraversion": 60,
+          "agreeableness": 45,
+          "neuroticism": 40
+        },
+        "driving_style": "Relentless competitor. Never gives up a position without a fight. Excellent race pace and tire management. Qualifying sometimes a weakness but extracts maximum on Sundays.",
+        "risk_profile": "Will drive through pain (raced at Jeddah 2022 with appendicitis aftermath). Never backs down. Carries the weight of being dropped from Ferrari with visible determination.",
+        "team_dynamics": "Brings intensity and competitiveness to Williams. A catalyst for team improvement. Demanding but fair with engineers.",
+        "traits": {
+          "aggression": 70,
+          "consistency": 80,
+          "wet_ability": 70,
+          "tire_mgmt": 85,
+          "qualifying": 70,
+          "racecraft": 80
+        }
+      },
+      "team_budget_m": 120
     },
     {
       "position": 15,
@@ -406,7 +714,29 @@
       "debut_year": 2025,
       "debut_age": 20,
       "f1_seasons": 2,
-      "progress_pct": 2
+      "progress_pct": 2,
+      "profile": {
+        "archetype": "The Scholar",
+        "big5": {
+          "openness": 75,
+          "conscientiousness": 80,
+          "extraversion": 65,
+          "agreeableness": 70,
+          "neuroticism": 35
+        },
+        "driving_style": "Intelligent racer with strong junior credentials (F2 champion). Methodical approach to learning the F1 car. Good feedback to engineers. Speed is building gradually.",
+        "risk_profile": "Patient. Understands the long game. Won't overdrive a car that isn't capable of more. Learns from mistakes quickly.",
+        "team_dynamics": "Good relationship with Hulkenberg as experienced teammate. Brazilian passion contained by German-Swiss team culture at Audi.",
+        "traits": {
+          "aggression": 45,
+          "consistency": 70,
+          "wet_ability": 60,
+          "tire_mgmt": 65,
+          "qualifying": 60,
+          "racecraft": 65
+        }
+      },
+      "team_budget_m": 130
     },
     {
       "position": 16,
@@ -433,7 +763,29 @@
       "debut_year": 2016,
       "debut_age": 19,
       "f1_seasons": 11,
-      "progress_pct": 1
+      "progress_pct": 1,
+      "profile": {
+        "archetype": "The Contrarian",
+        "big5": {
+          "openness": 50,
+          "conscientiousness": 70,
+          "extraversion": 40,
+          "agreeableness": 35,
+          "neuroticism": 55
+        },
+        "driving_style": "Defensive master. Exceptional at holding position against faster cars. Strong in the wet. Can produce stunning results (Hungary 2021 win) when everything aligns.",
+        "risk_profile": "Defensive driving occasionally tips into over-aggression. History of teammate conflicts (Perez, Gasly, Alonso). Guards his position fiercely.",
+        "team_dynamics": "Complex history with teammates. At Haas for a fresh start. Works best with clear team hierarchy and defined roles.",
+        "traits": {
+          "aggression": 65,
+          "consistency": 65,
+          "wet_ability": 75,
+          "tire_mgmt": 70,
+          "qualifying": 65,
+          "racecraft": 65
+        }
+      },
+      "team_budget_m": 115
     },
     {
       "position": 17,
@@ -460,7 +812,29 @@
       "debut_year": 2019,
       "debut_age": 22,
       "f1_seasons": 8,
-      "progress_pct": 1
+      "progress_pct": 1,
+      "profile": {
+        "archetype": "The Phoenix",
+        "big5": {
+          "openness": 75,
+          "conscientiousness": 75,
+          "extraversion": 70,
+          "agreeableness": 85,
+          "neuroticism": 35
+        },
+        "driving_style": "Smooth, adaptive, excellent tire whisperer. Rebuilt career at Williams after Red Bull dropped him. Extracts remarkable results from uncompetitive machinery. One of the most liked drivers in the paddock.",
+        "risk_profile": "Conservative but opportunistic. Picks moments to shine and protects the car otherwise. Survival instinct from the Red Bull experience.",
+        "team_dynamics": "Beloved by mechanics and engineers. Positive energy, constructive feedback. The emotional heart of Williams. Strong relationship with Sainz as co-leader.",
+        "traits": {
+          "aggression": 40,
+          "consistency": 75,
+          "wet_ability": 70,
+          "tire_mgmt": 85,
+          "qualifying": 65,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 120
     },
     {
       "position": 18,
@@ -487,7 +861,29 @@
       "debut_year": 2010,
       "debut_age": 22,
       "f1_seasons": 17,
-      "progress_pct": 0
+      "progress_pct": 0,
+      "profile": {
+        "archetype": "The Nearly Man",
+        "big5": {
+          "openness": 55,
+          "conscientiousness": 85,
+          "extraversion": 55,
+          "agreeableness": 50,
+          "neuroticism": 40
+        },
+        "driving_style": "Experienced, consistent, technically strong. The record holder for most starts without a podium (now broken). Excellent in qualifying, sometimes fades in races. Brings invaluable experience to a new team.",
+        "risk_profile": "Low risk, high consistency. In 2026 with Audi, his job is to provide a baseline and develop the car rather than take heroic risks.",
+        "team_dynamics": "The veteran anchor. Provides the stability a new manufacturer needs. Professional, no drama, delivers clear data.",
+        "traits": {
+          "aggression": 45,
+          "consistency": 75,
+          "wet_ability": 70,
+          "tire_mgmt": 70,
+          "qualifying": 80,
+          "racecraft": 60
+        }
+      },
+      "team_budget_m": 130
     },
     {
       "position": 19,
@@ -514,7 +910,29 @@
       "debut_year": 2013,
       "debut_age": 23,
       "f1_seasons": 14,
-      "progress_pct": 0
+      "progress_pct": 0,
+      "profile": {
+        "archetype": "The Stoic",
+        "big5": {
+          "openness": 45,
+          "conscientiousness": 80,
+          "extraversion": 35,
+          "agreeableness": 70,
+          "neuroticism": 25
+        },
+        "driving_style": "Steady, reliable, occasionally brilliant in qualifying. The perfect wingman at Mercedes for years. In 2026, bringing that experience to the new Cadillac entry. Strong one-lap pace when confident in the car.",
+        "risk_profile": "Minimal risk appetite. Races to a strategy. Rarely makes mistakes but rarely creates magic either. The embodiment of consistent points scoring.",
+        "team_dynamics": "Low-ego team player. Accepted the number two role at Mercedes with grace. At Cadillac, he's the team leader and development driver.",
+        "traits": {
+          "aggression": 35,
+          "consistency": 80,
+          "wet_ability": 60,
+          "tire_mgmt": 75,
+          "qualifying": 75,
+          "racecraft": 55
+        }
+      },
+      "team_budget_m": 110
     },
     {
       "position": 20,
@@ -541,7 +959,29 @@
       "debut_year": 2011,
       "debut_age": 21,
       "f1_seasons": 16,
-      "progress_pct": 0
+      "progress_pct": 0,
+      "profile": {
+        "archetype": "The Street Fighter",
+        "big5": {
+          "openness": 50,
+          "conscientiousness": 65,
+          "extraversion": 60,
+          "agreeableness": 65,
+          "neuroticism": 50
+        },
+        "driving_style": "Sunday specialist. Consistently better in races than qualifying. Exceptional tire management was his hallmark \u2014 made one-stop strategies work when nobody else could. Speed has declined with age.",
+        "risk_profile": "Takes measured risks in races but qualifying has become a weakness. Form has been erratic since 2023. Brings commercial value (Mexican market) alongside driving.",
+        "team_dynamics": "Experienced team player. At Cadillac for the final chapter. Brings 16 seasons of knowledge to a brand-new operation.",
+        "traits": {
+          "aggression": 50,
+          "consistency": 55,
+          "wet_ability": 60,
+          "tire_mgmt": 85,
+          "qualifying": 50,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 110
     },
     {
       "position": 21,
@@ -568,7 +1008,29 @@
       "debut_year": 2001,
       "debut_age": 19,
       "f1_seasons": 26,
-      "progress_pct": 0
+      "progress_pct": 0,
+      "profile": {
+        "archetype": "The Gladiator",
+        "big5": {
+          "openness": 65,
+          "conscientiousness": 90,
+          "extraversion": 55,
+          "agreeableness": 30,
+          "neuroticism": 35
+        },
+        "driving_style": "The most complete driver in F1 history by many accounts. Adapts to any car, any condition. In his 23rd season, still extracting the maximum. His car control in the wet remains supernatural. The 2024-2025 decline is real but the baseline was so high.",
+        "risk_profile": "Fiercely competitive. Will fight for 15th like it's a race win. Has mellowed slightly with age but the fire still burns. Political operator \u2014 uses media pressure strategically.",
+        "team_dynamics": "Demands respect and resources. Has outlasted multiple teammates and team principals. At Aston Martin for the long-shot championship run that hasn't materialized.",
+        "traits": {
+          "aggression": 75,
+          "consistency": 70,
+          "wet_ability": 90,
+          "tire_mgmt": 80,
+          "qualifying": 75,
+          "racecraft": 95
+        }
+      },
+      "team_budget_m": 135
     },
     {
       "position": 22,
@@ -595,7 +1057,29 @@
       "debut_year": 2017,
       "debut_age": 18,
       "f1_seasons": 10,
-      "progress_pct": 0
+      "progress_pct": 0,
+      "profile": {
+        "archetype": "The Heir",
+        "big5": {
+          "openness": 45,
+          "conscientiousness": 60,
+          "extraversion": 35,
+          "agreeableness": 50,
+          "neuroticism": 40
+        },
+        "driving_style": "Inconsistent but capable of stunning results. The 2020 Turkey podium (pole in wet qualifying) showed his ceiling. Struggles with confidence and adapting to car changes. Better in the wet than dry.",
+        "risk_profile": "Variable. Can produce brilliant drives or anonymous afternoons. The billionaire's son narrative overshadows genuine talent that surfaces unpredictably.",
+        "team_dynamics": "Unique position \u2014 his father owns the team. This insulates him from pressure but also from the hunger that drives others. Relationship with Alonso is complex.",
+        "traits": {
+          "aggression": 55,
+          "consistency": 50,
+          "wet_ability": 70,
+          "tire_mgmt": 55,
+          "qualifying": 55,
+          "racecraft": 55
+        }
+      },
+      "team_budget_m": 135
     }
   ],
   "constructors": [
@@ -610,7 +1094,11 @@
       "team_display": "Mercedes",
       "car_weight": 772,
       "car_over": 4,
-      "progress_pct": 100
+      "progress_pct": 100,
+      "budget_m": 135,
+      "staff": 1000,
+      "factory": "Brackley, UK",
+      "pts_per_million": 1.33
     },
     {
       "position": 2,
@@ -623,7 +1111,11 @@
       "team_display": "Ferrari",
       "car_weight": 770,
       "car_over": 2,
-      "progress_pct": 61
+      "progress_pct": 61,
+      "budget_m": 135,
+      "staff": 1100,
+      "factory": "Maranello, Italy",
+      "pts_per_million": 0.81
     },
     {
       "position": 3,
@@ -636,7 +1128,11 @@
       "team_display": "McLaren",
       "car_weight": 771,
       "car_over": 3,
-      "progress_pct": 52
+      "progress_pct": 52,
+      "budget_m": 135,
+      "staff": 900,
+      "factory": "Woking, UK",
+      "pts_per_million": 0.7
     },
     {
       "position": 4,
@@ -649,7 +1145,11 @@
       "team_display": "Red Bull",
       "car_weight": 778,
       "car_over": 10,
-      "progress_pct": 17
+      "progress_pct": 17,
+      "budget_m": 135,
+      "staff": 950,
+      "factory": "Milton Keynes, UK",
+      "pts_per_million": 0.22
     },
     {
       "position": 5,
@@ -662,7 +1162,11 @@
       "team_display": "Alpine",
       "car_weight": 773,
       "car_over": 5,
-      "progress_pct": 13
+      "progress_pct": 13,
+      "budget_m": 130,
+      "staff": 800,
+      "factory": "Enstone/Viry, UK/France",
+      "pts_per_million": 0.18
     },
     {
       "position": 6,
@@ -675,7 +1179,11 @@
       "team_display": "Haas",
       "car_weight": 773,
       "car_over": 5,
-      "progress_pct": 10
+      "progress_pct": 10,
+      "budget_m": 115,
+      "staff": 400,
+      "factory": "Kannapolis, USA / Maranello",
+      "pts_per_million": 0.16
     },
     {
       "position": 7,
@@ -688,7 +1196,11 @@
       "team_display": "RB",
       "car_weight": 775,
       "car_over": 7,
-      "progress_pct": 8
+      "progress_pct": 8,
+      "budget_m": 125,
+      "staff": 700,
+      "factory": "Faenza, Italy",
+      "pts_per_million": 0.11
     },
     {
       "position": 8,
@@ -701,7 +1213,11 @@
       "team_display": "Williams",
       "car_weight": 796,
       "car_over": 28,
-      "progress_pct": 3
+      "progress_pct": 3,
+      "budget_m": 120,
+      "staff": 750,
+      "factory": "Grove, UK",
+      "pts_per_million": 0.04
     },
     {
       "position": 9,
@@ -714,7 +1230,11 @@
       "team_display": "Audi",
       "car_weight": 776,
       "car_over": 8,
-      "progress_pct": 1
+      "progress_pct": 1,
+      "budget_m": 130,
+      "staff": 600,
+      "factory": "Hinwil, Switzerland",
+      "pts_per_million": 0.02
     },
     {
       "position": 10,
@@ -727,7 +1247,11 @@
       "team_display": "Cadillac",
       "car_weight": 774,
       "car_over": 6,
-      "progress_pct": 0
+      "progress_pct": 0,
+      "budget_m": 110,
+      "staff": 350,
+      "factory": "Silverstone, UK (new)",
+      "pts_per_million": 0
     },
     {
       "position": 11,
@@ -740,7 +1264,11 @@
       "team_display": "Aston Martin",
       "car_weight": 778,
       "car_over": 10,
-      "progress_pct": 0
+      "progress_pct": 0,
+      "budget_m": 135,
+      "staff": 850,
+      "factory": "Silverstone, UK",
+      "pts_per_million": 0
     }
   ],
   "races": [

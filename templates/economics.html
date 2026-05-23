@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Team Economics & Budget Efficiency</title>
+<meta name="description" content="F1 {{ data.year }} team budgets, spending efficiency, and the cost cap's impact on competition. Budget vs points scatter, efficiency rankings, and diminishing returns analysis.">
+<meta property="og:title" content="F1 {{ data.year }} — Team Economics & Budget Efficiency">
+<meta property="og:description" content="How efficiently do F1 teams spend their $135M cost cap? Budget vs performance analysis for the {{ data.year }} season.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/economics.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Team Economics">
+<meta name="twitter:description" content="Budget efficiency, cost cap analysis, and spending patterns across the {{ data.year }} F1 grid.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { position: relative; width: 100%; height: 480px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .explainer { font-size: 13px; color: #c9d1d9; line-height: 1.7; max-width: 800px; }
+  .explainer p { margin-bottom: 12px; }
+  .explainer strong { color: #f0f6fc; }
+
+  .callout {
+    background: #0d1830;
+    border: 1px solid #1b2d4a;
+    border-left: 4px solid #58a6ff;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .callout-title { color: #58a6ff; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .callout-body { color: #c9d1d9; font-size: 13px; line-height: 1.6; }
+
+  .callout-amber {
+    background: #2a1f00;
+    border: 1px solid #3d2e00;
+    border-left: 4px solid #d29922;
+  }
+  .callout-amber .callout-title { color: #d29922; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  th.right, td.right { text-align: right; }
+
+  .progress-bar { height: 6px; background: #21262d; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .chart-container { height: 360px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Team Economics</h1>
+  <div class="tagline">Budget efficiency, cost cap analysis, and the relationship between spending and performance across the {{ data.year }} F1 grid. Are the biggest spenders getting proportional value?</div>
+</div>
+
+<!-- Stats Cards -->
+<div class="section">
+  <h2>Financial Overview</h2>
+  <p class="section-sub">{{ data.year }} season after Round {{ data.current_round }}</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Cost Cap</div>
+      <div class="stat" style="color: #d29922;">$135M</div>
+      <div class="stat-label">{{ data.year }} FIA budget cap ceiling</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Total Grid Spend</div>
+      <div class="stat" id="totalSpend">--</div>
+      <div class="stat-label">estimated combined team budgets</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Most Efficient</div>
+      <div class="stat-sm ok" id="mostEfficientName">--</div>
+      <div class="stat-label" id="mostEfficientDetail">best pts/million $</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Least Efficient</div>
+      <div class="stat-sm neg" id="leastEfficientName">--</div>
+      <div class="stat-label" id="leastEfficientDetail">worst pts/million $</div>
+    </div>
+  </div>
+</div>
+
+<!-- Budget vs Points Scatter -->
+<div class="section section-divider">
+  <h2>Budget vs Points</h2>
+  <p class="section-sub">Each dot is a constructor. Does spending more money reliably produce more points?</p>
+  <div class="card">
+    <div class="chart-container" style="height: 520px;">
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Efficiency Ranking -->
+<div class="section section-divider">
+  <h2>Efficiency Ranking</h2>
+  <p class="section-sub">Points scored per million dollars of estimated budget — who extracts the most value?</p>
+  <div class="card">
+    <div class="chart-container" style="height: 420px;">
+      <canvas id="efficiencyChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Staff Efficiency -->
+<div class="section section-divider">
+  <h2>Staff Efficiency</h2>
+  <p class="section-sub">Points per 100 staff members — measuring human capital productivity</p>
+  <div class="card">
+    <div class="chart-container" style="height: 420px;">
+      <canvas id="staffChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Budget Table -->
+<div class="section section-divider">
+  <h2>Team Budget Breakdown</h2>
+  <p class="section-sub">Estimated budgets, staffing, and efficiency metrics for all {{ data.year }} constructors</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th class="right">Budget ($M)</th>
+          <th class="right">Staff</th>
+          <th>Factory</th>
+          <th class="right">Points</th>
+          <th class="right">Wins</th>
+          <th class="right">Pts/$M</th>
+          <th class="right">Pts/100 Staff</th>
+          <th>Efficiency</th>
+        </tr>
+      </thead>
+      <tbody id="budgetTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Analysis Section -->
+<div class="section section-divider">
+  <h2>Analysis</h2>
+  <p class="section-sub">What the numbers reveal about F1 team economics</p>
+
+  <div class="callout">
+    <div class="callout-title">Diminishing Returns</div>
+    <div class="callout-body" id="diminishingReturnsText">Loading...</div>
+  </div>
+
+  <div class="callout callout-amber" style="margin-top: 16px;">
+    <div class="callout-title">Cost Cap Effects</div>
+    <div class="callout-body">The $135M cost cap (introduced 2021, tightened annually) was designed to compress the field by limiting top-team spending. Before the cap, the gap between Ferrari/Mercedes/Red Bull budgets and midfield teams exceeded $200M. Under the cap, the maximum delta is constrained — but spending efficiency, staff quality, infrastructure advantages, and excluded costs (driver salaries, top-three executive pay, marketing) still create significant asymmetry. Teams at the cap ceiling do not automatically outperform smaller operations.</div>
+  </div>
+
+  <div class="callout" style="margin-top: 16px;">
+    <div class="callout-title">New Entrant Economics</div>
+    <div class="callout-body" id="newEntrantText">Loading...</div>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Budget estimates from public reporting &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // DATA (injected from Jinja2)
+  // ============================================================
+  var constructors = [
+    {% for c in data.constructors %}
+    {
+      name: '{{ c.name }}',
+      teamId: '{{ c.team_id }}',
+      color: '#{{ c.team_hex }}',
+      teamCss: '{{ c.team_css }}',
+      teamDisplay: '{{ c.team_display }}',
+      points: {{ c.points|int }},
+      wins: {{ c.wins|int }},
+      budgetM: {{ c.budget_m }},
+      staff: {{ c.staff }},
+      factory: '{{ c.factory }}',
+      ptsPerMillion: {{ c.pts_per_million|round(3) }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  var currentYear = {{ data.year }};
+  var currentRound = {{ data.current_round }};
+  var COST_CAP = 135;
+
+  // ============================================================
+  // STATS CARDS
+  // ============================================================
+  var totalSpend = constructors.reduce(function(a, c) { return a + c.budgetM; }, 0);
+  document.getElementById('totalSpend').textContent = '$' + totalSpend.toFixed(0) + 'M';
+
+  // Sort by efficiency (pts per million) — only count teams with points > 0
+  var withPoints = constructors.filter(function(c) { return c.points > 0; });
+  var sortedByEff = withPoints.slice().sort(function(a, b) { return b.ptsPerMillion - a.ptsPerMillion; });
+  var mostEfficient = sortedByEff[0];
+  var leastEfficient = sortedByEff[sortedByEff.length - 1];
+
+  document.getElementById('mostEfficientName').textContent = mostEfficient.teamDisplay;
+  document.getElementById('mostEfficientName').style.color = mostEfficient.color;
+  document.getElementById('mostEfficientDetail').textContent = mostEfficient.ptsPerMillion.toFixed(2) + ' pts/$M';
+
+  document.getElementById('leastEfficientName').textContent = leastEfficient.teamDisplay;
+  document.getElementById('leastEfficientName').style.color = leastEfficient.color;
+  document.getElementById('leastEfficientDetail').textContent = leastEfficient.ptsPerMillion.toFixed(2) + ' pts/$M';
+
+  // ============================================================
+  // UTILITY: Canvas setup
+  // ============================================================
+  function setupCanvas(canvas) {
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx: ctx, W: rect.width, H: rect.height };
+  }
+
+  // ============================================================
+  // CHART 1: Budget vs Points Scatter
+  // ============================================================
+  function drawScatter() {
+    var canvas = document.getElementById('scatterChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    var pad = { top: 40, right: 40, bottom: 60, left: 70 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    var minBudget = Math.min.apply(null, constructors.map(function(c) { return c.budgetM; }));
+    var maxBudget = Math.max.apply(null, constructors.map(function(c) { return c.budgetM; }));
+    var maxPts = Math.max.apply(null, constructors.map(function(c) { return c.points; }));
+    var budgetPad = (maxBudget - minBudget) * 0.1;
+    minBudget = Math.max(0, minBudget - budgetPad);
+    maxBudget = maxBudget + budgetPad;
+    var ptsPad = maxPts * 0.1;
+    maxPts = maxPts + ptsPad;
+
+    function toX(budget) { return pad.left + ((budget - minBudget) / (maxBudget - minBudget)) * cW; }
+    function toY(pts) { return pad.top + cH - (pts / maxPts) * cH; }
+
+    // Grid
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    for (var i = 0; i <= 5; i++) {
+      var y = pad.top + cH * i / 5;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(W - pad.right, y);
+      ctx.stroke();
+
+      var val = Math.round(maxPts * (5 - i) / 5);
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(val.toString(), pad.left - 8, y + 4);
+    }
+
+    for (var i = 0; i <= 5; i++) {
+      var val = minBudget + (maxBudget - minBudget) * i / 5;
+      var x = pad.left + cW * i / 5;
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, pad.top + cH);
+      ctx.stroke();
+
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('$' + Math.round(val) + 'M', x, pad.top + cH + 18);
+    }
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + cH);
+    ctx.lineTo(W - pad.right, pad.top + cH);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Estimated Budget ($M)', W / 2, H - 10);
+
+    ctx.save();
+    ctx.translate(16, pad.top + cH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText('Constructor Points', 0, 0);
+    ctx.restore();
+
+    // Cost cap line
+    var capX = toX(COST_CAP);
+    if (capX > pad.left && capX < W - pad.right) {
+      ctx.strokeStyle = '#d29922';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(capX, pad.top);
+      ctx.lineTo(capX, pad.top + cH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#d29922';
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('Cost Cap $135M', capX, pad.top - 8);
+    }
+
+    // Linear regression for trend line
+    var n = constructors.length;
+    var sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+    constructors.forEach(function(c) {
+      sumX += c.budgetM;
+      sumY += c.points;
+      sumXY += c.budgetM * c.points;
+      sumXX += c.budgetM * c.budgetM;
+    });
+    var slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    var intercept = (sumY - slope * sumX) / n;
+
+    // R-squared
+    var meanY = sumY / n;
+    var ssRes = 0, ssTot = 0;
+    constructors.forEach(function(c) {
+      var predicted = slope * c.budgetM + intercept;
+      ssRes += (c.points - predicted) * (c.points - predicted);
+      ssTot += (c.points - meanY) * (c.points - meanY);
+    });
+    var rSquared = 1 - ssRes / ssTot;
+
+    // Trend line
+    ctx.strokeStyle = 'rgba(139, 148, 158, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    var trendY0 = slope * minBudget + intercept;
+    var trendY1 = slope * maxBudget + intercept;
+    ctx.moveTo(toX(minBudget), toY(Math.max(trendY0, 0)));
+    ctx.lineTo(toX(maxBudget), toY(Math.max(trendY1, 0)));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // R-squared label
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('R² = ' + rSquared.toFixed(3), W - pad.right - 8, pad.top + 18);
+
+    // Data points
+    constructors.forEach(function(c) {
+      var x = toX(c.budgetM);
+      var y = toY(c.points);
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = c.color;
+      ctx.globalAlpha = 0.9;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = '#0d1117';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle = '#c9d1d9';
+      ctx.font = '11px "SF Mono", "Fira Code", monospace';
+      // Position label to avoid overlap: alternate above/below
+      var labelY = y - 18;
+      if (labelY < pad.top + 30) labelY = y + 22;
+      ctx.textAlign = 'center';
+      ctx.fillText(c.teamDisplay, x, labelY);
+    });
+  }
+
+  // ============================================================
+  // CHART 2: Efficiency Ranking (horizontal bars)
+  // ============================================================
+  function drawEfficiency() {
+    var canvas = document.getElementById('efficiencyChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    var pad = { top: 20, right: 80, bottom: 30, left: 120 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    var sorted = constructors.slice().sort(function(a, b) { return b.ptsPerMillion - a.ptsPerMillion; });
+    var n = sorted.length;
+    var barH = Math.min(28, (cH / n) - 4);
+    var gap = (cH - barH * n) / (n + 1);
+    var maxVal = sorted[0].ptsPerMillion;
+
+    sorted.forEach(function(c, i) {
+      var y = pad.top + gap + i * (barH + gap);
+      var barW = (c.ptsPerMillion / maxVal) * cW;
+
+      // Team name
+      ctx.fillStyle = '#c9d1d9';
+      ctx.font = '12px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(c.teamDisplay, pad.left - 10, y + barH / 2);
+
+      // Bar
+      ctx.fillStyle = c.color;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.roundRect(pad.left, y, Math.max(barW, 2), barH, 3);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Value
+      ctx.fillStyle = c.color;
+      ctx.font = '11px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(c.ptsPerMillion.toFixed(2) + ' pts/$M', pad.left + barW + 8, y + barH / 2);
+    });
+
+    // Axis label
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Points per Million $ Budget', W / 2, H - 5);
+  }
+
+  // ============================================================
+  // CHART 3: Staff Efficiency (horizontal bars)
+  // ============================================================
+  function drawStaffEfficiency() {
+    var canvas = document.getElementById('staffChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    var pad = { top: 20, right: 80, bottom: 30, left: 120 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Compute pts per 100 staff
+    var staffData = constructors.map(function(c) {
+      return {
+        teamDisplay: c.teamDisplay,
+        color: c.color,
+        staff: c.staff,
+        points: c.points,
+        per100: c.staff > 0 ? (c.points / c.staff) * 100 : 0
+      };
+    }).sort(function(a, b) { return b.per100 - a.per100; });
+
+    var n = staffData.length;
+    var barH = Math.min(28, (cH / n) - 4);
+    var gap = (cH - barH * n) / (n + 1);
+    var maxVal = staffData[0].per100;
+
+    staffData.forEach(function(c, i) {
+      var y = pad.top + gap + i * (barH + gap);
+      var barW = maxVal > 0 ? (c.per100 / maxVal) * cW : 0;
+
+      // Team name
+      ctx.fillStyle = '#c9d1d9';
+      ctx.font = '12px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(c.teamDisplay, pad.left - 10, y + barH / 2);
+
+      // Bar
+      ctx.fillStyle = c.color;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.roundRect(pad.left, y, Math.max(barW, 2), barH, 3);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Value
+      ctx.fillStyle = c.color;
+      ctx.font = '11px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(c.per100.toFixed(1) + ' pts/100 staff', pad.left + barW + 8, y + barH / 2);
+    });
+
+    // Axis label
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Points per 100 Staff Members', W / 2, H - 5);
+  }
+
+  // ============================================================
+  // BUDGET TABLE
+  // ============================================================
+  function buildTable() {
+    var tbody = document.getElementById('budgetTable');
+    var sorted = constructors.slice().sort(function(a, b) { return b.points - a.points; });
+    var maxEff = Math.max.apply(null, sorted.map(function(c) { return c.ptsPerMillion; }));
+
+    sorted.forEach(function(c) {
+      var per100Staff = c.staff > 0 ? ((c.points / c.staff) * 100).toFixed(1) : '0.0';
+      var effPct = maxEff > 0 ? (c.ptsPerMillion / maxEff * 100) : 0;
+
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td class="driver-name" style="color:' + c.color + ';">' + c.teamDisplay + '</td>' +
+        '<td class="right">$' + c.budgetM.toFixed(0) + 'M</td>' +
+        '<td class="right">' + c.staff.toLocaleString() + '</td>' +
+        '<td>' + c.factory + '</td>' +
+        '<td class="right">' + c.points + '</td>' +
+        '<td class="right">' + c.wins + '</td>' +
+        '<td class="right">' + c.ptsPerMillion.toFixed(2) + '</td>' +
+        '<td class="right">' + per100Staff + '</td>' +
+        '<td><div class="progress-bar"><div class="progress-fill" style="width:' + effPct.toFixed(1) + '%;background:' + c.color + ';"></div></div></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ============================================================
+  // ANALYSIS TEXT
+  // ============================================================
+  function buildAnalysis() {
+    // Diminishing returns analysis
+    var sorted = constructors.slice().sort(function(a, b) { return b.budgetM - a.budgetM; });
+    var topSpenders = sorted.slice(0, 3);
+    var midfield = sorted.slice(3, 7);
+    var backmarkers = sorted.slice(7);
+
+    var topAvgEff = topSpenders.reduce(function(a, c) { return a + c.ptsPerMillion; }, 0) / topSpenders.length;
+    var midAvgEff = midfield.length > 0 ? midfield.reduce(function(a, c) { return a + c.ptsPerMillion; }, 0) / midfield.length : 0;
+    var backAvgEff = backmarkers.length > 0 ? backmarkers.reduce(function(a, c) { return a + c.ptsPerMillion; }, 0) / backmarkers.length : 0;
+
+    var diminishingText = 'The top 3 spenders (' + topSpenders.map(function(c) { return c.teamDisplay; }).join(', ') + ') '
+      + 'average ' + topAvgEff.toFixed(2) + ' pts/$M. ';
+    if (midfield.length > 0) {
+      diminishingText += 'The midfield (' + midfield.map(function(c) { return c.teamDisplay; }).join(', ') + ') '
+        + 'averages ' + midAvgEff.toFixed(2) + ' pts/$M. ';
+    }
+
+    if (topAvgEff < midAvgEff) {
+      diminishingText += 'The midfield is outperforming the top spenders on a per-dollar basis — clear evidence of diminishing returns. '
+        + 'Spending at the cost cap ceiling does not guarantee proportional on-track performance. ';
+    } else if (topAvgEff > midAvgEff * 1.5) {
+      diminishingText += 'The top spenders are significantly more efficient, suggesting that near-cap spending still yields outsized returns — '
+        + 'the cost cap has not yet fully leveled the playing field. ';
+    } else {
+      diminishingText += 'Efficiency is relatively comparable across spending tiers, suggesting the cost cap is partially achieving its goal '
+        + 'of compressing the relationship between budget and performance. ';
+    }
+
+    if (backmarkers.length > 0) {
+      diminishingText += 'Backmarkers average ' + backAvgEff.toFixed(2) + ' pts/$M, '
+        + (backAvgEff < midAvgEff * 0.5
+          ? 'indicating that minimum-viable budgets still face a steep performance cliff.'
+          : 'showing that even lower-budget teams can extract meaningful results under the cap era.');
+    }
+
+    document.getElementById('diminishingReturnsText').textContent = diminishingText;
+
+    // New entrant analysis
+    var newEntrants = constructors.filter(function(c) {
+      var id = c.teamId.toLowerCase();
+      return id.indexOf('cadillac') >= 0 || id.indexOf('audi') >= 0 || id.indexOf('sauber') >= 0;
+    });
+
+    var newEntrantText;
+    if (newEntrants.length > 0) {
+      newEntrantText = 'New or transitioning entrants (' + newEntrants.map(function(c) { return c.teamDisplay; }).join(', ') + ') '
+        + 'face the classic F1 challenge: building competitive infrastructure while the cost cap limits how quickly money can close the gap. ';
+
+      newEntrants.forEach(function(c) {
+        newEntrantText += c.teamDisplay + ' operates with an estimated $' + c.budgetM.toFixed(0) + 'M budget and '
+          + c.staff.toLocaleString() + ' staff at ' + c.factory + ', '
+          + 'producing ' + c.ptsPerMillion.toFixed(2) + ' pts/$M. ';
+      });
+
+      newEntrantText += 'Historical precedent (Haas 2016, Racing Point/Aston Martin) suggests 3-5 years to achieve consistent midfield competitiveness from a new entry.';
+    } else {
+      newEntrantText = 'No clear new entrants identified in the ' + currentYear + ' grid. All teams are established operations with at least several seasons of F1 experience and existing factory infrastructure.';
+    }
+
+    document.getElementById('newEntrantText').textContent = newEntrantText;
+  }
+
+  // ============================================================
+  // DRAW ALL
+  // ============================================================
+  function drawAll() {
+    drawScatter();
+    drawEfficiency();
+    drawStaffEfficiency();
+  }
+
+  buildTable();
+  buildAnalysis();
+  drawAll();
+  window.addEventListener('resize', drawAll);
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Nonlinear Dynamics & Historical Comparison</title>
+<meta name="description" content="Gini coefficient, HHI, Lorenz curves, and rank-size analysis applied to the 2026 F1 championship. How concentrated is the points distribution compared to 2010-2025?">
+<meta property="og:title" content="F1 2026 — Nonlinear Dynamics & Historical Comparison">
+<meta property="og:description" content="Gini coefficient, Herfindahl-Hirschman Index, and Lorenz curves measure 2026 F1 championship concentration against historical seasons.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/nonlinear.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — Nonlinear Dynamics">
+<meta name="twitter:description" content="Gini, HHI, Lorenz curves, and Zipf analysis of the 2026 F1 championship points distribution.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { position: relative; width: 100%; height: 480px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .formula {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 18px;
+    color: #f0f6fc;
+    text-align: center;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .formula .var { color: #58a6ff; font-style: italic; }
+  .formula .op { color: #8b949e; }
+  .formula .fn { color: #d2a8ff; }
+  .formula-note {
+    font-size: 12px;
+    color: #8b949e;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .explainer { font-size: 13px; color: #c9d1d9; line-height: 1.7; max-width: 800px; }
+  .explainer p { margin-bottom: 12px; }
+  .explainer strong { color: #f0f6fc; }
+
+  .callout {
+    background: #0d1830;
+    border: 1px solid #1b2d4a;
+    border-left: 4px solid #58a6ff;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .callout-title { color: #58a6ff; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .callout-body { color: #c9d1d9; font-size: 13px; line-height: 1.6; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .chart-container { height: 360px; }
+    .formula { font-size: 14px; padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Nonlinear Dynamics</h1>
+  <div class="tagline">Gini coefficients, Herfindahl-Hirschman indices, Lorenz curves, and rank-size analysis applied to the 2026 F1 championship. Quantifying concentration and comparing competitiveness across 16 seasons.</div>
+</div>
+
+<!-- Stats Cards -->
+<div class="section">
+  <h2>Concentration Metrics</h2>
+  <p class="section-sub">2026 season after Round 4</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Gini Coefficient</div>
+      <div class="stat" id="giniStat">0.6612</div>
+      <div class="stat-label">0 = perfect equality, 1 = total concentration</div>
+    </div>
+    <div class="card">
+      <div class="card-title">HHI</div>
+      <div class="stat" id="hhiStat">0.1252</div>
+      <div class="stat-label">Herfindahl-Hirschman Index of market share</div>
+    </div>
+    <div class="card">
+      <div class="card-title" id="mostCompLabel">Most Competitive Season</div>
+      <div class="stat-sm ok" id="mostCompStat">--</div>
+      <div class="stat-label" id="mostCompDetail">lowest Gini in the dataset</div>
+    </div>
+    <div class="card">
+      <div class="card-title" id="leastCompLabel">Most Dominated Season</div>
+      <div class="stat-sm neg" id="leastCompStat">--</div>
+      <div class="stat-label" id="leastCompDetail">highest Gini in the dataset</div>
+    </div>
+  </div>
+</div>
+
+<!-- Lorenz Curve -->
+<div class="section section-divider">
+  <h2>Lorenz Curve</h2>
+  <p class="section-sub">Cumulative share of points vs cumulative share of drivers — the shaded area between the curve and the equality line is proportional to the Gini coefficient</p>
+  <div class="card">
+    <div class="chart-container" style="height: 520px;">
+      <canvas id="lorenzChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Historical Gini Comparison -->
+<div class="section section-divider">
+  <h2>Historical Gini Comparison</h2>
+  <p class="section-sub">Gini coefficients for all seasons 2010&ndash;2026, sorted by inequality. Green = competitive, red = dominated.</p>
+  <div class="card">
+    <div class="chart-container" style="height: 560px;">
+      <canvas id="giniBarChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- HHI Time Series -->
+<div class="section section-divider">
+  <h2>HHI Time Series</h2>
+  <p class="section-sub">Herfindahl-Hirschman Index from 2010 to 2026. Below 0.15 = competitive market, above 0.25 = highly concentrated.</p>
+  <div class="card">
+    <div class="chart-container" style="height: 420px;">
+      <canvas id="hhiChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Rank-Size Analysis -->
+<div class="section section-divider">
+  <h2>Rank-Size Analysis (Zipf)</h2>
+  <p class="section-sub">Log-log plot of rank vs points. Zipf's law predicts a linear relationship — deviations reveal structural patterns in the grid hierarchy.</p>
+  <div class="card">
+    <div class="chart-container" style="height: 480px;">
+      <canvas id="zipfChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Explanation Section -->
+<div class="section section-divider">
+  <h2>What These Metrics Measure</h2>
+  <p class="section-sub">Economics and information theory applied to F1 championship points</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Gini Coefficient</div>
+      <div class="explainer">
+        <p>The Gini coefficient measures inequality in a distribution. Originally designed for income inequality, it works identically for championship points: <strong>how unevenly are points distributed across drivers?</strong></p>
+        <p>A Gini of 0 means every driver has identical points. A Gini of 1 means one driver has all the points. Most F1 seasons fall between 0.45 and 0.75.</p>
+      </div>
+      <div class="formula">
+        <span class="var">G</span> <span class="op">=</span>
+        <span class="op">&Sigma;</span><span class="op">&Sigma;</span> <span class="op">|</span><span class="var">x<sub>i</sub></span> <span class="op">&minus;</span> <span class="var">x<sub>j</sub></span><span class="op">|</span>
+        <span class="op">/</span> <span class="op">(</span><span class="op">2</span><span class="var">n</span><sup>2</sup><span class="var">&mu;</span><span class="op">)</span>
+      </div>
+      <div class="formula-note">where x<sub>i</sub>, x<sub>j</sub> are individual driver points, n = number of drivers, &mu; = mean points</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Herfindahl-Hirschman Index</div>
+      <div class="explainer">
+        <p>The HHI is a market concentration measure used by antitrust regulators. Applied to F1, it treats each driver's points share as a "market share." <strong>Would the championship pass an antitrust review?</strong></p>
+        <p>HHI below 0.15 indicates a competitive field. Between 0.15 and 0.25 is moderately concentrated. Above 0.25 signals dominance — a regulatory red flag in economics.</p>
+      </div>
+      <div class="formula">
+        <span class="var">HHI</span> <span class="op">=</span>
+        <span class="op">&Sigma;</span> <span class="var">s<sub>i</sub></span><sup>2</sup>
+      </div>
+      <div class="formula-note">where s<sub>i</sub> = driver i's points / total points (market share)</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top: 16px;">
+    <div class="card">
+      <div class="card-title">Lorenz Curve</div>
+      <div class="explainer">
+        <p>The Lorenz curve plots the cumulative share of points (y-axis) against the cumulative share of drivers sorted from lowest to highest (x-axis). The diagonal line represents perfect equality.</p>
+        <p>The <strong>Gini coefficient equals twice the area</strong> between the Lorenz curve and the equality line. A curve hugging the diagonal means a competitive season; a curve bowing deeply means domination.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Zipf's Law / Rank-Size</div>
+      <div class="explainer">
+        <p>Zipf's law states that in many natural distributions, the value of the r-th ranked item is proportional to 1/r. On a log-log plot, this produces a straight line with slope &minus;1.</p>
+        <p>In F1, deviations from Zipf reveal structure: a <strong>concave deviation</strong> (top-heavy) means the leaders hoard disproportionate points. A <strong>convex deviation</strong> means the midfield is more compressed than expected.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Finding -->
+<div class="section section-divider">
+  <h2>Key Finding</h2>
+  <p class="section-sub">What the data says about 2026</p>
+  <div class="callout" id="keyFindingCallout">
+    <div class="callout-title" id="keyFindingTitle">Loading...</div>
+    <div class="callout-body" id="keyFindingBody"></div>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // DATA (injected from Jinja2)
+  // ============================================================
+  var currentGini = 0.6612;
+  var currentHHI = 0.1252;
+  var currentYear = 2026;
+  var currentRound = 4;
+
+  var drivers = [
+    { name: 'Andrea Kimi Antonelli', familyName: 'Antonelli', pts: 100, color: '##00d2be', teamCss: 'team-mercedes', team: 'Mercedes' },    { name: 'George Russell', familyName: 'Russell', pts: 80, color: '##00d2be', teamCss: 'team-mercedes', team: 'Mercedes' },    { name: 'Charles Leclerc', familyName: 'Leclerc', pts: 59, color: '##dc143c', teamCss: 'team-ferrari', team: 'Ferrari' },    { name: 'Lando Norris', familyName: 'Norris', pts: 51, color: '##ff8700', teamCss: 'team-mclaren', team: 'McLaren' },    { name: 'Lewis Hamilton', familyName: 'Hamilton', pts: 51, color: '##dc143c', teamCss: 'team-ferrari', team: 'Ferrari' },    { name: 'Oscar Piastri', familyName: 'Piastri', pts: 43, color: '##ff8700', teamCss: 'team-mclaren', team: 'McLaren' },    { name: 'Max Verstappen', familyName: 'Verstappen', pts: 26, color: '##3671C6', teamCss: 'team-redbull', team: 'Red Bull' },    { name: 'Oliver Bearman', familyName: 'Bearman', pts: 17, color: '##b6babd', teamCss: 'team-haas', team: 'Haas' },    { name: 'Pierre Gasly', familyName: 'Gasly', pts: 16, color: '##0090ff', teamCss: 'team-alpine', team: 'Alpine' },    { name: 'Liam Lawson', familyName: 'Lawson', pts: 10, color: '##6692ff', teamCss: 'team-rb', team: 'RB' },    { name: 'Franco Colapinto', familyName: 'Colapinto', pts: 7, color: '##0090ff', teamCss: 'team-alpine', team: 'Alpine' },    { name: 'Arvid Lindblad', familyName: 'Lindblad', pts: 4, color: '##6692ff', teamCss: 'team-rb', team: 'RB' },    { name: 'Isack Hadjar', familyName: 'Hadjar', pts: 4, color: '##3671C6', teamCss: 'team-redbull', team: 'Red Bull' },    { name: 'Carlos Sainz', familyName: 'Sainz', pts: 4, color: '##64c4ff', teamCss: 'team-williams', team: 'Williams' },    { name: 'Gabriel Bortoleto', familyName: 'Bortoleto', pts: 2, color: '##00e701', teamCss: 'team-audi', team: 'Audi' },    { name: 'Esteban Ocon', familyName: 'Ocon', pts: 1, color: '##b6babd', teamCss: 'team-haas', team: 'Haas' },    { name: 'Alexander Albon', familyName: 'Albon', pts: 1, color: '##64c4ff', teamCss: 'team-williams', team: 'Williams' },    { name: 'Nico Hülkenberg', familyName: 'Hülkenberg', pts: 0, color: '##00e701', teamCss: 'team-audi', team: 'Audi' },    { name: 'Valtteri Bottas', familyName: 'Bottas', pts: 0, color: '##c0c0c0', teamCss: 'team-cadillac', team: 'Cadillac' },    { name: 'Sergio Pérez', familyName: 'Pérez', pts: 0, color: '##c0c0c0', teamCss: 'team-cadillac', team: 'Cadillac' },    { name: 'Fernando Alonso', familyName: 'Alonso', pts: 0, color: '##006f62', teamCss: 'team-aston', team: 'Aston Martin' },    { name: 'Lance Stroll', familyName: 'Stroll', pts: 0, color: '##006f62', teamCss: 'team-aston', team: 'Aston Martin' }  ];
+
+  var historical = {
+    '2010': {
+      round: 19,
+      gini: 0.6554,
+      hhi: 0.0985,
+      totalPoints: 1919.0,
+      nDrivers: 27,
+      standings: [
+        { driver: 'Sebastian Vettel', points: 256.0, wins: 5, team: 'Red Bull' },        { driver: 'Fernando Alonso', points: 252.0, wins: 5, team: 'Ferrari' },        { driver: 'Mark Webber', points: 242.0, wins: 4, team: 'Red Bull' },        { driver: 'Lewis Hamilton', points: 240.0, wins: 3, team: 'McLaren' },        { driver: 'Jenson Button', points: 214.0, wins: 2, team: 'McLaren' },        { driver: 'Felipe Massa', points: 144.0, wins: 0, team: 'Ferrari' },        { driver: 'Nico Rosberg', points: 142.0, wins: 0, team: 'Mercedes' },        { driver: 'Robert Kubica', points: 136.0, wins: 0, team: 'Renault' },        { driver: 'Michael Schumacher', points: 72.0, wins: 0, team: 'Mercedes' },        { driver: 'Rubens Barrichello', points: 47.0, wins: 0, team: 'Williams' },        { driver: 'Adrian Sutil', points: 47.0, wins: 0, team: 'Force India' },        { driver: 'Kamui Kobayashi', points: 32.0, wins: 0, team: 'Sauber' },        { driver: 'Vitaly Petrov', points: 27.0, wins: 0, team: 'Renault' },        { driver: 'Nico Hülkenberg', points: 22.0, wins: 0, team: 'Williams' },        { driver: 'Vitantonio Liuzzi', points: 21.0, wins: 0, team: 'Force India' },        { driver: 'Sébastien Buemi', points: 8.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Pedro de la Rosa', points: 6.0, wins: 0, team: 'Sauber' },        { driver: 'Nick Heidfeld', points: 6.0, wins: 0, team: 'Sauber' },        { driver: 'Jaime Alguersuari', points: 5.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Heikki Kovalainen', points: 0.0, wins: 0, team: 'Lotus' },        { driver: 'Jarno Trulli', points: 0.0, wins: 0, team: 'Lotus' },        { driver: 'Karun Chandhok', points: 0.0, wins: 0, team: 'HRT' },        { driver: 'Bruno Senna', points: 0.0, wins: 0, team: 'HRT' },        { driver: 'Lucas di Grassi', points: 0.0, wins: 0, team: 'Virgin' },        { driver: 'Timo Glock', points: 0.0, wins: 0, team: 'Virgin' },        { driver: 'Sakon Yamamoto', points: 0.0, wins: 0, team: 'HRT' },        { driver: 'Christian Klien', points: 0.0, wins: 0, team: 'HRT' }      ]
+    },    '2011': {
+      round: 19,
+      gini: 0.7165,
+      hhi: 0.1209,
+      totalPoints: 1919.0,
+      nDrivers: 28,
+      standings: [
+        { driver: 'Sebastian Vettel', points: 392.0, wins: 11, team: 'Red Bull' },        { driver: 'Jenson Button', points: 270.0, wins: 3, team: 'McLaren' },        { driver: 'Mark Webber', points: 258.0, wins: 1, team: 'Red Bull' },        { driver: 'Fernando Alonso', points: 257.0, wins: 1, team: 'Ferrari' },        { driver: 'Lewis Hamilton', points: 227.0, wins: 3, team: 'McLaren' },        { driver: 'Felipe Massa', points: 118.0, wins: 0, team: 'Ferrari' },        { driver: 'Nico Rosberg', points: 89.0, wins: 0, team: 'Mercedes' },        { driver: 'Michael Schumacher', points: 76.0, wins: 0, team: 'Mercedes' },        { driver: 'Adrian Sutil', points: 42.0, wins: 0, team: 'Force India' },        { driver: 'Vitaly Petrov', points: 37.0, wins: 0, team: 'Renault' },        { driver: 'Nick Heidfeld', points: 34.0, wins: 0, team: 'Renault' },        { driver: 'Kamui Kobayashi', points: 30.0, wins: 0, team: 'Sauber' },        { driver: 'Paul di Resta', points: 27.0, wins: 0, team: 'Force India' },        { driver: 'Jaime Alguersuari', points: 26.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Sébastien Buemi', points: 15.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Sergio Pérez', points: 14.0, wins: 0, team: 'Sauber' },        { driver: 'Rubens Barrichello', points: 4.0, wins: 0, team: 'Williams' },        { driver: 'Bruno Senna', points: 2.0, wins: 0, team: 'Renault' },        { driver: 'Pastor Maldonado', points: 1.0, wins: 0, team: 'Williams' },        { driver: 'Pedro de la Rosa', points: 0.0, wins: 0, team: 'Sauber' },        { driver: 'Jarno Trulli', points: 0.0, wins: 0, team: 'Lotus' },        { driver: 'Heikki Kovalainen', points: 0.0, wins: 0, team: 'Lotus' },        { driver: 'Vitantonio Liuzzi', points: 0.0, wins: 0, team: 'HRT' },        { driver: 'Jérôme d'Ambrosio', points: 0.0, wins: 0, team: 'Virgin' },        { driver: 'Timo Glock', points: 0.0, wins: 0, team: 'Virgin' },        { driver: 'Narain Karthikeyan', points: 0.0, wins: 0, team: 'HRT' },        { driver: 'Daniel Ricciardo', points: 0.0, wins: 0, team: 'HRT' },        { driver: 'Karun Chandhok', points: 0.0, wins: 0, team: 'Lotus' }      ]
+    },    '2012': {
+      round: 20,
+      gini: 0.5779,
+      hhi: 0.087,
+      totalPoints: 2020.0,
+      nDrivers: 25,
+      standings: [
+        { driver: 'Sebastian Vettel', points: 281.0, wins: 5, team: 'Red Bull' },        { driver: 'Fernando Alonso', points: 278.0, wins: 3, team: 'Ferrari' },        { driver: 'Kimi Räikkönen', points: 207.0, wins: 1, team: 'Lotus F1' },        { driver: 'Lewis Hamilton', points: 190.0, wins: 4, team: 'McLaren' },        { driver: 'Jenson Button', points: 188.0, wins: 3, team: 'McLaren' },        { driver: 'Mark Webber', points: 179.0, wins: 2, team: 'Red Bull' },        { driver: 'Felipe Massa', points: 122.0, wins: 0, team: 'Ferrari' },        { driver: 'Romain Grosjean', points: 96.0, wins: 0, team: 'Lotus F1' },        { driver: 'Nico Rosberg', points: 93.0, wins: 1, team: 'Mercedes' },        { driver: 'Sergio Pérez', points: 66.0, wins: 0, team: 'Sauber' },        { driver: 'Nico Hülkenberg', points: 63.0, wins: 0, team: 'Force India' },        { driver: 'Kamui Kobayashi', points: 60.0, wins: 0, team: 'Sauber' },        { driver: 'Michael Schumacher', points: 49.0, wins: 0, team: 'Mercedes' },        { driver: 'Paul di Resta', points: 46.0, wins: 0, team: 'Force India' },        { driver: 'Pastor Maldonado', points: 45.0, wins: 1, team: 'Williams' },        { driver: 'Bruno Senna', points: 31.0, wins: 0, team: 'Williams' },        { driver: 'Jean-Éric Vergne', points: 16.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Daniel Ricciardo', points: 10.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Vitaly Petrov', points: 0.0, wins: 0, team: 'Caterham' },        { driver: 'Timo Glock', points: 0.0, wins: 0, team: 'Marussia' },        { driver: 'Charles Pic', points: 0.0, wins: 0, team: 'Marussia' },        { driver: 'Heikki Kovalainen', points: 0.0, wins: 0, team: 'Caterham' },        { driver: 'Jérôme d'Ambrosio', points: 0.0, wins: 0, team: 'Lotus F1' },        { driver: 'Narain Karthikeyan', points: 0.0, wins: 0, team: 'HRT' },        { driver: 'Pedro de la Rosa', points: 0.0, wins: 0, team: 'HRT' }      ]
+    },    '2013': {
+      round: 19,
+      gini: 0.6216,
+      hhi: 0.1082,
+      totalPoints: 1919.0,
+      nDrivers: 23,
+      standings: [
+        { driver: 'Sebastian Vettel', points: 397.0, wins: 13, team: 'Red Bull' },        { driver: 'Fernando Alonso', points: 242.0, wins: 2, team: 'Ferrari' },        { driver: 'Mark Webber', points: 199.0, wins: 0, team: 'Red Bull' },        { driver: 'Lewis Hamilton', points: 189.0, wins: 1, team: 'Mercedes' },        { driver: 'Kimi Räikkönen', points: 183.0, wins: 1, team: 'Lotus F1' },        { driver: 'Nico Rosberg', points: 171.0, wins: 2, team: 'Mercedes' },        { driver: 'Romain Grosjean', points: 132.0, wins: 0, team: 'Lotus F1' },        { driver: 'Felipe Massa', points: 112.0, wins: 0, team: 'Ferrari' },        { driver: 'Jenson Button', points: 73.0, wins: 0, team: 'McLaren' },        { driver: 'Nico Hülkenberg', points: 51.0, wins: 0, team: 'Sauber' },        { driver: 'Sergio Pérez', points: 49.0, wins: 0, team: 'McLaren' },        { driver: 'Paul di Resta', points: 48.0, wins: 0, team: 'Force India' },        { driver: 'Adrian Sutil', points: 29.0, wins: 0, team: 'Force India' },        { driver: 'Daniel Ricciardo', points: 20.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Jean-Éric Vergne', points: 13.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Esteban Gutiérrez', points: 6.0, wins: 0, team: 'Sauber' },        { driver: 'Valtteri Bottas', points: 4.0, wins: 0, team: 'Williams' },        { driver: 'Pastor Maldonado', points: 1.0, wins: 0, team: 'Williams' },        { driver: 'Jules Bianchi', points: 0.0, wins: 0, team: 'Marussia' },        { driver: 'Charles Pic', points: 0.0, wins: 0, team: 'Caterham' },        { driver: 'Giedo van der Garde', points: 0.0, wins: 0, team: 'Caterham' },        { driver: 'Heikki Kovalainen', points: 0.0, wins: 0, team: 'Lotus F1' },        { driver: 'Max Chilton', points: 0.0, wins: 0, team: 'Marussia' }      ]
+    },    '2016': {
+      round: 21,
+      gini: 0.6546,
+      hhi: 0.1138,
+      totalPoints: 2121.0,
+      nDrivers: 24,
+      standings: [
+        { driver: 'Nico Rosberg', points: 385.0, wins: 9, team: 'Mercedes' },        { driver: 'Lewis Hamilton', points: 380.0, wins: 10, team: 'Mercedes' },        { driver: 'Daniel Ricciardo', points: 256.0, wins: 1, team: 'Red Bull' },        { driver: 'Sebastian Vettel', points: 212.0, wins: 0, team: 'Ferrari' },        { driver: 'Max Verstappen', points: 204.0, wins: 1, team: 'Toro Rosso' },        { driver: 'Kimi Räikkönen', points: 186.0, wins: 0, team: 'Ferrari' },        { driver: 'Sergio Pérez', points: 101.0, wins: 0, team: 'Force India' },        { driver: 'Valtteri Bottas', points: 85.0, wins: 0, team: 'Williams' },        { driver: 'Nico Hülkenberg', points: 72.0, wins: 0, team: 'Force India' },        { driver: 'Fernando Alonso', points: 54.0, wins: 0, team: 'McLaren' },        { driver: 'Felipe Massa', points: 53.0, wins: 0, team: 'Williams' },        { driver: 'Carlos Sainz', points: 46.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Romain Grosjean', points: 29.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Daniil Kvyat', points: 25.0, wins: 0, team: 'Red Bull' },        { driver: 'Jenson Button', points: 21.0, wins: 0, team: 'McLaren' },        { driver: 'Kevin Magnussen', points: 7.0, wins: 0, team: 'Renault' },        { driver: 'Felipe Nasr', points: 2.0, wins: 0, team: 'Sauber' },        { driver: 'Jolyon Palmer', points: 1.0, wins: 0, team: 'Renault' },        { driver: 'Pascal Wehrlein', points: 1.0, wins: 0, team: 'Manor Marussia' },        { driver: 'Stoffel Vandoorne', points: 1.0, wins: 0, team: 'McLaren' },        { driver: 'Esteban Gutiérrez', points: 0.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Marcus Ericsson', points: 0.0, wins: 0, team: 'Sauber' },        { driver: 'Esteban Ocon', points: 0.0, wins: 0, team: 'Manor Marussia' },        { driver: 'Rio Haryanto', points: 0.0, wins: 0, team: 'Manor Marussia' }      ]
+    },    '2018': {
+      round: 21,
+      gini: 0.5685,
+      hhi: 0.1128,
+      totalPoints: 2121.0,
+      nDrivers: 20,
+      standings: [
+        { driver: 'Lewis Hamilton', points: 408.0, wins: 11, team: 'Mercedes' },        { driver: 'Sebastian Vettel', points: 320.0, wins: 5, team: 'Ferrari' },        { driver: 'Kimi Räikkönen', points: 251.0, wins: 1, team: 'Ferrari' },        { driver: 'Max Verstappen', points: 249.0, wins: 2, team: 'Red Bull' },        { driver: 'Valtteri Bottas', points: 247.0, wins: 0, team: 'Mercedes' },        { driver: 'Daniel Ricciardo', points: 170.0, wins: 2, team: 'Red Bull' },        { driver: 'Nico Hülkenberg', points: 69.0, wins: 0, team: 'Renault' },        { driver: 'Sergio Pérez', points: 62.0, wins: 0, team: 'Force India' },        { driver: 'Kevin Magnussen', points: 56.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Carlos Sainz', points: 53.0, wins: 0, team: 'Renault' },        { driver: 'Fernando Alonso', points: 50.0, wins: 0, team: 'McLaren' },        { driver: 'Esteban Ocon', points: 49.0, wins: 0, team: 'Force India' },        { driver: 'Charles Leclerc', points: 39.0, wins: 0, team: 'Sauber' },        { driver: 'Romain Grosjean', points: 37.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Pierre Gasly', points: 29.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Stoffel Vandoorne', points: 12.0, wins: 0, team: 'McLaren' },        { driver: 'Marcus Ericsson', points: 9.0, wins: 0, team: 'Sauber' },        { driver: 'Lance Stroll', points: 6.0, wins: 0, team: 'Williams' },        { driver: 'Brendon Hartley', points: 4.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Sergey Sirotkin', points: 1.0, wins: 0, team: 'Williams' }      ]
+    },    '2019': {
+      round: 21,
+      gini: 0.5721,
+      hhi: 0.1139,
+      totalPoints: 2140.0,
+      nDrivers: 20,
+      standings: [
+        { driver: 'Lewis Hamilton', points: 413.0, wins: 11, team: 'Mercedes' },        { driver: 'Valtteri Bottas', points: 326.0, wins: 4, team: 'Mercedes' },        { driver: 'Max Verstappen', points: 278.0, wins: 3, team: 'Red Bull' },        { driver: 'Charles Leclerc', points: 264.0, wins: 2, team: 'Ferrari' },        { driver: 'Sebastian Vettel', points: 240.0, wins: 1, team: 'Ferrari' },        { driver: 'Carlos Sainz', points: 96.0, wins: 0, team: 'McLaren' },        { driver: 'Pierre Gasly', points: 95.0, wins: 0, team: 'Red Bull' },        { driver: 'Alexander Albon', points: 92.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Daniel Ricciardo', points: 54.0, wins: 0, team: 'Renault' },        { driver: 'Sergio Pérez', points: 52.0, wins: 0, team: 'Racing Point' },        { driver: 'Lando Norris', points: 49.0, wins: 0, team: 'McLaren' },        { driver: 'Kimi Räikkönen', points: 43.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Daniil Kvyat', points: 37.0, wins: 0, team: 'Toro Rosso' },        { driver: 'Nico Hülkenberg', points: 37.0, wins: 0, team: 'Renault' },        { driver: 'Lance Stroll', points: 21.0, wins: 0, team: 'Racing Point' },        { driver: 'Kevin Magnussen', points: 20.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Antonio Giovinazzi', points: 14.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Romain Grosjean', points: 8.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Robert Kubica', points: 1.0, wins: 0, team: 'Williams' },        { driver: 'George Russell', points: 0.0, wins: 0, team: 'Williams' }      ]
+    },    '2020': {
+      round: 17,
+      gini: 0.585,
+      hhi: 0.1012,
+      totalPoints: 1734.0,
+      nDrivers: 23,
+      standings: [
+        { driver: 'Lewis Hamilton', points: 347.0, wins: 11, team: 'Mercedes' },        { driver: 'Valtteri Bottas', points: 223.0, wins: 2, team: 'Mercedes' },        { driver: 'Max Verstappen', points: 214.0, wins: 2, team: 'Red Bull' },        { driver: 'Sergio Pérez', points: 125.0, wins: 1, team: 'Racing Point' },        { driver: 'Daniel Ricciardo', points: 119.0, wins: 0, team: 'Renault' },        { driver: 'Carlos Sainz', points: 105.0, wins: 0, team: 'McLaren' },        { driver: 'Alexander Albon', points: 105.0, wins: 0, team: 'Red Bull' },        { driver: 'Charles Leclerc', points: 98.0, wins: 0, team: 'Ferrari' },        { driver: 'Lando Norris', points: 97.0, wins: 0, team: 'McLaren' },        { driver: 'Pierre Gasly', points: 75.0, wins: 1, team: 'AlphaTauri' },        { driver: 'Lance Stroll', points: 75.0, wins: 0, team: 'Racing Point' },        { driver: 'Esteban Ocon', points: 62.0, wins: 0, team: 'Renault' },        { driver: 'Sebastian Vettel', points: 33.0, wins: 0, team: 'Ferrari' },        { driver: 'Daniil Kvyat', points: 32.0, wins: 0, team: 'AlphaTauri' },        { driver: 'Nico Hülkenberg', points: 10.0, wins: 0, team: 'Racing Point' },        { driver: 'Kimi Räikkönen', points: 4.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Antonio Giovinazzi', points: 4.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'George Russell', points: 3.0, wins: 0, team: 'Williams' },        { driver: 'Romain Grosjean', points: 2.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Kevin Magnussen', points: 1.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Nicholas Latifi', points: 0.0, wins: 0, team: 'Williams' },        { driver: 'Jack Aitken', points: 0.0, wins: 0, team: 'Williams' },        { driver: 'Pietro Fittipaldi', points: 0.0, wins: 0, team: 'Haas F1 Team' }      ]
+    },    '2021': {
+      round: 22,
+      gini: 0.5723,
+      hhi: 0.1054,
+      totalPoints: 2207.5,
+      nDrivers: 21,
+      standings: [
+        { driver: 'Max Verstappen', points: 395.5, wins: 10, team: 'Red Bull' },        { driver: 'Lewis Hamilton', points: 387.5, wins: 8, team: 'Mercedes' },        { driver: 'Valtteri Bottas', points: 226.0, wins: 1, team: 'Mercedes' },        { driver: 'Sergio Pérez', points: 190.0, wins: 1, team: 'Red Bull' },        { driver: 'Carlos Sainz', points: 164.5, wins: 0, team: 'Ferrari' },        { driver: 'Lando Norris', points: 160.0, wins: 0, team: 'McLaren' },        { driver: 'Charles Leclerc', points: 159.0, wins: 0, team: 'Ferrari' },        { driver: 'Daniel Ricciardo', points: 115.0, wins: 1, team: 'McLaren' },        { driver: 'Pierre Gasly', points: 110.0, wins: 0, team: 'AlphaTauri' },        { driver: 'Fernando Alonso', points: 81.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Esteban Ocon', points: 74.0, wins: 1, team: 'Alpine F1 Team' },        { driver: 'Sebastian Vettel', points: 43.0, wins: 0, team: 'Aston Martin' },        { driver: 'Lance Stroll', points: 34.0, wins: 0, team: 'Aston Martin' },        { driver: 'Yuki Tsunoda', points: 32.0, wins: 0, team: 'AlphaTauri' },        { driver: 'George Russell', points: 16.0, wins: 0, team: 'Williams' },        { driver: 'Kimi Räikkönen', points: 10.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Nicholas Latifi', points: 7.0, wins: 0, team: 'Williams' },        { driver: 'Antonio Giovinazzi', points: 3.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Mick Schumacher', points: 0.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Robert Kubica', points: 0.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Nikita Mazepin', points: 0.0, wins: 0, team: 'Haas F1 Team' }      ]
+    },    '2022': {
+      round: 22,
+      gini: 0.6202,
+      hhi: 0.1131,
+      totalPoints: 2350.0,
+      nDrivers: 22,
+      standings: [
+        { driver: 'Max Verstappen', points: 454.0, wins: 15, team: 'Red Bull' },        { driver: 'Charles Leclerc', points: 308.0, wins: 3, team: 'Ferrari' },        { driver: 'Sergio Pérez', points: 305.0, wins: 2, team: 'Red Bull' },        { driver: 'George Russell', points: 275.0, wins: 1, team: 'Mercedes' },        { driver: 'Carlos Sainz', points: 246.0, wins: 1, team: 'Ferrari' },        { driver: 'Lewis Hamilton', points: 240.0, wins: 0, team: 'Mercedes' },        { driver: 'Lando Norris', points: 122.0, wins: 0, team: 'McLaren' },        { driver: 'Esteban Ocon', points: 92.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Fernando Alonso', points: 81.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Valtteri Bottas', points: 49.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Daniel Ricciardo', points: 37.0, wins: 0, team: 'McLaren' },        { driver: 'Sebastian Vettel', points: 37.0, wins: 0, team: 'Aston Martin' },        { driver: 'Kevin Magnussen', points: 25.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Pierre Gasly', points: 23.0, wins: 0, team: 'AlphaTauri' },        { driver: 'Lance Stroll', points: 18.0, wins: 0, team: 'Aston Martin' },        { driver: 'Mick Schumacher', points: 12.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Yuki Tsunoda', points: 12.0, wins: 0, team: 'AlphaTauri' },        { driver: 'Guanyu Zhou', points: 6.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Alexander Albon', points: 4.0, wins: 0, team: 'Williams' },        { driver: 'Nicholas Latifi', points: 2.0, wins: 0, team: 'Williams' },        { driver: 'Nyck de Vries', points: 2.0, wins: 0, team: 'Williams' },        { driver: 'Nico Hülkenberg', points: 0.0, wins: 0, team: 'Aston Martin' }      ]
+    },    '2023': {
+      round: 22,
+      gini: 0.6041,
+      hhi: 0.1138,
+      totalPoints: 2458.0,
+      nDrivers: 22,
+      standings: [
+        { driver: 'Max Verstappen', points: 575.0, wins: 19, team: 'Red Bull' },        { driver: 'Sergio Pérez', points: 285.0, wins: 2, team: 'Red Bull' },        { driver: 'Lewis Hamilton', points: 234.0, wins: 0, team: 'Mercedes' },        { driver: 'Fernando Alonso', points: 206.0, wins: 0, team: 'Aston Martin' },        { driver: 'Charles Leclerc', points: 206.0, wins: 0, team: 'Ferrari' },        { driver: 'Lando Norris', points: 205.0, wins: 0, team: 'McLaren' },        { driver: 'Carlos Sainz', points: 200.0, wins: 1, team: 'Ferrari' },        { driver: 'George Russell', points: 175.0, wins: 0, team: 'Mercedes' },        { driver: 'Oscar Piastri', points: 97.0, wins: 0, team: 'McLaren' },        { driver: 'Lance Stroll', points: 74.0, wins: 0, team: 'Aston Martin' },        { driver: 'Pierre Gasly', points: 62.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Esteban Ocon', points: 58.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Alexander Albon', points: 27.0, wins: 0, team: 'Williams' },        { driver: 'Yuki Tsunoda', points: 17.0, wins: 0, team: 'AlphaTauri' },        { driver: 'Valtteri Bottas', points: 10.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Nico Hülkenberg', points: 9.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Daniel Ricciardo', points: 6.0, wins: 0, team: 'AlphaTauri' },        { driver: 'Guanyu Zhou', points: 6.0, wins: 0, team: 'Alfa Romeo' },        { driver: 'Kevin Magnussen', points: 3.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Liam Lawson', points: 2.0, wins: 0, team: 'AlphaTauri' },        { driver: 'Logan Sargeant', points: 1.0, wins: 0, team: 'Williams' },        { driver: 'Nyck de Vries', points: 0.0, wins: 0, team: 'AlphaTauri' }      ]
+    },    '2024': {
+      round: 24,
+      gini: 0.6457,
+      hhi: 0.109,
+      totalPoints: 2659.0,
+      nDrivers: 24,
+      standings: [
+        { driver: 'Max Verstappen', points: 437.0, wins: 9, team: 'Red Bull' },        { driver: 'Lando Norris', points: 374.0, wins: 4, team: 'McLaren' },        { driver: 'Charles Leclerc', points: 356.0, wins: 3, team: 'Ferrari' },        { driver: 'Oscar Piastri', points: 292.0, wins: 2, team: 'McLaren' },        { driver: 'Carlos Sainz', points: 290.0, wins: 2, team: 'Ferrari' },        { driver: 'George Russell', points: 245.0, wins: 2, team: 'Mercedes' },        { driver: 'Lewis Hamilton', points: 223.0, wins: 2, team: 'Mercedes' },        { driver: 'Sergio Pérez', points: 152.0, wins: 0, team: 'Red Bull' },        { driver: 'Fernando Alonso', points: 70.0, wins: 0, team: 'Aston Martin' },        { driver: 'Pierre Gasly', points: 42.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Nico Hülkenberg', points: 41.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Yuki Tsunoda', points: 30.0, wins: 0, team: 'RB F1 Team' },        { driver: 'Lance Stroll', points: 24.0, wins: 0, team: 'Aston Martin' },        { driver: 'Esteban Ocon', points: 23.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Kevin Magnussen', points: 16.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Alexander Albon', points: 12.0, wins: 0, team: 'Williams' },        { driver: 'Daniel Ricciardo', points: 12.0, wins: 0, team: 'RB F1 Team' },        { driver: 'Oliver Bearman', points: 7.0, wins: 0, team: 'Ferrari' },        { driver: 'Franco Colapinto', points: 5.0, wins: 0, team: 'Williams' },        { driver: 'Guanyu Zhou', points: 4.0, wins: 0, team: 'Sauber' },        { driver: 'Liam Lawson', points: 4.0, wins: 0, team: 'RB F1 Team' },        { driver: 'Valtteri Bottas', points: 0.0, wins: 0, team: 'Sauber' },        { driver: 'Logan Sargeant', points: 0.0, wins: 0, team: 'Williams' },        { driver: 'Jack Doohan', points: 0.0, wins: 0, team: 'Alpine F1 Team' }      ]
+    },    '2025': {
+      round: 24,
+      gini: 0.5663,
+      hhi: 0.1086,
+      totalPoints: 2640.0,
+      nDrivers: 21,
+      standings: [
+        { driver: 'Lando Norris', points: 423.0, wins: 7, team: 'McLaren' },        { driver: 'Max Verstappen', points: 421.0, wins: 8, team: 'Red Bull' },        { driver: 'Oscar Piastri', points: 410.0, wins: 7, team: 'McLaren' },        { driver: 'George Russell', points: 319.0, wins: 2, team: 'Mercedes' },        { driver: 'Charles Leclerc', points: 242.0, wins: 0, team: 'Ferrari' },        { driver: 'Lewis Hamilton', points: 156.0, wins: 0, team: 'Ferrari' },        { driver: 'Andrea Kimi Antonelli', points: 150.0, wins: 0, team: 'Mercedes' },        { driver: 'Alexander Albon', points: 73.0, wins: 0, team: 'Williams' },        { driver: 'Carlos Sainz', points: 64.0, wins: 0, team: 'Williams' },        { driver: 'Fernando Alonso', points: 56.0, wins: 0, team: 'Aston Martin' },        { driver: 'Nico Hülkenberg', points: 51.0, wins: 0, team: 'Sauber' },        { driver: 'Isack Hadjar', points: 51.0, wins: 0, team: 'RB F1 Team' },        { driver: 'Oliver Bearman', points: 41.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Liam Lawson', points: 38.0, wins: 0, team: 'Red Bull' },        { driver: 'Esteban Ocon', points: 38.0, wins: 0, team: 'Haas F1 Team' },        { driver: 'Lance Stroll', points: 33.0, wins: 0, team: 'Aston Martin' },        { driver: 'Yuki Tsunoda', points: 33.0, wins: 0, team: 'RB F1 Team' },        { driver: 'Pierre Gasly', points: 22.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Gabriel Bortoleto', points: 19.0, wins: 0, team: 'Sauber' },        { driver: 'Franco Colapinto', points: 0.0, wins: 0, team: 'Alpine F1 Team' },        { driver: 'Jack Doohan', points: 0.0, wins: 0, team: 'Alpine F1 Team' }      ]
+    }  };
+
+  // Add current year to historical for unified processing
+  historical[currentYear.toString()] = {
+    round: currentRound,
+    gini: currentGini,
+    hhi: currentHHI,
+    totalPoints: drivers.reduce(function(a, d) { return a + d.pts; }, 0),
+    nDrivers: drivers.length,
+    standings: drivers.map(function(d) { return { driver: d.familyName, points: d.pts, wins: 0, team: d.team }; })
+  };
+
+  // Build sorted year list
+  var years = Object.keys(historical).sort();
+  var allGinis = years.map(function(y) { return { year: y, gini: historical[y].gini }; });
+  var allHHIs = years.map(function(y) { return { year: y, hhi: historical[y].hhi }; });
+
+  // Find most/least competitive
+  var sortedByGini = allGinis.slice().sort(function(a, b) { return a.gini - b.gini; });
+  var mostComp = sortedByGini[0];
+  var leastComp = sortedByGini[sortedByGini.length - 1];
+
+  document.getElementById('mostCompStat').textContent = mostComp.year;
+  document.getElementById('mostCompDetail').textContent = 'Gini = ' + mostComp.gini.toFixed(4);
+  document.getElementById('leastCompStat').textContent = leastComp.year;
+  document.getElementById('leastCompDetail').textContent = 'Gini = ' + leastComp.gini.toFixed(4);
+
+  // ============================================================
+  // UTILITY: Canvas setup
+  // ============================================================
+  function setupCanvas(canvas) {
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx: ctx, W: rect.width, H: rect.height };
+  }
+
+  // ============================================================
+  // CHART 1: Lorenz Curve
+  // ============================================================
+  function drawLorenz() {
+    var canvas = document.getElementById('lorenzChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    var pad = { top: 40, right: 40, bottom: 60, left: 70 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Sort drivers by points ascending for Lorenz
+    var sorted = drivers.slice().sort(function(a, b) { return a.pts - b.pts; });
+    var n = sorted.length;
+    var total = sorted.reduce(function(a, d) { return a + d.pts; }, 0);
+
+    // Build Lorenz points: (cumulative fraction of population, cumulative fraction of points)
+    var lorenz = [{ x: 0, y: 0 }];
+    var cumPts = 0;
+    for (var i = 0; i < n; i++) {
+      cumPts += sorted[i].pts;
+      lorenz.push({ x: (i + 1) / n, y: cumPts / total });
+    }
+
+    function toCanvasX(frac) { return pad.left + frac * cW; }
+    function toCanvasY(frac) { return pad.top + cH - frac * cH; }
+
+    // Shaded Gini area (between equality line and Lorenz curve)
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(0), toCanvasY(0));
+    // Equality line top
+    ctx.lineTo(toCanvasX(1), toCanvasY(1));
+    // Back along Lorenz curve
+    for (var i = lorenz.length - 1; i >= 0; i--) {
+      ctx.lineTo(toCanvasX(lorenz[i].x), toCanvasY(lorenz[i].y));
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(248, 81, 73, 0.12)';
+    ctx.fill();
+
+    // Grid lines
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    for (var i = 0; i <= 10; i++) {
+      var f = i / 10;
+      // horizontal
+      ctx.beginPath();
+      ctx.moveTo(pad.left, toCanvasY(f));
+      ctx.lineTo(W - pad.right, toCanvasY(f));
+      ctx.stroke();
+      // vertical
+      ctx.beginPath();
+      ctx.moveTo(toCanvasX(f), pad.top);
+      ctx.lineTo(toCanvasX(f), pad.top + cH);
+      ctx.stroke();
+    }
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + cH);
+    ctx.lineTo(W - pad.right, pad.top + cH);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    for (var i = 0; i <= 10; i += 2) {
+      ctx.fillText((i * 10) + '%', toCanvasX(i / 10), pad.top + cH + 18);
+    }
+    ctx.textAlign = 'right';
+    for (var i = 0; i <= 10; i += 2) {
+      ctx.fillText((i * 10) + '%', pad.left - 8, toCanvasY(i / 10) + 4);
+    }
+
+    // Axis titles
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Cumulative share of drivers (lowest to highest)', W / 2, H - 10);
+
+    ctx.save();
+    ctx.translate(16, pad.top + cH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText('Cumulative share of points', 0, 0);
+    ctx.restore();
+
+    // Equality line (diagonal)
+    ctx.strokeStyle = '#3fb950';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(0), toCanvasY(0));
+    ctx.lineTo(toCanvasX(1), toCanvasY(1));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Lorenz curve
+    ctx.strokeStyle = '#f85149';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (var i = 0; i < lorenz.length; i++) {
+      var x = toCanvasX(lorenz[i].x);
+      var y = toCanvasY(lorenz[i].y);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Driver dots on Lorenz curve
+    for (var i = 1; i < lorenz.length; i++) {
+      var x = toCanvasX(lorenz[i].x);
+      var y = toCanvasY(lorenz[i].y);
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = sorted[i - 1].color;
+      ctx.fill();
+      ctx.strokeStyle = '#0d1117';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // Legend
+    ctx.fillStyle = '#3fb950';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = '#3fb950';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pad.left + 10, pad.top + 14);
+    ctx.lineTo(pad.left + 30, pad.top + 14);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillText('Perfect equality', pad.left + 36, pad.top + 18);
+
+    ctx.strokeStyle = '#f85149';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(pad.left + 10, pad.top + 34);
+    ctx.lineTo(pad.left + 30, pad.top + 34);
+    ctx.stroke();
+    ctx.fillStyle = '#f85149';
+    ctx.fillText(currentYear + ' Lorenz curve (Gini = ' + currentGini.toFixed(4) + ')', pad.left + 36, pad.top + 38);
+
+    // Gini area label
+    var midX = toCanvasX(0.5);
+    var eqY = toCanvasY(0.5);
+    var lorenzMidIdx = Math.floor(lorenz.length / 2);
+    var lorenzMidY = toCanvasY(lorenz[lorenzMidIdx].y);
+    var labelY = (eqY + lorenzMidY) / 2;
+    ctx.fillStyle = 'rgba(248, 81, 73, 0.6)';
+    ctx.font = '12px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Gini area', midX, labelY);
+  }
+
+  // ============================================================
+  // CHART 2: Historical Gini Bar Chart
+  // ============================================================
+  function drawGiniBarChart() {
+    var canvas = document.getElementById('giniBarChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    var pad = { top: 30, right: 80, bottom: 40, left: 60 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Sort by Gini ascending
+    var sorted = allGinis.slice().sort(function(a, b) { return a.gini - b.gini; });
+    var n = sorted.length;
+    var barH = Math.min(28, (cH / n) - 4);
+    var gap = (cH - barH * n) / (n + 1);
+
+    // Find range for scaling
+    var maxGini = sorted[n - 1].gini;
+    var minGini = sorted[0].gini;
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, H - pad.bottom);
+    ctx.lineTo(W - pad.right, H - pad.bottom);
+    ctx.stroke();
+
+    // X-axis ticks
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    var tickCount = 8;
+    for (var i = 0; i <= tickCount; i++) {
+      var val = (maxGini * i / tickCount);
+      var x = pad.left + (val / maxGini) * cW;
+      ctx.fillText(val.toFixed(2), x, H - pad.bottom + 18);
+      ctx.strokeStyle = '#21262d';
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, H - pad.bottom);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Gini Coefficient', W / 2, H - 5);
+
+    // Bars
+    sorted.forEach(function(item, i) {
+      var y = pad.top + gap + i * (barH + gap);
+      var barW = (item.gini / maxGini) * cW;
+
+      // Color: green (low Gini) to red (high Gini)
+      var t = (item.gini - minGini) / (maxGini - minGini);
+      var r = Math.round(63 + t * (248 - 63));
+      var g = Math.round(185 + t * (81 - 185));
+      var b = Math.round(80 + t * (73 - 80));
+      var color = 'rgb(' + r + ',' + g + ',' + b + ')';
+
+      // Highlight current year
+      var isCurrent = (item.year === currentYear.toString());
+
+      ctx.fillStyle = color;
+      ctx.globalAlpha = isCurrent ? 1.0 : 0.75;
+      ctx.beginPath();
+      ctx.roundRect(pad.left, y, barW, barH, 3);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      if (isCurrent) {
+        ctx.strokeStyle = '#f0f6fc';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(pad.left, y, barW, barH, 3);
+        ctx.stroke();
+      }
+
+      // Year label
+      ctx.fillStyle = isCurrent ? '#f0f6fc' : '#c9d1d9';
+      ctx.font = (isCurrent ? 'bold ' : '') + '11px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(item.year, pad.left - 8, y + barH / 2 + 4);
+
+      // Value label
+      ctx.fillStyle = color;
+      ctx.font = '11px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(item.gini.toFixed(4), pad.left + barW + 8, y + barH / 2 + 4);
+    });
+  }
+
+  // ============================================================
+  // CHART 3: HHI Time Series
+  // ============================================================
+  function drawHHIChart() {
+    var canvas = document.getElementById('hhiChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    var pad = { top: 40, right: 60, bottom: 60, left: 70 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    var sortedByYear = allHHIs.slice().sort(function(a, b) { return parseInt(a.year) - parseInt(b.year); });
+    var n = sortedByYear.length;
+    var maxHHI = Math.max.apply(null, sortedByYear.map(function(d) { return d.hhi; }));
+    maxHHI = Math.max(maxHHI, 0.30); // ensure threshold lines visible
+    var minHHI = 0;
+
+    function toX(i) { return pad.left + (i / (n - 1)) * cW; }
+    function toY(val) { return pad.top + cH - ((val - minHHI) / (maxHHI - minHHI)) * cH; }
+
+    // Grid lines
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    var yTicks = 6;
+    for (var i = 0; i <= yTicks; i++) {
+      var val = minHHI + (maxHHI - minHHI) * i / yTicks;
+      var y = toY(val);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(W - pad.right, y);
+      ctx.stroke();
+
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(val.toFixed(3), pad.left - 8, y + 4);
+    }
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + cH);
+    ctx.lineTo(W - pad.right, pad.top + cH);
+    ctx.stroke();
+
+    // Threshold lines
+    // Competitive threshold (0.15)
+    if (0.15 <= maxHHI) {
+      var y15 = toY(0.15);
+      ctx.strokeStyle = '#3fb950';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y15);
+      ctx.lineTo(W - pad.right, y15);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#3fb950';
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText('Competitive (<0.15)', W - pad.right + 5, y15 - 4);
+    }
+
+    // Concentrated threshold (0.25)
+    if (0.25 <= maxHHI) {
+      var y25 = toY(0.25);
+      ctx.strokeStyle = '#f85149';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y25);
+      ctx.lineTo(W - pad.right, y25);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#f85149';
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText('Concentrated (>0.25)', W - pad.right + 5, y25 - 4);
+    }
+
+    // X-axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    sortedByYear.forEach(function(item, i) {
+      var x = toX(i);
+      ctx.save();
+      ctx.translate(x, pad.top + cH + 16);
+      ctx.rotate(-Math.PI / 4);
+      ctx.textAlign = 'right';
+      ctx.fillText(item.year, 0, 0);
+      ctx.restore();
+    });
+
+    // Area fill
+    ctx.beginPath();
+    ctx.moveTo(toX(0), pad.top + cH);
+    sortedByYear.forEach(function(item, i) {
+      ctx.lineTo(toX(i), toY(item.hhi));
+    });
+    ctx.lineTo(toX(n - 1), pad.top + cH);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(88, 166, 255, 0.08)';
+    ctx.fill();
+
+    // Line
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    sortedByYear.forEach(function(item, i) {
+      var x = toX(i);
+      var y = toY(item.hhi);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Dots
+    sortedByYear.forEach(function(item, i) {
+      var x = toX(i);
+      var y = toY(item.hhi);
+      var isCurrent = (item.year === currentYear.toString());
+
+      ctx.beginPath();
+      ctx.arc(x, y, isCurrent ? 7 : 5, 0, Math.PI * 2);
+      ctx.fillStyle = isCurrent ? '#58a6ff' : '#161b22';
+      ctx.fill();
+      ctx.strokeStyle = '#58a6ff';
+      ctx.lineWidth = isCurrent ? 3 : 2;
+      ctx.stroke();
+
+      if (isCurrent) {
+        ctx.fillStyle = '#f0f6fc';
+        ctx.font = 'bold 11px "SF Mono", "Fira Code", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(item.hhi.toFixed(4), x, y - 14);
+      }
+    });
+
+    // Y-axis label
+    ctx.save();
+    ctx.translate(16, pad.top + cH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('HHI', 0, 0);
+    ctx.restore();
+  }
+
+  // ============================================================
+  // CHART 4: Rank-Size (Zipf) Analysis
+  // ============================================================
+  function drawZipf() {
+    var canvas = document.getElementById('zipfChart');
+    var s = setupCanvas(canvas);
+    var ctx = s.ctx, W = s.W, H = s.H;
+
+    var pad = { top: 40, right: 40, bottom: 60, left: 70 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Sort drivers by points descending
+    var sorted = drivers.slice().sort(function(a, b) { return b.pts - a.pts; }).filter(function(d) { return d.pts > 0; });
+    var n = sorted.length;
+
+    // Log-log data
+    var logData = sorted.map(function(d, i) {
+      return { rank: i + 1, pts: d.pts, logRank: Math.log10(i + 1), logPts: Math.log10(d.pts), color: d.color, name: d.familyName };
+    });
+
+    var maxLogRank = Math.log10(n);
+    var maxLogPts = logData[0].logPts;
+    var minLogPts = logData[logData.length - 1].logPts;
+    // Add some padding
+    var ptsRange = maxLogPts - minLogPts;
+    minLogPts -= ptsRange * 0.05;
+    maxLogPts += ptsRange * 0.05;
+
+    function toX(logR) { return pad.left + (logR / maxLogRank) * cW; }
+    function toY(logP) { return pad.top + cH - ((logP - minLogPts) / (maxLogPts - minLogPts)) * cH; }
+
+    // Grid
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    for (var i = 0; i <= 5; i++) {
+      var val = minLogPts + (maxLogPts - minLogPts) * i / 5;
+      var y = toY(val);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(W - pad.right, y);
+      ctx.stroke();
+
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.pow(10, val).toFixed(0), pad.left - 8, y + 4);
+    }
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + cH);
+    ctx.lineTo(W - pad.right, pad.top + cH);
+    ctx.stroke();
+
+    // X-axis: log rank labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    for (var r = 1; r <= n; r++) {
+      if (r <= 5 || r === 10 || r === 15 || r === 20 || r === n) {
+        ctx.fillText(r.toString(), toX(Math.log10(r)), pad.top + cH + 18);
+      }
+    }
+
+    // Axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Rank (log scale)', W / 2, H - 10);
+
+    ctx.save();
+    ctx.translate(16, pad.top + cH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText('Points (log scale)', 0, 0);
+    ctx.restore();
+
+    // Zipf reference line (slope = -1 through rank 1 point)
+    // Zipf: log(pts) = log(pts_1) - 1 * log(rank)
+    var zipfIntercept = logData[0].logPts;
+    var zipfSlope = -1;
+
+    ctx.strokeStyle = '#d29922';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    var zipfX0 = 0;
+    var zipfY0 = zipfIntercept;
+    var zipfX1 = maxLogRank;
+    var zipfY1 = zipfIntercept + zipfSlope * maxLogRank;
+    ctx.moveTo(toX(zipfX0), toY(zipfY0));
+    ctx.lineTo(toX(zipfX1), toY(Math.max(zipfY1, minLogPts)));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Linear regression for actual slope
+    var sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+    for (var i = 0; i < logData.length; i++) {
+      sumX += logData[i].logRank;
+      sumY += logData[i].logPts;
+      sumXY += logData[i].logRank * logData[i].logPts;
+      sumXX += logData[i].logRank * logData[i].logRank;
+    }
+    var actualSlope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    var actualIntercept = (sumY - actualSlope * sumX) / n;
+
+    // Actual regression line
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    var regY0 = actualIntercept;
+    var regY1 = actualIntercept + actualSlope * maxLogRank;
+    ctx.moveTo(toX(0), toY(regY0));
+    ctx.lineTo(toX(maxLogRank), toY(Math.max(regY1, minLogPts)));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Data points
+    logData.forEach(function(d) {
+      var x = toX(d.logRank);
+      var y = toY(d.logPts);
+
+      ctx.beginPath();
+      ctx.arc(x, y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = d.color;
+      ctx.fill();
+      ctx.strokeStyle = '#0d1117';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Label top 5 and bottom 2
+      if (d.rank <= 5 || d.rank >= n - 1) {
+        ctx.fillStyle = '#c9d1d9';
+        ctx.font = '10px "SF Mono", "Fira Code", monospace';
+        ctx.textAlign = d.rank <= 3 ? 'left' : 'right';
+        var offsetX = d.rank <= 3 ? 10 : -10;
+        ctx.fillText(d.name, x + offsetX, y - 10);
+      }
+    });
+
+    // Legend
+    ctx.fillStyle = '#d29922';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = '#d29922';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(W - pad.right - 260, pad.top + 14);
+    ctx.lineTo(W - pad.right - 240, pad.top + 14);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillText('Zipf (slope = -1.00)', W - pad.right - 234, pad.top + 18);
+
+    ctx.fillStyle = '#58a6ff';
+    ctx.setLineDash([4, 3]);
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W - pad.right - 260, pad.top + 34);
+    ctx.lineTo(W - pad.right - 240, pad.top + 34);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillText('Actual (slope = ' + actualSlope.toFixed(2) + ')', W - pad.right - 234, pad.top + 38);
+  }
+
+  // ============================================================
+  // KEY FINDING
+  // ============================================================
+  function computeKeyFinding() {
+    var rank = 0;
+    for (var i = 0; i < sortedByGini.length; i++) {
+      if (sortedByGini[i].year === currentYear.toString()) {
+        rank = i + 1;
+        break;
+      }
+    }
+    var totalSeasons = sortedByGini.length;
+    var percentile = ((rank - 1) / (totalSeasons - 1)) * 100;
+
+    var title, body;
+
+    if (percentile <= 25) {
+      title = currentYear + ' is unusually competitive';
+      body = currentYear + ' ranks #' + rank + ' out of ' + totalSeasons + ' seasons (2010-' + currentYear + ') by Gini coefficient, placing it in the most competitive quartile. '
+        + 'With a Gini of ' + currentGini.toFixed(4) + ' and HHI of ' + currentHHI.toFixed(4) + ', points are distributed more evenly than ' + Math.round(100 - percentile) + '% of recent seasons. '
+        + 'The championship resembles a competitive market — no single driver or team has captured a dominant share of total points through Round ' + currentRound + '.';
+    } else if (percentile >= 75) {
+      title = currentYear + ' shows significant concentration';
+      body = currentYear + ' ranks #' + rank + ' out of ' + totalSeasons + ' seasons (2010-' + currentYear + ') by Gini coefficient, placing it among the most concentrated championships in recent history. '
+        + 'With a Gini of ' + currentGini.toFixed(4) + ' and HHI of ' + currentHHI.toFixed(4) + ', the points distribution is more unequal than ' + Math.round(percentile) + '% of comparable seasons. '
+        + 'In antitrust terms, this championship would raise concentration concerns — one or two drivers command a disproportionate share of total points.';
+    } else {
+      title = currentYear + ' falls in the mid-range of competitiveness';
+      body = currentYear + ' ranks #' + rank + ' out of ' + totalSeasons + ' seasons (2010-' + currentYear + ') by Gini coefficient, placing it near the historical median. '
+        + 'With a Gini of ' + currentGini.toFixed(4) + ' and HHI of ' + currentHHI.toFixed(4) + ', the points distribution is neither unusually equal nor dominated. '
+        + 'Compared to the most competitive season (' + mostComp.year + ', Gini ' + mostComp.gini.toFixed(4) + ') and the most concentrated (' + leastComp.year + ', Gini ' + leastComp.gini.toFixed(4) + '), '
+        + currentYear + ' sits at roughly the ' + Math.round(percentile) + 'th percentile after Round ' + currentRound + '.';
+    }
+
+    document.getElementById('keyFindingTitle').textContent = title;
+    document.getElementById('keyFindingBody').textContent = body;
+  }
+
+  // ============================================================
+  // DRAW ALL
+  // ============================================================
+  function drawAll() {
+    drawLorenz();
+    drawGiniBarChart();
+    drawHHIChart();
+    drawZipf();
+  }
+
+  computeKeyFinding();
+  drawAll();
+  window.addEventListener('resize', drawAll);
+
+})();
+</script>
+
+</body>
+</html>
