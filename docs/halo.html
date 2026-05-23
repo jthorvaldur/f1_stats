@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — The Halo: Safety vs. Visibility</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #21262d; }
+  .timeline-event { position: relative; margin-bottom: 20px; }
+  .timeline-event::before {
+    content: ''; position: absolute; left: -24px; top: 6px;
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid; background: #0d1117;
+  }
+  .timeline-year { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+  .timeline-desc { font-size: 12px; color: #c9d1d9; line-height: 1.6; }
+  .timeline-event.fatal::before { border-color: #f85149; background: #f85149; }
+  .timeline-event.save::before { border-color: #3fb950; background: #3fb950; }
+  .timeline-event.reg::before { border-color: #58a6ff; background: #58a6ff; }
+  .timeline-event.upgrade::before { border-color: #d29922; background: #d29922; }
+
+  .diagram { position: relative; width: 100%; height: 320px; margin: 12px 0; }
+  canvas { width: 100%; height: 100%; }
+
+  .callout {
+    border-left: 3px solid; padding: 12px 16px; margin: 16px 0;
+    font-size: 12px; line-height: 1.7; background: rgba(255,255,255,0.02);
+    border-radius: 0 8px 8px 0;
+  }
+  .callout-red { border-color: #f85149; }
+  .callout-green { border-color: #3fb950; }
+  .callout-amber { border-color: #d29922; }
+  .callout-blue { border-color: #58a6ff; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>The Halo</h1>
+  <div class="tagline">Why Formula 1 puts a titanium bar directly in front of the driver's eyes — the engineering trade-off between visibility and survival, and what changed for 2026.</div>
+</div>
+
+<!-- ── Specs ──────────────────────────────────── -->
+<div class="section">
+  <h2>Technical Specifications</h2>
+  <p class="section-sub">The halo is an FIA-homologated component — identical for all teams, manufactured to spec</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Material</div>
+      <div class="stat-sm">Grade 5 Ti</div>
+      <div class="stat-label">Titanium alloy (aerospace-grade)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Weight</div>
+      <div class="stat">9<span style="font-size:14px;color:#8b949e;"> kg</span></div>
+      <div class="stat-label">~1.2% of minimum car weight</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tube Diameter</div>
+      <div class="stat">50<span style="font-size:14px;color:#8b949e;"> mm</span></div>
+      <div class="stat-label">central pillar cross-section</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Load Rating</div>
+      <div class="stat-sm" style="color:#3fb950;">125 kN</div>
+      <div class="stat-label">~12,700 kg — weight of a bus</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── The Visibility Problem ────────────────── -->
+<div class="section section-divider">
+  <h2>The Visibility Problem</h2>
+  <p class="section-sub">Why a titanium bar sits directly in the driver's forward line of sight</p>
+
+  <div class="card">
+    <div class="card-title">Cross-Section: Driver's View</div>
+    <div class="diagram">
+      <canvas id="viewDiagram"></canvas>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">The Central Pillar</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        The halo's front stay — a 50mm titanium tube — runs from the nose of the chassis to the top of the halo arc, passing directly through the driver's forward field of view. At arm's length (~70 cm from the driver's eyes), 50mm subtends approximately <strong>4 degrees</strong> of visual angle. This is roughly the width of four fingers held at arm's length.
+      </div>
+      <div class="callout callout-amber" style="margin-top:12px;">
+        The pillar sits on the car's centerline — exactly where the driver looks when approaching a corner apex, braking point, or the start lights.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why Drivers Adapted</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        Human binocular vision compensates for narrow obstructions. Each eye has a ~170&deg; field of view, and the overlapping binocular zone (~120&deg;) means the brain fills in the 4&deg; blocked by the pillar using the other eye's input. This is the same mechanism that makes your nose invisible in daily life despite being in your visual field.
+      </div>
+      <div class="callout callout-green" style="margin-top:12px;">
+        After initial 2018 complaints, driver feedback converged: "You stop noticing it after three laps." The brain's visual cortex treats it like the nose — present but perceptually erased through binocular fusion.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title">What TV Doesn't Show</div>
+    <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+      The onboard camera (mounted above the driver's head) is a <strong>monocular</strong> lens — it cannot do binocular fusion. The camera shows the pillar as a thick black bar bisecting the view, which is far more obstructive than what the driver actually perceives. Bottas noted in 2018: "The halo has less impact than cameras show." Every driver who has raced with it confirms this gap between the TV image and the lived experience.
+    </div>
+  </div>
+</div>
+
+<!-- ── 2026 Changes ──────────────────────────── -->
+<div class="section section-divider">
+  <h2>What Changed for 2026</h2>
+  <p class="section-sub">The 2026 regulations brought specific halo modifications</p>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Doubled Load Requirement</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        The 2026 halo must withstand <strong>125 kN</strong> static load on the central pillar — approximately double the original 2018 specification. This upgrade came after analysis of multi-car incidents (Silverstone 2022, Monza 2021) showed that real-world forces could approach the original limits. The FIA chose to double the margin rather than merely match observed forces.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Updated Chassis Integration</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        The 2026 survival cell is redesigned around a smaller, lighter car. The three halo mounting points — two at the rear cockpit flanks and one at the front — must integrate with updated crash structure geometry. Teams cannot modify the halo itself but can design bodywork around it, leading to the "faired halo" designs seen on the 2026 Mercedes and Ferrari.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Active Aero Interaction</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        The 2026 cars feature active aerodynamics — moveable front and rear wing elements. The halo sits in the transition zone between the low-drag and high-downforce configurations. Teams have been creative in managing airflow over and around the halo, with several using it as an anchor point for vortex generators that feed the rear wing.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Start Light Visibility</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        The FIA modified start light gantry positioning for 2026 to account for halo obstruction at certain grid slots. Rear-grid drivers on some circuits reported the halo pillar partially blocking the start lights. The fix: lights are now angled 2&deg; downward and additional repeater lights are positioned at track level on the pit wall side.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Lives Saved Timeline ──────────────────── -->
+<div class="section section-divider">
+  <h2>Lives Saved: 2018–2026</h2>
+  <p class="section-sub">Major incidents where the halo demonstrably prevented death or catastrophic injury</p>
+
+  <div class="card">
+    <div class="timeline">
+
+      <div class="timeline-event fatal">
+        <div class="timeline-year" style="color:#f85149;">2014 — Jules Bianchi, Suzuka</div>
+        <div class="timeline-desc">Bianchi's car struck a recovery vehicle at high speed. He suffered fatal head injuries. No halo existed. His death was the catalyst for accelerating cockpit protection development. Bianchi died in July 2015 — the first F1 race fatality since Ayrton Senna in 1994.</div>
+      </div>
+
+      <div class="timeline-event reg">
+        <div class="timeline-year" style="color:#58a6ff;">2018 — Halo Mandated</div>
+        <div class="timeline-desc">The FIA mandated the halo for all open-cockpit FIA single-seater categories. Initial reception was hostile — fans and some drivers called it ugly and unnecessary. Sebastian Vettel compared it to a "flip-flop."</div>
+      </div>
+
+      <div class="timeline-event save">
+        <div class="timeline-year" style="color:#3fb950;">2018 — Leclerc, Spa-Francorchamps</div>
+        <div class="timeline-desc">Fernando Alonso's McLaren launched over Leclerc's Sauber at the start. The halo deflected the airborne car away from Leclerc's head. The first real-world validation — just 12 races after introduction.</div>
+      </div>
+
+      <div class="timeline-event save">
+        <div class="timeline-year" style="color:#3fb950;">2020 — Grosjean, Bahrain</div>
+        <div class="timeline-desc">Romain Grosjean's Haas hit a barrier at 221 km/h, splitting the car in half and igniting a fireball. The halo prevented the barrier from crushing his head and created an air pocket in the wreckage. He walked away with burned hands. Without the halo, this was a certain fatality.</div>
+      </div>
+
+      <div class="timeline-event save">
+        <div class="timeline-year" style="color:#3fb950;">2021 — Hamilton, Monza</div>
+        <div class="timeline-desc">Verstappen's Red Bull launched over Hamilton's Mercedes at the chicane, with the rear wheel landing directly on the halo above Hamilton's helmet. The halo absorbed the full weight of the car. Hamilton described the impact as "heavy" but walked away uninjured.</div>
+      </div>
+
+      <div class="timeline-event save">
+        <div class="timeline-year" style="color:#3fb950;">2022 — Zhou Guanyu, Silverstone</div>
+        <div class="timeline-desc">Zhou's Alfa Romeo flipped inverted and slid along the gravel trap and over the tire barrier at high speed, with the halo grinding against the asphalt. The halo maintained the survival cell's integrity throughout the slide. Zhou was uninjured.</div>
+      </div>
+
+      <div class="timeline-event upgrade">
+        <div class="timeline-year" style="color:#d29922;">2026 — Strength Doubled</div>
+        <div class="timeline-desc">Load requirement increased to 125 kN. The engineering response to 8 years of real-world incident data: the original spec was sufficient, but the FIA chose to double the margin. The 50mm tube diameter is unchanged; the wall thickness and titanium grade were upgraded.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── The Trade-off ─────────────────────────── -->
+<div class="section section-divider">
+  <h2>The Engineering Trade-Off</h2>
+  <p class="section-sub">Why a bar in front of the driver's face is the correct solution</p>
+
+  <div class="card">
+    <div class="card-title">Alternatives Considered and Rejected</div>
+    <table>
+      <thead>
+        <tr><th>Concept</th><th>Description</th><th>Why Rejected</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Aeroscreen</td><td>Transparent polycarbonate windscreen (used in IndyCar)</td><td>Optical distortion at F1 speeds, rain/debris fouling, weight penalty, driver extraction time increased</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Closed Cockpit</td><td>Full canopy like a fighter jet</td><td>Driver extraction in fire scenarios (Grosjean escaped in 27 seconds — a canopy adds critical seconds), fogging, weight, fundamental change to F1 DNA</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">Shield</td><td>Partial transparent deflector (tested by Vettel, 2017)</td><td>Caused dizziness and visual distortion at speed. Vettel abandoned testing after one installation lap: "I got dizzy"</td></tr>
+        <tr><td style="color:#f0f6fc;font-weight:600;">No Protection</td><td>Open cockpit, helmet only</td><td>Bianchi (2014), Surtees (2009), Massa (2009). The evidence is unambiguous.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:16px;">
+    <strong>The fundamental insight:</strong> A 50mm titanium tube that the brain perceptually erases through binocular fusion, versus a transparent screen that introduces optical distortion the brain cannot correct for. The "ugly bar" is the superior optical solution — the human visual system handles occlusion better than refraction.
+  </div>
+
+  <div class="grid grid-3" style="margin-top:16px;">
+    <div class="card">
+      <div class="card-title">Visual Obstruction</div>
+      <div class="stat" style="color:#d29922;">4&deg;</div>
+      <div class="stat-label">of forward view blocked by pillar</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Lives Saved</div>
+      <div class="stat" style="color:#3fb950;">&ge;5</div>
+      <div class="stat-label">confirmed in F1 alone (2018–2026)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">FIA Survival Improvement</div>
+      <div class="stat" style="color:#3fb950;">+17%</div>
+      <div class="stat-label">modeled across 40 historical crashes</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Sources: <a href="https://en.wikipedia.org/wiki/Halo_(safety_device)">Wikipedia</a>,
+  <a href="https://www.fia.com/news/how-make-f1-halo">FIA</a>,
+  <a href="https://f1chronicle.com/2026-f1-halo-device-regulations-explained/">F1 Chronicle</a>,
+  <a href="https://racesundays.com/technology/the-f1-halo-has-it-saved-lives-and-how-many">Race Sundays</a>
+  &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  function drawViewDiagram() {
+    const canvas = document.getElementById('viewDiagram');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+    const cx = w / 2;
+    const cy = h * 0.85;
+
+    // Driver's eye position
+    ctx.fillStyle = '#f0f6fc';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('DRIVER', cx, cy + 18);
+
+    // Field of view cone
+    const fovAngle = 60 * Math.PI / 180;
+    const fovDist = h * 0.72;
+
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx - Math.sin(fovAngle) * fovDist, cy - Math.cos(fovAngle) * fovDist);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.sin(fovAngle) * fovDist, cy - Math.cos(fovAngle) * fovDist);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Binocular zone
+    ctx.fillStyle = 'rgba(63,185,80,0.04)';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx - Math.sin(fovAngle * 0.8) * fovDist, cy - Math.cos(fovAngle * 0.8) * fovDist);
+    ctx.lineTo(cx + Math.sin(fovAngle * 0.8) * fovDist, cy - Math.cos(fovAngle * 0.8) * fovDist);
+    ctx.closePath();
+    ctx.fill();
+
+    // FOV labels
+    ctx.fillStyle = '#484f58';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('~170° monocular FOV per eye', cx + Math.sin(fovAngle) * fovDist * 0.5 + 8, cy - Math.cos(fovAngle) * fovDist * 0.5);
+    ctx.fillStyle = '#3fb950';
+    ctx.textAlign = 'right';
+    ctx.fillText('~120° binocular zone', cx - 20, cy - fovDist * 0.35);
+
+    // Halo pillar (the obstruction)
+    const pillarDist = fovDist * 0.45;
+    const pillarWidth = 18;
+    ctx.fillStyle = '#d29922';
+    ctx.globalAlpha = 0.7;
+    ctx.fillRect(cx - pillarWidth / 2, cy - pillarDist - 30, pillarWidth, 60);
+    ctx.globalAlpha = 1;
+
+    // Pillar label
+    ctx.fillStyle = '#d29922';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('HALO PILLAR', cx, cy - pillarDist - 38);
+    ctx.fillText('50mm / ~4°', cx, cy - pillarDist + 38);
+
+    // Blocked zone (shadow behind pillar)
+    const pillarAngle = 2 * Math.PI / 180;
+    ctx.fillStyle = 'rgba(210,153,34,0.06)';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx - Math.sin(pillarAngle) * fovDist, cy - Math.cos(pillarAngle) * fovDist);
+    ctx.lineTo(cx + Math.sin(pillarAngle) * fovDist, cy - Math.cos(pillarAngle) * fovDist);
+    ctx.closePath();
+    ctx.fill();
+
+    // Brain compensation note
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'left';
+    const noteX = cx + pillarWidth / 2 + 20;
+    ctx.fillText('Left eye sees past right edge', noteX, cy - pillarDist - 10);
+    ctx.fillText('Right eye sees past left edge', noteX, cy - pillarDist + 4);
+    ctx.fillStyle = '#3fb950';
+    ctx.fillText('→ Brain fuses: pillar "disappears"', noteX, cy - pillarDist + 22);
+
+    // Halo arc (top view suggestion)
+    ctx.strokeStyle = '#d2992266';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy - pillarDist, w * 0.25, 15, 0, Math.PI, 0);
+    ctx.stroke();
+    ctx.fillStyle = '#484f58';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('halo arc (top-down)', cx, cy - pillarDist + 58);
+
+    // View arc labels
+    ctx.fillStyle = '#484f58';
+    ctx.font = '9px monospace';
+    const topY = cy - fovDist + 10;
+    ctx.textAlign = 'center';
+    ctx.fillText('TRACK / APEX / BRAKING ZONE', cx, topY);
+  }
+
+  drawViewDiagram();
+  window.addEventListener('resize', drawViewDiagram);
+})();
+</script>
+
+</body>
+</html>

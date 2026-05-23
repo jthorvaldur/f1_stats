@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Points Progression</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .chart-container { position: relative; width: 100%; height: 480px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8b949e; cursor: pointer; }
+  .legend-item:hover { color: #f0f6fc; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-item.dimmed { opacity: 0.25; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 8px 12px; border-bottom: 1px solid #21262d; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .pos-up { color: #3fb950; }
+  .pos-down { color: #f85149; }
+  .pos-same { color: #8b949e; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .chart-container { height: 360px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Points Progression</h1>
+  <div class="tagline">Cumulative championship points after each round. Click a driver in the legend to highlight their line. The gap between Mercedes and the field has only grown through the opening four races.</div>
+</div>
+
+<div class="section">
+  <h2>Championship Battle</h2>
+  <p class="section-sub">Cumulative driver points — Rounds 1 through 4</p>
+  <div class="card">
+    <div class="chart-container">
+      <canvas id="progressionChart"></canvas>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Constructor Progression</h2>
+  <p class="section-sub">Cumulative constructor points — the Mercedes dominance visualized</p>
+  <div class="card">
+    <div class="chart-container" style="height:380px;">
+      <canvas id="constructorChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Round-by-Round Points</h2>
+  <p class="section-sub">Points scored per race and cumulative total — top 10 drivers</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Driver</th><th>R1 AUS</th><th>R2 CHN</th><th>R3 JPN</th><th>R4 MIA</th><th>Total</th><th>Trend</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="driver-name" style="color:#00d2be;">Antonelli</td><td>18</td><td>25</td><td>25</td><td>25</td><td style="font-weight:700;">100</td><td class="pos-up">3 consecutive wins</td></tr>
+        <tr><td class="driver-name" style="color:#00d2be;">Russell</td><td>25</td><td>18</td><td>12</td><td>12</td><td style="font-weight:700;">80</td><td class="pos-down">declining from R1 win</td></tr>
+        <tr><td class="driver-name" style="color:#dc143c;">Leclerc</td><td>15</td><td>12</td><td>15</td><td>4</td><td style="font-weight:700;">59</td><td class="pos-down">dropped to P8 in Miami</td></tr>
+        <tr><td class="driver-name" style="color:#ff8700;">Norris</td><td>10</td><td>—</td><td>10</td><td>18</td><td style="font-weight:700;">51</td><td class="pos-up">DNS R2, strong Miami</td></tr>
+        <tr><td class="driver-name" style="color:#dc143c;">Hamilton</td><td>12</td><td>15</td><td>8</td><td>8</td><td style="font-weight:700;">51</td><td class="pos-same">steady P4-P6</td></tr>
+        <tr><td class="driver-name" style="color:#ff8700;">Piastri</td><td>—</td><td>—</td><td>18</td><td>15</td><td style="font-weight:700;">43</td><td class="pos-up">DNS first 2, podium since</td></tr>
+        <tr><td class="driver-name" style="color:#3671C6;">Verstappen</td><td>8</td><td>—</td><td>4</td><td>10</td><td style="font-weight:700;">26</td><td class="pos-same">struggling for pace</td></tr>
+        <tr><td class="driver-name" style="color:#b6babd;">Bearman</td><td>6</td><td>10</td><td>—</td><td>0</td><td style="font-weight:700;">17</td><td class="pos-down">retired R3, lapped R4</td></tr>
+        <tr><td class="driver-name" style="color:#0090ff;">Gasly</td><td>1</td><td>8</td><td>6</td><td>—</td><td style="font-weight:700;">16</td><td class="pos-down">retired R4</td></tr>
+        <tr><td class="driver-name" style="color:#6692ff;">Lawson</td><td>0</td><td>6</td><td>2</td><td>—</td><td style="font-weight:700;">10</td><td class="pos-down">retired R4</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Observations</h2>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Antonelli's Trajectory</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        After finishing P2 in Australia, Antonelli has won three consecutive races. His 93-point haul from Rounds 2-4 is the highest three-race total on the grid. At 19, he's on pace for a record-breaking maiden championship — projected at ~600 points over 24 races if current form holds.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">McLaren's Recovery</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        McLaren had a disastrous Round 2 with both drivers DNS. Since then, Piastri and Norris have combined for 61 points in two races (Rounds 3-4), the highest two-race team total behind Mercedes. Their trajectory suggests they're the strongest challenger once reliability stabilizes.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Red Bull's Decline</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        Verstappen sits 7th with 26 points — his worst start to a season since his debut year. He retired in China and has failed to finish on the podium. Red Bull's estimated 10 kg weight surplus correlates with their ~0.3-0.4s per lap deficit to Mercedes.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Reliability Factor</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        The 2026 regulations have brought a wave of unreliability. Of 88 race starts across 4 rounds, there have been 14 retirements and 4 DNS entries. Aston Martin leads the misery with zero finishes in the points and multiple retirements. The new power unit architecture is taking its toll.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  const rounds = ['Start', 'R1\nAUS', 'R2\nCHN', 'R3\nJPN', 'R4\nMIA'];
+
+  const driverData = [
+    {name:'Antonelli',  pts:[0,18,43,68,100],  color:'#00d2be', width:3},
+    {name:'Russell',    pts:[0,25,43,55,80],    color:'#00d2be', width:2, dash:[6,3]},
+    {name:'Leclerc',    pts:[0,15,27,42,59],    color:'#dc143c', width:2},
+    {name:'Norris',     pts:[0,10,10,20,51],    color:'#ff8700', width:2},
+    {name:'Hamilton',   pts:[0,12,27,35,51],    color:'#dc143c', width:1.5, dash:[4,4]},
+    {name:'Piastri',    pts:[0,0,0,18,43],      color:'#ff8700', width:1.5, dash:[4,4]},
+    {name:'Verstappen', pts:[0,8,8,12,26],      color:'#3671C6', width:2},
+    {name:'Bearman',    pts:[0,6,16,16,17],     color:'#b6babd', width:1},
+    {name:'Gasly',      pts:[0,1,9,15,16],      color:'#0090ff', width:1},
+    {name:'Lawson',     pts:[0,0,6,8,10],       color:'#6692ff', width:1},
+    {name:'Colapinto',  pts:[0,0,1,1,7],        color:'#0090ff', width:1, dash:[2,3]},
+    {name:'Lindblad',   pts:[0,4,4,4,4],        color:'#6692ff', width:1, dash:[2,3]},
+    {name:'Hadjar',     pts:[0,0,4,4,4],        color:'#3671C6', width:1, dash:[2,3]},
+    {name:'Sainz',      pts:[0,0,2,2,4],        color:'#64c4ff', width:1},
+  ];
+
+  const constructorData = [
+    {name:'Mercedes',     pts:[0,43,86,111,180], color:'#00d2be', width:3},
+    {name:'Ferrari',      pts:[0,27,54,77,110],  color:'#dc143c', width:2.5},
+    {name:'McLaren',      pts:[0,10,10,38,94],   color:'#ff8700', width:2.5},
+    {name:'Red Bull',     pts:[0,8,12,16,30],    color:'#3671C6', width:2},
+    {name:'Alpine',       pts:[0,1,10,17,23],    color:'#0090ff', width:1.5},
+    {name:'Haas',         pts:[0,6,16,17,18],    color:'#b6babd', width:1.5},
+    {name:'RB',           pts:[0,4,10,12,14],    color:'#6692ff', width:1.5},
+    {name:'Williams',     pts:[0,0,2,2,5],       color:'#64c4ff', width:1},
+    {name:'Audi',         pts:[0,2,2,2,2],       color:'#00e701', width:1},
+    {name:'Cadillac',     pts:[0,0,0,0,0],       color:'#c0c0c0', width:1, dash:[3,3]},
+    {name:'Aston Martin', pts:[0,0,0,0,0],       color:'#006f62', width:1, dash:[3,3]},
+  ];
+
+  let highlighted = null;
+
+  function drawLineChart(canvasId, data, maxPts, labelY) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width;
+    const h = rect.height;
+    const pad = {top:20, right:80, bottom:40, left:45};
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    function xPos(i) { return pad.left + (i / (rounds.length - 1)) * chartW; }
+    function yPos(v) { return pad.top + chartH - (v / maxPts) * chartH; }
+
+    // Grid
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#8b949e';
+    const ySteps = maxPts <= 50 ? 10 : maxPts <= 120 ? 20 : 50;
+    for (let v = 0; v <= maxPts; v += ySteps) {
+      const y = yPos(v);
+      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
+      ctx.textAlign = 'right';
+      ctx.fillText(v.toString(), pad.left - 6, y + 4);
+    }
+
+    // X labels
+    ctx.textAlign = 'center';
+    rounds.forEach((r, i) => {
+      const x = xPos(i);
+      ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + chartH); ctx.stroke();
+      const lines = r.split('\n');
+      lines.forEach((line, li) => {
+        ctx.fillStyle = li === 0 ? '#c9d1d9' : '#484f58';
+        ctx.fillText(line, x, pad.top + chartH + 16 + li * 12);
+      });
+    });
+
+    // Lines
+    data.forEach(d => {
+      const dim = highlighted && highlighted !== d.name;
+      ctx.strokeStyle = d.color;
+      ctx.lineWidth = d.width || 1.5;
+      ctx.globalAlpha = dim ? 0.1 : 0.9;
+      if (d.dash) ctx.setLineDash(d.dash);
+      else ctx.setLineDash([]);
+
+      ctx.beginPath();
+      d.pts.forEach((p, i) => {
+        const x = xPos(i); const y = yPos(p);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // End dot + label
+      const lastPt = d.pts[d.pts.length - 1];
+      const lx = xPos(d.pts.length - 1);
+      const ly = yPos(lastPt);
+      ctx.beginPath();
+      ctx.arc(lx, ly, dim ? 2 : 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = d.color;
+      ctx.fill();
+
+      ctx.fillStyle = dim ? '#484f58' : d.color;
+      ctx.font = (dim ? '9' : '10') + 'px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(d.name + ' ' + lastPt, lx + 6, ly + 4);
+
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  function buildLegend() {
+    const el = document.getElementById('legend');
+    el.innerHTML = '';
+    driverData.forEach(d => {
+      const item = document.createElement('div');
+      item.className = 'legend-item' + (highlighted && highlighted !== d.name ? ' dimmed' : '');
+      item.innerHTML = '<div class="legend-dot" style="background:' + d.color + '"></div>' + d.name;
+      item.onclick = () => {
+        highlighted = highlighted === d.name ? null : d.name;
+        drawAll();
+      };
+      el.appendChild(item);
+    });
+  }
+
+  function drawAll() {
+    drawLineChart('progressionChart', driverData, 110, 'Points');
+    drawLineChart('constructorChart', constructorData, 200, 'Points');
+    buildLegend();
+  }
+
+  drawAll();
+  window.addEventListener('resize', drawAll);
+})();
+</script>
+
+</body>
+</html>
