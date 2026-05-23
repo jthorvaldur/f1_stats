@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Championship Entropy</title>
+<meta name="description" content="Shannon entropy measures F1 championship competitiveness. 2026 season compared to historical seasons including the 2021 and 2010 title fights.">
+<meta property="og:title" content="F1 2026 — Championship Entropy">
+<meta property="og:description" content="Shannon entropy measures F1 championship competitiveness. 2026 compared to the closest and most dominant seasons in history.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/entropy.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — Championship Entropy">
+<meta name="twitter:description" content="Shannon entropy applied to F1 — measuring how competitive the 2026 championship really is.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .chart-container { position: relative; width: 100%; height: 480px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8b949e; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
+  .team-mclaren { color: #ff8700; }
+  .team-redbull { color: #3671C6; }
+  .team-alpine { color: #0090ff; }
+  .team-haas { color: #b6babd; }
+  .team-rb { color: #6692ff; }
+  .team-williams { color: #64c4ff; }
+  .team-audi { color: #00e701; }
+  .team-cadillac { color: #c0c0c0; }
+  .team-aston { color: #006f62; }
+
+  .formula {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 18px;
+    color: #f0f6fc;
+    text-align: center;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .formula .var { color: #58a6ff; font-style: italic; }
+  .formula .op { color: #8b949e; }
+  .formula .fn { color: #d2a8ff; }
+  .formula-note {
+    font-size: 12px;
+    color: #8b949e;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .explainer { font-size: 13px; color: #c9d1d9; line-height: 1.7; max-width: 800px; }
+  .explainer p { margin-bottom: 12px; }
+  .explainer strong { color: #f0f6fc; }
+
+  .entropy-meter {
+    position: relative;
+    height: 32px;
+    background: #21262d;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .entropy-meter-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .entropy-meter-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #8b949e;
+    margin-top: 4px;
+  }
+  .entropy-meter-marker {
+    position: absolute;
+    top: -6px;
+    width: 2px;
+    height: 44px;
+    background: #f0f6fc;
+    z-index: 2;
+  }
+  .entropy-meter-marker-label {
+    position: absolute;
+    top: -22px;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: #f0f6fc;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .chart-container { height: 360px; }
+    .formula { font-size: 14px; padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Championship Entropy</h1>
+  <div class="tagline">Measuring competitiveness with information theory. Shannon entropy quantifies how evenly championship points are distributed across the grid — higher entropy means a tighter fight.</div>
+</div>
+
+<!-- Section 1: Math Explanation -->
+<div class="section">
+  <h2>What Is Shannon Entropy?</h2>
+  <p class="section-sub">Information theory applied to championship competition</p>
+  <div class="card">
+    <div class="explainer">
+      <p>Shannon entropy, introduced by Claude Shannon in 1948, measures the uncertainty or disorder in a probability distribution. When applied to F1 championship points, it answers a simple question: <strong>how unpredictable is the championship?</strong></p>
+      <p>We treat each driver's share of total points as a probability: <strong>p<sub>i</sub> = points<sub>i</sub> / total_points</strong>. Drivers with zero points are excluded (log(0) is undefined and they carry no information).</p>
+    </div>
+    <div class="formula">
+      <span class="var">H</span> <span class="op">=</span> <span class="op">&minus;</span> <span class="op">&Sigma;</span> <span class="var">p<sub>i</sub></span> <span class="op">&times;</span> <span class="fn">log<sub>2</sub></span><span class="op">(</span><span class="var">p<sub>i</sub></span><span class="op">)</span>
+    </div>
+    <div class="formula-note">where p<sub>i</sub> = driver i's points / total points, summed over all drivers with points &gt; 0</div>
+    <div style="margin-top: 20px;" class="grid grid-2">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #3fb950;">Maximum Entropy (Perfect Competition)</div>
+        <div class="stat-sm ok" id="hmaxDisplay">--</div>
+        <div class="stat-label">H<sub>max</sub> = log<sub>2</sub>(N) when all N drivers have equal points. Every driver equally likely to be champion. Complete uncertainty.</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #f85149;">Minimum Entropy (Total Domination)</div>
+        <div class="stat-sm neg">0.000 bits</div>
+        <div class="stat-label">H = 0 when one driver has all points. The outcome is certain. No surprise at all.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 2: 2026 Entropy Calculation -->
+<div class="section section-divider">
+  <h2>2026 Championship Entropy</h2>
+  <p class="section-sub">After Round 4 — Miami Grand Prix</p>
+  <div class="grid grid-3">
+    <div class="card">
+      <div class="card-title">Shannon Entropy (H)</div>
+      <div class="stat ok" id="currentH">--</div>
+      <div class="stat-label">bits</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Maximum Possible (H<sub>max</sub>)</div>
+      <div class="stat" id="currentHmax" style="color: #8b949e;">--</div>
+      <div class="stat-label">bits (for 22 drivers)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Competitiveness Index</div>
+      <div class="stat" id="currentNorm" style="color: #58a6ff;">--</div>
+      <div class="stat-label">H / H<sub>max</sub> as percentage</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top: 16px;">
+    <div class="card-title">Entropy Scale</div>
+    <div style="position: relative; margin: 24px 0 8px;">
+      <div class="entropy-meter">
+        <div class="entropy-meter-fill" id="entropyFill" style="width: 0%; background: linear-gradient(90deg, #f85149, #d29922, #3fb950);"></div>
+        <div class="entropy-meter-marker" id="entropyMarker" style="left: 0%;">
+          <div class="entropy-meter-marker-label" id="entropyMarkerLabel">--</div>
+        </div>
+      </div>
+      <div class="entropy-meter-labels">
+        <span>0 — Total Domination</span>
+        <span id="hmaxLabel">log<sub>2</sub>(22) — Perfect Competition</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top: 16px;">
+    <div class="card-title">Driver Entropy Contributions</div>
+    <table>
+      <thead>
+        <tr><th>Driver</th><th>Team</th><th>Points</th><th>p<sub>i</sub></th><th>&minus;p<sub>i</sub> log<sub>2</sub>(p<sub>i</sub>)</th><th>% of Total H</th></tr>
+      </thead>
+      <tbody id="driverEntropyTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Section 3: Historical Comparison Chart -->
+<div class="section section-divider">
+  <h2>Historical Comparison</h2>
+  <p class="section-sub">Championship entropy across notable F1 seasons — normalized to [0, 1] competitiveness index</p>
+  <div class="card">
+    <div class="chart-container" style="height: 420px;">
+      <canvas id="historicalChart"></canvas>
+    </div>
+    <div class="legend" id="historicalLegend"></div>
+  </div>
+  <div class="card" style="margin-top: 16px;">
+    <div class="card-title">Season Entropy Table</div>
+    <table>
+      <thead>
+        <tr><th>Season</th><th>Description</th><th>H (bits)</th><th>H<sub>max</sub></th><th>Competitiveness</th><th>Character</th></tr>
+      </thead>
+      <tbody id="historicalTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Section 4: Round-by-Round Entropy -->
+<div class="section section-divider">
+  <h2>2026 Round-by-Round Entropy</h2>
+  <p class="section-sub">How championship uncertainty has evolved through the first four races</p>
+  <div class="card">
+    <div class="chart-container" style="height: 400px;">
+      <canvas id="roundChart"></canvas>
+    </div>
+  </div>
+  <div class="card" style="margin-top: 16px;">
+    <div class="card-title">Round-by-Round Values</div>
+    <table>
+      <thead>
+        <tr><th>Round</th><th>Race</th><th>Leader</th><th>Scorers</th><th>H (bits)</th><th>H / H<sub>max</sub></th><th>Trend</th></tr>
+      </thead>
+      <tbody id="roundTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Section 5: Normalized Entropy Explainer -->
+<div class="section section-divider">
+  <h2>Normalized Entropy — The Competitiveness Index</h2>
+  <p class="section-sub">A single number from 0% to 100% that captures how competitive a season is</p>
+  <div class="card">
+    <div class="explainer">
+      <p>Raw entropy H depends on the number of drivers — a 22-driver grid naturally has higher maximum entropy than a 20-driver grid. To compare across seasons with different grid sizes, we normalize:</p>
+    </div>
+    <div class="formula">
+      <span class="var">C</span> <span class="op">=</span>
+      <span class="var">H</span> <span class="op">/</span> <span class="var">H<sub>max</sub></span> <span class="op">=</span>
+      <span class="var">H</span> <span class="op">/</span> <span class="fn">log<sub>2</sub></span><span class="op">(</span><span class="var">N</span><span class="op">)</span>
+    </div>
+    <div class="formula-note">C = 1.0 (100%) means perfectly equal points. C = 0 means one driver has everything.</div>
+    <div style="margin-top: 20px;" class="grid grid-3">
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #3fb950;">High Competitiveness (&gt;85%)</div>
+        <div class="stat-label">Multiple drivers with realistic title chances. Points spread evenly. Example: early-season standings, 2010 finale.</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #d29922;">Moderate (65%&ndash;85%)</div>
+        <div class="stat-label">Clear frontrunners but midfield still scoring. Some stratification visible. Most completed seasons fall here.</div>
+      </div>
+      <div class="card" style="background: #0d1117;">
+        <div class="card-title" style="color: #f85149;">Low Competitiveness (&lt;65%)</div>
+        <div class="stat-label">Heavy domination by one driver or team. Points heavily concentrated at the top. Example: 2023 Verstappen.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+// ============================================================
+// UTILITY: Shannon entropy computation
+// ============================================================
+function shannonEntropy(points) {
+  const total = points.reduce((a, b) => a + b, 0);
+  if (total === 0) return 0;
+  let H = 0;
+  for (const p of points) {
+    if (p <= 0) continue;
+    const pi = p / total;
+    H -= pi * Math.log2(pi);
+  }
+  return H;
+}
+
+function hMax(n) {
+  return Math.log2(n);
+}
+
+// ============================================================
+// DATA: 2026 standings after each round
+// ============================================================
+const drivers2026 = [
+  { name: 'Antonelli',  team: 'Mercedes',  color: '#00d2be', cls: 'team-mercedes' },
+  { name: 'Russell',    team: 'Mercedes',  color: '#00d2be', cls: 'team-mercedes' },
+  { name: 'Leclerc',    team: 'Ferrari',   color: '#dc143c', cls: 'team-ferrari' },
+  { name: 'Norris',     team: 'McLaren',   color: '#ff8700', cls: 'team-mclaren' },
+  { name: 'Hamilton',   team: 'Ferrari',   color: '#dc143c', cls: 'team-ferrari' },
+  { name: 'Piastri',    team: 'McLaren',   color: '#ff8700', cls: 'team-mclaren' },
+  { name: 'Verstappen', team: 'Red Bull',  color: '#3671C6', cls: 'team-redbull' },
+  { name: 'Bearman',    team: 'Haas',      color: '#b6babd', cls: 'team-haas' },
+  { name: 'Gasly',      team: 'Alpine',    color: '#0090ff', cls: 'team-alpine' },
+  { name: 'Lawson',     team: 'RB',        color: '#6692ff', cls: 'team-rb' },
+  { name: 'Colapinto',  team: 'Alpine',    color: '#0090ff', cls: 'team-alpine' },
+  { name: 'Lindblad',   team: 'RB',        color: '#6692ff', cls: 'team-rb' },
+  { name: 'Hadjar',     team: 'Red Bull',  color: '#3671C6', cls: 'team-redbull' },
+  { name: 'Sainz',      team: 'Williams',  color: '#64c4ff', cls: 'team-williams' },
+  { name: 'Bortoleto',  team: 'Audi',      color: '#00e701', cls: 'team-audi' },
+  { name: 'Ocon',       team: 'Haas',      color: '#b6babd', cls: 'team-haas' },
+  { name: 'Albon',      team: 'Williams',  color: '#64c4ff', cls: 'team-williams' },
+  { name: 'Hulkenberg', team: 'Audi',      color: '#00e701', cls: 'team-audi' },
+  { name: 'Bottas',     team: 'Cadillac',  color: '#c0c0c0', cls: 'team-cadillac' },
+  { name: 'Perez',      team: 'Cadillac',  color: '#c0c0c0', cls: 'team-cadillac' },
+  { name: 'Alonso',     team: 'Aston Martin', color: '#006f62', cls: 'team-aston' },
+  { name: 'Stroll',     team: 'Aston Martin', color: '#006f62', cls: 'team-aston' },
+];
+
+// Points after each round (cumulative)
+// R1 Australia, R2 China, R3 Japan, R4 Miami
+const roundByRound = [
+  {
+    round: 1, name: 'Australia',
+    // Approximate R1 results — Antonelli win, Russell P2
+    points: [25, 18, 15, 12, 10, 8, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  },
+  {
+    round: 2, name: 'China',
+    // Antonelli 2 wins, cumulative growth
+    points: [50, 36, 28, 24, 22, 18, 12, 10, 8, 6, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  },
+  {
+    round: 3, name: 'Japan',
+    // Antonelli 3 wins
+    points: [75, 54, 43, 37, 36, 30, 18, 13, 12, 8, 5, 3, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0]
+  },
+  {
+    round: 4, name: 'Miami',
+    // Final R4 standings as specified
+    points: [100, 80, 59, 51, 51, 43, 26, 17, 16, 10, 7, 4, 4, 4, 2, 1, 1, 0, 0, 0, 0, 0]
+  }
+];
+
+const N_DRIVERS = 22;
+const H_MAX = hMax(N_DRIVERS);
+
+// ============================================================
+// SECTION 2: Current 2026 entropy
+// ============================================================
+const currentPoints = roundByRound[3].points;
+const currentH = shannonEntropy(currentPoints);
+const currentNormalized = currentH / H_MAX;
+
+document.getElementById('currentH').textContent = currentH.toFixed(3);
+document.getElementById('currentHmax').textContent = H_MAX.toFixed(3);
+document.getElementById('currentNorm').textContent = (currentNormalized * 100).toFixed(1) + '%';
+document.getElementById('hmaxDisplay').textContent = H_MAX.toFixed(3) + ' bits';
+
+// Entropy meter
+const fillPct = (currentNormalized * 100).toFixed(1);
+document.getElementById('entropyFill').style.width = fillPct + '%';
+const marker = document.getElementById('entropyMarker');
+marker.style.left = fillPct + '%';
+document.getElementById('entropyMarkerLabel').textContent = 'H = ' + currentH.toFixed(3);
+
+// Driver entropy table
+const totalPts = currentPoints.reduce((a, b) => a + b, 0);
+const driverContributions = drivers2026.map((d, i) => {
+  const pts = currentPoints[i];
+  const pi = pts / totalPts;
+  const contrib = pts > 0 ? -(pi * Math.log2(pi)) : 0;
+  return { ...d, pts, pi, contrib };
+}).filter(d => d.pts > 0);
+
+const totalH = driverContributions.reduce((a, d) => a + d.contrib, 0);
+const tbody = document.getElementById('driverEntropyTable');
+driverContributions.forEach(d => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="driver-name">${d.name}</td>
+    <td class="${d.cls}">${d.team}</td>
+    <td>${d.pts}</td>
+    <td>${d.pi.toFixed(4)}</td>
+    <td>${d.contrib.toFixed(4)}</td>
+    <td>${(d.contrib / totalH * 100).toFixed(1)}%</td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// ============================================================
+// SECTION 3: Historical comparison
+// ============================================================
+// Approximate final standings for notable seasons
+const historicalSeasons = [
+  {
+    year: '2010',
+    desc: 'Four-way title fight',
+    character: 'Wide open',
+    color: '#3fb950',
+    // Vettel 256, Alonso 252, Webber 242, Hamilton 240, Button 214, Massa 144, Kubica 136, Rosberg 142, Sutil 47, Barrichello 47, Kamui 32, Petrov 27, Hulk 22, Buemi 8, Alguersuari 5, de la Rosa 6, Liuzzi 21, Kobayashi 0, Chandhok 0, Senna 0, di Grassi 0, Glock 0, Trulli 0, Kovalainen 0
+    points: [256, 252, 242, 240, 214, 144, 142, 136, 47, 47, 32, 27, 22, 21, 8, 6, 5, 0, 0, 0, 0, 0, 0, 0],
+    nDrivers: 24
+  },
+  {
+    year: '2014',
+    desc: 'Mercedes dominant (Ham vs Ros)',
+    character: 'Team dominant',
+    color: '#00d2be',
+    // Hamilton 384, Rosberg 317, Ricciardo 238, Bottas 186, Vettel 167, Alonso 161, Button 126, Massa 134, Perez 59, Hulk 96, Raikkonen 55, Magnussen 55, Vergne 22, Kvyat 8, Grosjean 8, Maldonado 2, Bianchi 2, Kobayashi 0, Ericsson 0, Gutierrez 0, Sutil 0, Chilton 0
+    points: [384, 317, 238, 186, 167, 161, 134, 126, 96, 59, 55, 55, 22, 8, 8, 2, 2, 0, 0, 0, 0, 0],
+    nDrivers: 22
+  },
+  {
+    year: '2021',
+    desc: 'Verstappen vs Hamilton (closest)',
+    character: 'Two-horse race',
+    color: '#3671C6',
+    // Verstappen 395.5, Hamilton 387.5, Bottas 226, Perez 190, Sainz 164.5, Norris 160, Leclerc 159, Ricciardo 115, Gasly 110, Alonso 81, Ocon 74, Vettel 43, Stroll 34, Tsunoda 32, Russell 16, Raikkonen 10, Latifi 7, Giovinazzi 3, Schumacher 0, Mazepin 0
+    points: [395.5, 387.5, 226, 190, 164.5, 160, 159, 115, 110, 81, 74, 43, 34, 32, 16, 10, 7, 3, 0, 0],
+    nDrivers: 20
+  },
+  {
+    year: '2023',
+    desc: 'Verstappen total domination',
+    character: 'Dominant',
+    color: '#f85149',
+    // Verstappen 575, Perez 285, Hamilton 234, Alonso 206, Norris 205, Sainz 200, Leclerc 188, Russell 175, Piastri 97, Gasly 62, Ocon 58, Stroll 47, Tsunoda 17, Bottas 10, Hulk 9, Ricciardo 6, Zhou 6, Magnussen 3, Lawson 2, Sargeant 1, Albon 27, de Vries 0
+    points: [575, 285, 234, 206, 205, 200, 188, 175, 97, 62, 58, 47, 27, 17, 10, 9, 6, 6, 3, 2, 1, 0],
+    nDrivers: 22
+  },
+  {
+    year: '2025',
+    desc: 'Norris / Verstappen / Piastri (very tight)',
+    character: 'Ultra-competitive',
+    color: '#ff8700',
+    // Norris 423, Verstappen 421, Piastri 410, Leclerc 370, Sainz 340, Russell 290, Hamilton 260, Albon 120, Gasly 115, Hulkenberg 88, Tsunoda 80, Stroll 55, Alonso 50, Ocon 45, Bearman 40, Lawson 35, Colapinto 28, Bortoleto 18, Doohan 15, Hadjar 10
+    points: [423, 421, 410, 370, 340, 290, 260, 120, 115, 88, 80, 55, 50, 45, 40, 35, 28, 18, 15, 10],
+    nDrivers: 20
+  },
+  {
+    year: '2026 (R4)',
+    desc: 'Current season after Round 4',
+    character: 'Early season',
+    color: '#58a6ff',
+    points: currentPoints,
+    nDrivers: N_DRIVERS
+  }
+];
+
+// Compute entropy for each
+const historicalData = historicalSeasons.map(s => {
+  const H = shannonEntropy(s.points);
+  const Hm = hMax(s.nDrivers);
+  const norm = H / Hm;
+  return { ...s, H, Hm, norm };
+});
+
+// Sort by normalized entropy for chart
+const sorted = [...historicalData].sort((a, b) => a.norm - b.norm);
+
+// Historical table
+const histTbody = document.getElementById('historicalTable');
+historicalData.forEach(s => {
+  const colorClass = s.norm > 0.85 ? 'ok' : s.norm > 0.65 ? 'warn' : 'neg';
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="driver-name">${s.year}</td>
+    <td>${s.desc}</td>
+    <td>${s.H.toFixed(3)}</td>
+    <td>${s.Hm.toFixed(3)}</td>
+    <td class="${colorClass}">${(s.norm * 100).toFixed(1)}%</td>
+    <td>${s.character}</td>
+  `;
+  histTbody.appendChild(tr);
+});
+
+// ============================================================
+// CHART: Historical comparison (horizontal bar chart)
+// ============================================================
+function drawHistoricalChart() {
+  const canvas = document.getElementById('historicalChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const H = rect.height;
+
+  const pad = { top: 30, right: 80, bottom: 40, left: 120 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+  const barH = Math.min(40, chartH / sorted.length - 10);
+  const gap = (chartH - barH * sorted.length) / (sorted.length + 1);
+
+  // Background
+  ctx.clearRect(0, 0, W, H);
+
+  // Axis
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, H - pad.bottom);
+  ctx.lineTo(W - pad.right, H - pad.bottom);
+  ctx.stroke();
+
+  // X-axis ticks (0% to 100%)
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  for (let i = 0; i <= 10; i++) {
+    const x = pad.left + (chartW * i / 10);
+    ctx.fillText((i * 10) + '%', x, H - pad.bottom + 20);
+    if (i > 0) {
+      ctx.strokeStyle = '#21262d';
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, H - pad.bottom);
+      ctx.stroke();
+    }
+  }
+
+  // X-axis label
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Competitiveness Index (H / H_max)', W / 2, H - 5);
+
+  // Bars
+  sorted.forEach((s, i) => {
+    const y = pad.top + gap + i * (barH + gap);
+    const barW = chartW * s.norm;
+
+    // Bar
+    ctx.fillStyle = s.color;
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    ctx.roundRect(pad.left, y, barW, barH, 3);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Label (left)
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = '12px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(s.year, pad.left - 10, y + barH / 2 + 4);
+
+    // Value (right of bar)
+    ctx.fillStyle = s.color;
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText((s.norm * 100).toFixed(1) + '%', pad.left + barW + 8, y + barH / 2 + 4);
+  });
+}
+
+// ============================================================
+// CHART: Round-by-round entropy
+// ============================================================
+function drawRoundChart() {
+  const canvas = document.getElementById('roundChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const HH = rect.height;
+
+  const pad = { top: 40, right: 60, bottom: 50, left: 70 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = HH - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, HH);
+
+  // Compute entropy per round
+  const roundEntropies = roundByRound.map(r => {
+    const H = shannonEntropy(r.points);
+    const scorers = r.points.filter(p => p > 0).length;
+    return { ...r, H, norm: H / H_MAX, scorers };
+  });
+
+  const maxH = H_MAX;
+  const minH = 0;
+
+  // Grid lines
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + chartH - (chartH * i / 5);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'right';
+    const val = (maxH * i / 5).toFixed(1);
+    ctx.fillText(val, pad.left - 8, y + 4);
+  }
+
+  // H_max reference line
+  const hmaxY = pad.top;
+  ctx.strokeStyle = '#3fb950';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, hmaxY);
+  ctx.lineTo(W - pad.right, hmaxY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#3fb950';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('H_max = ' + H_MAX.toFixed(2), W - pad.right + 5, hmaxY + 4);
+
+  // Axes
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, HH - pad.bottom);
+  ctx.lineTo(W - pad.right, HH - pad.bottom);
+  ctx.stroke();
+
+  // Y-axis label
+  ctx.save();
+  ctx.translate(15, pad.top + chartH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Entropy H (bits)', 0, 0);
+  ctx.restore();
+
+  // Plot line + points
+  const points = roundEntropies.map((r, i) => {
+    const x = pad.left + (i / (roundEntropies.length - 1)) * chartW;
+    const y = pad.top + chartH - (r.H / maxH) * chartH;
+    return { x, y, ...r };
+  });
+
+  // Line
+  ctx.strokeStyle = '#58a6ff';
+  ctx.lineWidth = 3;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  points.forEach((p, i) => {
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  });
+  ctx.stroke();
+
+  // Area fill
+  ctx.fillStyle = 'rgba(88, 166, 255, 0.08)';
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, HH - pad.bottom);
+  points.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(points[points.length - 1].x, HH - pad.bottom);
+  ctx.closePath();
+  ctx.fill();
+
+  // Dots and labels
+  points.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#161b22';
+    ctx.fill();
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Value above dot
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.H.toFixed(3), p.x, p.y - 14);
+
+    // Round label below axis
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.fillText('R' + p.round, p.x, HH - pad.bottom + 18);
+    ctx.font = '9px "SF Mono", "Fira Code", monospace';
+    ctx.fillText(p.name, p.x, HH - pad.bottom + 32);
+  });
+
+  // Round table
+  const roundTbody = document.getElementById('roundTable');
+  roundEntropies.forEach((r, i) => {
+    const prevH = i > 0 ? roundEntropies[i - 1].H : null;
+    let trend = '--';
+    if (prevH !== null) {
+      const diff = r.H - prevH;
+      if (diff > 0.01) trend = '<span style="color:#3fb950;">+' + diff.toFixed(3) + ' (spreading)</span>';
+      else if (diff < -0.01) trend = '<span style="color:#f85149;">' + diff.toFixed(3) + ' (concentrating)</span>';
+      else trend = '<span style="color:#8b949e;">~0 (stable)</span>';
+    }
+    // Find leader
+    const maxPts = Math.max(...r.points);
+    const leaderIdx = r.points.indexOf(maxPts);
+    const leader = drivers2026[leaderIdx].name;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="driver-name">R${r.round}</td>
+      <td>${r.name}</td>
+      <td>${leader} (${maxPts})</td>
+      <td>${r.scorers}</td>
+      <td>${r.H.toFixed(3)}</td>
+      <td>${(r.norm * 100).toFixed(1)}%</td>
+      <td>${trend}</td>
+    `;
+    roundTbody.appendChild(tr);
+  });
+}
+
+// ============================================================
+// DRAW
+// ============================================================
+function drawAll() {
+  drawHistoricalChart();
+  drawRoundChart();
+}
+
+drawAll();
+window.addEventListener('resize', drawAll);
+</script>
+
+</body>
+</html>

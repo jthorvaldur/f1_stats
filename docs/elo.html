@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Elo Ratings</title>
+<meta name="description" content="Elo rating system applied to the 2026 F1 season. Pairwise skill rankings separating driver talent from car performance, with teammate gap analysis.">
+<meta property="og:title" content="F1 2026 — Elo Ratings">
+<meta property="og:description" content="Elo rating system applied to the 2026 F1 season. Pairwise skill rankings separating driver talent from car performance.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/elo.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — Elo Ratings">
+<meta name="twitter:description" content="Elo rating system applied to the 2026 F1 season. Pairwise skill rankings separating driver from car.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+
+  .progress-bar { height: 6px; background: #21262d; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .chart-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .chart-container canvas { width: 100%; display: block; }
+
+  .prose { color: #c9d1d9; font-size: 13px; line-height: 1.8; }
+  .prose p { margin-bottom: 14px; }
+  .prose code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #f0f6fc; }
+  .prose h4 { color: #f0f6fc; font-size: 14px; margin: 20px 0 8px; }
+  .prose ul { margin: 8px 0 14px 20px; }
+  .prose li { margin-bottom: 4px; }
+
+  .formula-block {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 12px 0 16px;
+    font-size: 13px;
+    color: #d29922;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a class="back-link" href="index.html">&larr; back to overview</a>
+  <h1>Elo Ratings</h1>
+  <div class="tagline">Separating driver from car. An Elo rating system applied to the 2026 season to estimate driver skill independent of machinery.</div>
+  <div class="badges">
+    <span class="badge badge-blue">Pairwise Elo</span>
+    <span class="badge badge-amber">K-factor 4</span>
+    <span class="badge badge-green">4 Races Processed</span>
+    <span class="badge badge-purple">DNF-Neutral</span>
+  </div>
+</div>
+
+<!-- Stats cards -->
+<div class="section">
+  <h2>Key Metrics</h2>
+  <p class="section-sub">Headline figures from the Elo model after Round 4</p>
+  <div class="grid grid-3" id="stats-cards"></div>
+</div>
+
+<!-- Bar chart: final Elo ratings -->
+<div class="section section-divider">
+  <h2>Final Elo Ratings</h2>
+  <p class="section-sub">Horizontal bar chart after Round 4 (Miami) — sorted highest to lowest, colored by team</p>
+  <div class="chart-container">
+    <canvas id="bar-chart"></canvas>
+  </div>
+</div>
+
+<!-- Line chart: round-by-round progression -->
+<div class="section section-divider">
+  <h2>Elo Progression</h2>
+  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through 4 races</p>
+  <div class="chart-container">
+    <canvas id="line-chart"></canvas>
+  </div>
+  <div id="line-legend" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:11px;"></div>
+</div>
+
+<!-- Teammate comparison table -->
+<div class="section section-divider">
+  <h2>Teammate Comparison</h2>
+  <p class="section-sub">Elo gap within each team — the purest signal of driver vs. driver</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Team</th><th>Driver 1</th><th>Elo</th><th>Driver 2</th><th>Elo</th><th>Gap</th></tr>
+      </thead>
+      <tbody id="teammate-table"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Methodology -->
+<div class="section section-divider">
+  <h2>The Math</h2>
+  <p class="section-sub">How the Elo model works and what the numbers mean</p>
+  <div class="card prose">
+    <h4>Elo Rating System</h4>
+    <p>
+      The Elo system was originally developed for chess but applies naturally to any competition
+      where you need to rank participants based on head-to-head outcomes. In F1, each race generates
+      pairwise comparisons: every pair of drivers who both finish the race produces a "match" where
+      the driver who finished ahead wins.
+    </p>
+
+    <h4>The Formula</h4>
+    <div class="formula-block">
+      Expected score: E_A = 1 / (1 + 10^((R_B - R_A) / 400))<br>
+      Update rule:&nbsp;&nbsp;&nbsp; R_A_new = R_A + K * (S_A - E_A)<br>
+      <br>
+      where S_A = 1 if A finished ahead of B, 0 otherwise
+    </div>
+
+    <h4>Why K = 4?</h4>
+    <p>
+      In chess, K is typically 16-32 because each game is a single match. In F1, a 16-finisher race
+      generates <code>16 * 15 / 2 = 120</code> pairwise comparisons per driver. A large K would cause
+      wild rating swings after every race. K=4 produces stable, meaningful movement: a dominant race
+      might move a driver +15 to +25 points, while a poor race costs a similar amount. Over a full
+      season the ratings converge to reflect genuine performance differences.
+    </p>
+
+    <h4>What the Numbers Mean</h4>
+    <ul>
+      <li><strong>1500</strong> — baseline. Every driver starts here.</li>
+      <li><strong>1550+</strong> — consistently finishing ahead of expectation.</li>
+      <li><strong>1600+</strong> — clearly outperforming the field. Elite form.</li>
+      <li><strong>1450-</strong> — consistently finishing behind expectation.</li>
+      <li><strong>1400 or below</strong> — significant underperformance relative to the grid.</li>
+    </ul>
+
+    <h4>DNF Handling</h4>
+    <p>
+      Drivers who retire (DNF) or do not start (DNS) are excluded from that race's pairwise comparisons
+      entirely. They are not penalized — mechanical failures and crashes do not affect their rating.
+      This is deliberate: Elo should measure driver skill, and a gearbox failure is not a skill signal.
+    </p>
+  </div>
+</div>
+
+<!-- Car vs Driver -->
+<div class="section section-divider">
+  <h2>Car vs. Driver</h2>
+  <p class="section-sub">The fundamental caveat — and why teammate gaps matter most</p>
+  <div class="card prose">
+    <p>
+      Elo ratings in F1 still capture car performance to a significant extent. A driver in the
+      fastest car will accumulate a higher rating not because they are necessarily more skilled,
+      but because they finish ahead of more drivers in every race. This is an inherent limitation
+      of any results-based rating system.
+    </p>
+    <p>
+      The <strong>teammate comparison</strong> is the purest signal available. Since teammates share
+      the same car, the Elo gap between them isolates driver performance from machinery. A large
+      intra-team gap suggests a genuine skill or consistency difference. A small gap suggests
+      closely matched drivers.
+    </p>
+    <p>
+      Cross-team comparisons should be interpreted cautiously. If both Mercedes drivers sit at
+      1550+ while both Cadillac drivers sit at 1440, that tells you more about the cars than
+      the drivers. But if one Mercedes driver is at 1580 and the other at 1530, the 50-point
+      gap is a meaningful driver-skill signal — they had the same equipment.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Elo computed client-side &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────
+const TEAMS = {
+  'Russell':    { team: 'Mercedes',     color: '#00d2be' },
+  'Antonelli':  { team: 'Mercedes',     color: '#00d2be' },
+  'Leclerc':    { team: 'Ferrari',      color: '#dc143c' },
+  'Hamilton':   { team: 'Ferrari',      color: '#dc143c' },
+  'Norris':     { team: 'McLaren',      color: '#ff8700' },
+  'Piastri':    { team: 'McLaren',      color: '#ff8700' },
+  'Verstappen': { team: 'Red Bull',     color: '#3671C6' },
+  'Hadjar':     { team: 'Red Bull',     color: '#3671C6' },
+  'Gasly':      { team: 'Alpine',       color: '#0090ff' },
+  'Colapinto':  { team: 'Alpine',       color: '#0090ff' },
+  'Bearman':    { team: 'Haas',         color: '#b6babd' },
+  'Ocon':       { team: 'Haas',         color: '#b6babd' },
+  'Lawson':     { team: 'RB',           color: '#6692ff' },
+  'Lindblad':   { team: 'RB',           color: '#6692ff' },
+  'Albon':      { team: 'Williams',     color: '#64c4ff' },
+  'Sainz':      { team: 'Williams',     color: '#64c4ff' },
+  'Bortoleto':  { team: 'Audi',         color: '#00e701' },
+  'Hulkenberg': { team: 'Audi',         color: '#00e701' },
+  'Bottas':     { team: 'Cadillac',     color: '#c0c0c0' },
+  'Perez':      { team: 'Cadillac',     color: '#c0c0c0' },
+  'Alonso':     { team: 'Aston Martin', color: '#006f62' },
+  'Stroll':     { team: 'Aston Martin', color: '#006f62' },
+};
+
+const RACES = [
+  { label: 'R1 Australia', finishers: ['Russell','Antonelli','Leclerc','Hamilton','Norris','Verstappen','Bearman','Lindblad','Bortoleto','Gasly','Ocon','Albon','Lawson','Colapinto','Sainz','Perez'] },
+  { label: 'R2 China',     finishers: ['Antonelli','Russell','Hamilton','Leclerc','Bearman','Gasly','Lawson','Hadjar','Sainz','Colapinto','Hulkenberg','Lindblad','Bottas','Ocon','Perez'] },
+  { label: 'R3 Japan',     finishers: ['Antonelli','Piastri','Leclerc','Russell','Norris','Hamilton','Gasly','Verstappen','Lawson','Ocon','Hulkenberg','Hadjar','Bortoleto','Lindblad','Sainz','Colapinto','Perez','Alonso','Bottas','Albon'] },
+  { label: 'R4 Miami',     finishers: ['Antonelli','Norris','Piastri','Russell','Verstappen','Hamilton','Colapinto','Leclerc','Sainz','Albon','Bearman','Bortoleto','Ocon','Lindblad','Alonso','Perez','Stroll','Bottas'] },
+];
+
+// ── Elo computation ─────────────────────────────────────────────────────
+const K = 4;
+const allDrivers = Object.keys(TEAMS);
+
+// Initialize ratings
+let ratings = {};
+allDrivers.forEach(d => ratings[d] = 1500);
+
+// Track history: history[driver] = [1500, after_R1, after_R2, after_R3, after_R4]
+let history = {};
+allDrivers.forEach(d => history[d] = [1500]);
+
+function expectedScore(rA, rB) {
+  return 1 / (1 + Math.pow(10, (rB - rA) / 400));
+}
+
+RACES.forEach(race => {
+  const n = race.finishers.length;
+  // Accumulate deltas for all drivers in this race
+  const deltas = {};
+  race.finishers.forEach(d => deltas[d] = 0);
+
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const winner = race.finishers[i];
+      const loser = race.finishers[j];
+      const eW = expectedScore(ratings[winner], ratings[loser]);
+      const eL = expectedScore(ratings[loser], ratings[winner]);
+      deltas[winner] += K * (1 - eW);
+      deltas[loser]  += K * (0 - eL);
+    }
+  }
+
+  // Apply deltas
+  race.finishers.forEach(d => {
+    ratings[d] += deltas[d];
+  });
+
+  // Snapshot for history
+  allDrivers.forEach(d => {
+    history[d].push(ratings[d]);
+  });
+});
+
+// Round ratings for display
+function r(v) { return Math.round(v); }
+
+// ── Stats cards ─────────────────────────────────────────────────────────
+const sorted = allDrivers.slice().sort((a, b) => ratings[b] - ratings[a]);
+const highestDriver = sorted[0];
+const highestElo = r(ratings[highestDriver]);
+
+// Biggest riser: max (final - 1500)
+let biggestRiser = sorted[0];
+let biggestRise = ratings[sorted[0]] - 1500;
+sorted.forEach(d => {
+  const rise = ratings[d] - 1500;
+  if (rise > biggestRise) { biggestRise = rise; biggestRiser = d; }
+});
+
+// Biggest teammate gap
+const teamPairs = {};
+allDrivers.forEach(d => {
+  const t = TEAMS[d].team;
+  if (!teamPairs[t]) teamPairs[t] = [];
+  teamPairs[t].push(d);
+});
+
+let biggestGapTeam = '';
+let biggestGapVal = 0;
+let biggestGapPair = ['', ''];
+Object.entries(teamPairs).forEach(([team, drivers]) => {
+  if (drivers.length === 2) {
+    const gap = Math.abs(ratings[drivers[0]] - ratings[drivers[1]]);
+    if (gap > biggestGapVal) {
+      biggestGapVal = gap;
+      biggestGapTeam = team;
+      biggestGapPair = ratings[drivers[0]] > ratings[drivers[1]] ? [drivers[0], drivers[1]] : [drivers[1], drivers[0]];
+    }
+  }
+});
+
+document.getElementById('stats-cards').innerHTML = `
+  <div class="card">
+    <div class="card-title">Highest Rated Driver</div>
+    <div class="stat-sm ok">${highestDriver}</div>
+    <div class="stat-label">Elo ${highestElo} &mdash; ${TEAMS[highestDriver].team}</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Biggest Riser</div>
+    <div class="stat-sm" style="color:${TEAMS[biggestRiser].color};">${biggestRiser}</div>
+    <div class="stat-label">+${r(biggestRise)} from baseline 1500</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Largest Teammate Gap</div>
+    <div class="stat-sm" style="color:${TEAMS[biggestGapPair[0]].color};">${biggestGapPair[0]} over ${biggestGapPair[1]}</div>
+    <div class="stat-label">${r(biggestGapVal)} Elo gap &mdash; ${biggestGapTeam}</div>
+  </div>
+`;
+
+// ── Bar chart ───────────────────────────────────────────────────────────
+function drawBarChart() {
+  const canvas = document.getElementById('bar-chart');
+  const dpr = window.devicePixelRatio || 1;
+  const barH = 28;
+  const gap = 6;
+  const padTop = 30;
+  const padBottom = 40;
+  const padLeft = 120;
+  const padRight = 80;
+  const totalH = padTop + sorted.length * (barH + gap) + padBottom;
+  const w = canvas.parentElement.clientWidth - 40;
+
+  canvas.width = w * dpr;
+  canvas.height = totalH * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = totalH + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  // Find range
+  const minElo = Math.min(...sorted.map(d => ratings[d]));
+  const maxElo = Math.max(...sorted.map(d => ratings[d]));
+  const rangeMin = Math.floor((minElo - 20) / 10) * 10;
+  const rangeMax = Math.ceil((maxElo + 20) / 10) * 10;
+  const chartW = w - padLeft - padRight;
+
+  function xPos(elo) {
+    return padLeft + (elo - rangeMin) / (rangeMax - rangeMin) * chartW;
+  }
+
+  // Grid lines
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#484f58';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+  ctx.textAlign = 'center';
+
+  for (let e = Math.ceil(rangeMin / 25) * 25; e <= rangeMax; e += 25) {
+    const x = xPos(e);
+    ctx.beginPath();
+    ctx.moveTo(x, padTop);
+    ctx.lineTo(x, totalH - padBottom);
+    ctx.stroke();
+    ctx.fillText(e, x, totalH - padBottom + 16);
+  }
+
+  // Baseline 1500 line
+  const x1500 = xPos(1500);
+  ctx.strokeStyle = '#484f58';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(x1500, padTop - 10);
+  ctx.lineTo(x1500, totalH - padBottom + 4);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Bars
+  sorted.forEach((d, i) => {
+    const y = padTop + i * (barH + gap);
+    const elo = ratings[d];
+    const color = TEAMS[d].color;
+    const barStart = xPos(Math.min(elo, 1500));
+    const barEnd = xPos(Math.max(elo, 1500));
+    const barWidth = barEnd - barStart;
+
+    // Bar
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    ctx.roundRect(barStart, y, barWidth, barH, 3);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Driver name
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(d, padLeft - 10, y + barH / 2 + 4);
+
+    // Elo value
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = 'bold 11px "SF Mono", "Fira Code", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(r(elo), xPos(elo) + 6, y + barH / 2 + 4);
+  });
+}
+
+drawBarChart();
+window.addEventListener('resize', drawBarChart);
+
+// ── Line chart ──────────────────────────────────────────────────────────
+function drawLineChart() {
+  const canvas = document.getElementById('line-chart');
+  const dpr = window.devicePixelRatio || 1;
+  const padTop = 30;
+  const padBottom = 50;
+  const padLeft = 60;
+  const padRight = 30;
+  const w = canvas.parentElement.clientWidth - 40;
+  const h = 450;
+
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  // Find range across all history
+  let allVals = [];
+  allDrivers.forEach(d => history[d].forEach(v => allVals.push(v)));
+  const minV = Math.min(...allVals);
+  const maxV = Math.max(...allVals);
+  const rangeMin = Math.floor((minV - 15) / 25) * 25;
+  const rangeMax = Math.ceil((maxV + 15) / 25) * 25;
+
+  const chartW = w - padLeft - padRight;
+  const chartH = h - padTop - padBottom;
+  const rounds = ['Start', 'R1', 'R2', 'R3', 'R4'];
+
+  function xPos(i) { return padLeft + (i / (rounds.length - 1)) * chartW; }
+  function yPos(v) { return padTop + (1 - (v - rangeMin) / (rangeMax - rangeMin)) * chartH; }
+
+  // Grid
+  ctx.strokeStyle = '#21262d';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#484f58';
+  ctx.font = '10px "SF Mono", "Fira Code", monospace';
+
+  // Horizontal grid
+  ctx.textAlign = 'right';
+  for (let v = rangeMin; v <= rangeMax; v += 25) {
+    const y = yPos(v);
+    ctx.beginPath();
+    ctx.moveTo(padLeft, y);
+    ctx.lineTo(w - padRight, y);
+    ctx.stroke();
+    ctx.fillText(Math.round(v), padLeft - 8, y + 4);
+  }
+
+  // Baseline 1500
+  ctx.strokeStyle = '#484f58';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(padLeft, yPos(1500));
+  ctx.lineTo(w - padRight, yPos(1500));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Vertical grid + labels
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px "SF Mono", "Fira Code", monospace';
+  rounds.forEach((label, i) => {
+    const x = xPos(i);
+    ctx.strokeStyle = '#21262d';
+    ctx.beginPath();
+    ctx.moveTo(x, padTop);
+    ctx.lineTo(x, h - padBottom);
+    ctx.stroke();
+    ctx.fillText(label, x, h - padBottom + 20);
+  });
+
+  // Sort drivers by final rating for draw order (lowest first so top drivers draw on top)
+  const drawOrder = allDrivers.slice().sort((a, b) => ratings[a] - ratings[b]);
+
+  // Lines
+  drawOrder.forEach(d => {
+    const color = TEAMS[d].color;
+    const pts = history[d];
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+    pts.forEach((v, i) => {
+      const x = xPos(i);
+      const y = yPos(v);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Dot at final point
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(xPos(pts.length - 1), yPos(pts[pts.length - 1]), 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Label at final point (top drivers only to avoid clutter)
+    const finalElo = pts[pts.length - 1];
+    if (finalElo > 1520 || finalElo < 1460) {
+      ctx.fillStyle = color;
+      ctx.font = '10px "SF Mono", "Fira Code", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(d, xPos(pts.length - 1) + 8, yPos(finalElo) + 3);
+    }
+  });
+
+  ctx.globalAlpha = 1;
+
+  // Build legend
+  const legendEl = document.getElementById('line-legend');
+  legendEl.innerHTML = '';
+  sorted.forEach(d => {
+    const span = document.createElement('span');
+    span.style.display = 'inline-flex';
+    span.style.alignItems = 'center';
+    span.style.gap = '4px';
+    span.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${TEAMS[d].color};"></span>${d}`;
+    legendEl.appendChild(span);
+  });
+}
+
+drawLineChart();
+window.addEventListener('resize', drawLineChart);
+
+// ── Teammate table ──────────────────────────────────────────────────────
+const teamOrder = ['Mercedes', 'Ferrari', 'McLaren', 'Red Bull', 'Alpine', 'Haas', 'RB', 'Williams', 'Audi', 'Cadillac', 'Aston Martin'];
+const teamColorMap = {
+  'Mercedes': '#00d2be', 'Ferrari': '#dc143c', 'McLaren': '#ff8700',
+  'Red Bull': '#3671C6', 'Alpine': '#0090ff', 'Haas': '#b6babd',
+  'RB': '#6692ff', 'Williams': '#64c4ff', 'Audi': '#00e701',
+  'Cadillac': '#c0c0c0', 'Aston Martin': '#006f62'
+};
+
+const tbody = document.getElementById('teammate-table');
+teamOrder.forEach(team => {
+  const drivers = teamPairs[team];
+  if (!drivers || drivers.length < 2) return;
+  const [d1, d2] = ratings[drivers[0]] >= ratings[drivers[1]] ? [drivers[0], drivers[1]] : [drivers[1], drivers[0]];
+  const gap = r(ratings[d1] - ratings[d2]);
+  const color = teamColorMap[team];
+  tbody.innerHTML += `
+    <tr>
+      <td style="color:${color};font-weight:600;">${team}</td>
+      <td class="driver-name">${d1}</td>
+      <td>${r(ratings[d1])}</td>
+      <td class="driver-name">${d2}</td>
+      <td>${r(ratings[d2])}</td>
+      <td style="color:${gap > 30 ? '#d29922' : gap > 15 ? '#8b949e' : '#3fb950'};font-weight:600;">${gap > 0 ? '+' : ''}${gap}</td>
+    </tr>
+  `;
+});
+</script>
+
+</body>
+</html>
