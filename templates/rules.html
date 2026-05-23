@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Regulation Changes</title>
+<meta name="description" content="{{ data.year }} Formula 1 regulation changes: active aero, tripled MGU-K output, 100% sustainable fuel, lighter cars, and the biggest rule reset in a decade.">
+<meta property="og:title" content="F1 {{ data.year }} — Regulation Changes">
+<meta property="og:description" content="{{ data.year }} Formula 1 regulation changes: active aero, tripled MGU-K output, 100% sustainable fuel, lighter cars, and the biggest rule reset in a decade.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/rules.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Regulation Changes">
+<meta name="twitter:description" content="{{ data.year }} Formula 1 regulation changes: active aero, tripled MGU-K output, 100% sustainable fuel, lighter cars, and the biggest rule reset in a decade.">
+<meta name="keywords" content="F1 {{ data.year }} regulations, Formula 1 rule changes, active aero, MGU-K, sustainable fuel, FIA technical regulations">
+<link rel="canonical" href="https://jthorvaldur.github.io/f1_stats/rules.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  /* Change card layout */
+  .change-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .change-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #30363d;
+    font-size: 13px;
+    font-weight: 700;
+    color: #f0f6fc;
+  }
+  .change-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .change-col {
+    padding: 16px 20px;
+  }
+  .change-col-before {
+    border-right: 1px solid #30363d;
+    background: rgba(248, 81, 73, 0.03);
+  }
+  .change-col-after {
+    background: rgba(63, 185, 80, 0.03);
+  }
+  .change-col-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .change-col-before .change-col-label { color: #f85149; }
+  .change-col-after .change-col-label { color: #3fb950; }
+  .change-col-value {
+    font-size: 13px;
+    color: #c9d1d9;
+    line-height: 1.5;
+  }
+  .change-implication {
+    padding: 12px 20px;
+    border-top: 1px solid #30363d;
+    font-size: 12px;
+    color: #8b949e;
+    line-height: 1.5;
+    background: rgba(88, 166, 255, 0.02);
+  }
+  .change-implication strong { color: #58a6ff; font-weight: 600; }
+
+  /* Implications cards */
+  .impl-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 24px;
+  }
+  .impl-card h4 {
+    color: #f0f6fc;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .impl-card p {
+    color: #8b949e;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  /* Entrant cards */
+  .entrant-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 24px;
+  }
+  .entrant-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin-bottom: 4px;
+  }
+  .entrant-sub {
+    font-size: 12px;
+    color: #8b949e;
+    margin-bottom: 14px;
+  }
+  .entrant-detail {
+    font-size: 12px;
+    color: #c9d1d9;
+    line-height: 1.7;
+  }
+  .entrant-detail strong { color: #f0f6fc; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .change-columns { grid-template-columns: 1fr; }
+    .change-col-before { border-right: none; border-bottom: 1px solid #30363d; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ HERO -->
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to championship</a>
+  <h1>{{ data.year }} Regulations</h1>
+  <div class="tagline">The biggest technical rule reset in a decade. New power units, active aerodynamics, smaller and lighter cars, and 100% sustainable fuel redefine what an F1 car is from the ground up.</div>
+  <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <span class="badge badge-green">New Power Unit</span>
+    <span class="badge badge-blue">Active Aero</span>
+    <span class="badge badge-amber">Lighter Cars</span>
+    <span class="badge badge-purple">Sustainable Fuel</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ OVERVIEW -->
+<div class="section">
+  <h2>At a Glance</h2>
+  <p class="section-sub">The headline numbers behind the {{ data.year }} regulation overhaul</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Power Split</div>
+      <div class="stat ok">50/50</div>
+      <div class="stat-label">Half electric, half ICE. MGU-K output tripled from 120 kW to 350 kW. The MGU-H is gone.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Active Aero</div>
+      <div class="stat" style="color:#58a6ff;">Active</div>
+      <div class="stat-label">Front and rear wings adjust continuously. Low-drag mode on straights, high-downforce in corners.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Minimum Weight</div>
+      <div class="stat" style="color:#bb9af7;">768 kg</div>
+      <div class="stat-label">Down 32 kg from 2025. Smaller cars with shorter wheelbase and narrower track.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Fuel</div>
+      <div class="stat warn">100%</div>
+      <div class="stat-label">Fully sustainable fuel mandate. All teams must run non-fossil-origin fuel from race one.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ REGULATION CHANGE SECTIONS -->
+{% set category_icons = {
+  'power_unit': 'Power Unit',
+  'aero': 'Aerodynamics',
+  'chassis': 'Chassis & Dimensions',
+  'sporting': 'Sporting Regulations'
+} %}
+
+{% for category in ['power_unit', 'aero', 'chassis', 'sporting'] %}
+{% if category in data.regulation_changes %}
+<div class="section section-divider">
+  <h2>{{ data.regulation_changes[category].title }}</h2>
+  <p class="section-sub">{{ category_icons[category] }} changes for {{ data.year }}</p>
+
+  {% for change in data.regulation_changes[category].changes %}
+  <div class="change-card">
+    <div class="change-header">{{ change.what }}</div>
+    <div class="change-columns">
+      <div class="change-col change-col-before">
+        <div class="change-col-label">2025 (Before)</div>
+        <div class="change-col-value">{{ change['from'] }}</div>
+      </div>
+      <div class="change-col change-col-after">
+        <div class="change-col-label">{{ data.year }} (After)</div>
+        <div class="change-col-value">{{ change.to }}</div>
+      </div>
+    </div>
+    <div class="change-implication"><strong>Implication:</strong> {{ change.implication }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endfor %}
+
+<!-- ═══════════════════════════════════════════ KEY IMPLICATIONS -->
+<div class="section section-divider">
+  <h2>Key Implications</h2>
+  <p class="section-sub">What the {{ data.year }} regulations mean in practice</p>
+  <div class="grid grid-3">
+    <div class="impl-card">
+      <h4>What This Means for Racing</h4>
+      <p>Active aerodynamics change the overtaking game fundamentally. Cars can shed drag on straights and load up in corners independently, reducing the dirty-air penalty that has plagued close racing. The manual DRS button is replaced by a system that adjusts continuously based on speed and load. Combined with lighter, more agile cars, wheel-to-wheel racing should be closer and more sustained through corner sequences, not just on straights.</p>
+    </div>
+    <div class="impl-card">
+      <h4>What This Means for Teams</h4>
+      <p>A full regulation reset under the existing cost cap creates the widest development opportunity since 2014. Every team starts from a blank sheet on power unit, aero, and chassis. The removal of the MGU-H simplifies the power unit and lowers barriers for new manufacturers. Teams with strong electrical engineering capability gain an advantage as the MGU-K becomes the dominant performance differentiator. The cost cap ensures spending parity, but intellectual capital becomes the key variable.</p>
+    </div>
+    <div class="impl-card">
+      <h4>What This Means for Fans</h4>
+      <p>Visibly different cars for the first time in years: shorter, narrower, with moving wing elements. Races should feature more genuine overtaking through corners rather than DRS-assisted highway passes. The tripled electric output means louder energy recovery whine and visible deployment differences between drivers. Pit strategy changes with sustainable fuel energy density. Expect more variability in the first season as teams find the performance envelope.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ NEW ENTRANTS -->
+<div class="section section-divider">
+  <h2>New Entrants</h2>
+  <p class="section-sub">The regulation reset opens the door for new manufacturers and teams</p>
+  <div class="grid grid-2">
+    <div class="entrant-card">
+      <div class="entrant-name" style="color: #c0c0c0;">Cadillac F1 (General Motors)</div>
+      <div class="entrant-sub">11th team &mdash; new constructor entry</div>
+      <div class="entrant-detail">
+        <strong>Background:</strong> GM's return to Formula 1 as the first new constructor entry since Haas in 2016. The team operates under the Cadillac brand with a dedicated facility in the United States.
+        <br><br>
+        <strong>Power unit:</strong> Running Ferrari customer power units initially, with plans to develop a GM-branded power unit for 2028 under the new regulations.
+        <br><br>
+        <strong>Why now:</strong> The {{ data.year }} regulation reset provides a natural entry point where all teams start with clean-sheet designs. The simplified power unit (no MGU-H) lowers the engineering barrier for new manufacturers, and the cost cap ensures the team can be competitive without unlimited spending.
+      </div>
+    </div>
+    <div class="entrant-card">
+      <div class="entrant-name" style="color: #00e701;">Audi F1 (formerly Sauber)</div>
+      <div class="entrant-sub">Full manufacturer takeover of Stake/Sauber</div>
+      <div class="entrant-detail">
+        <strong>Background:</strong> Audi completes its acquisition of the Sauber Group, rebranding the team as a full factory Audi operation. Sauber's Hinwil facility becomes Audi's F1 headquarters, combining decades of F1 infrastructure with Volkswagen Group engineering resources.
+        <br><br>
+        <strong>Power unit:</strong> Audi's own power unit, developed in-house at Neuburg an der Donau. The first clean-sheet F1 power unit from a new manufacturer since Honda's return in 2015.
+        <br><br>
+        <strong>Why now:</strong> The elimination of the MGU-H was a precondition Audi set for entry. The {{ data.year }} power unit regulations simplify the architecture enough to make a new entrant's power unit viable, and the Sauber acquisition provides a ready-made team structure, Concorde Agreement entry, and wind tunnel.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ FOOTER -->
+<footer>
+  Data: FIA {{ data.year }} Technical &amp; Sporting Regulations &middot; <a href="https://www.fia.com/regulation/category/110">FIA F1 Regulations</a> &middot; <a href="https://www.formula1.com/en/latest/article/f1-rules-and-regulations">Formula1.com</a> &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+</body>
+</html>

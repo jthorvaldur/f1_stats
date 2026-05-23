@@ -80,8 +80,8 @@
 
 <!-- ── Next Race ──────────────────────────────── -->
 <div class="section">
-  <h2>Next Race: Canadian Grand Prix</h2>
-  <p class="section-sub">Round 5 &middot; 2026-05-24 &middot; Circuit Gilles Villeneuve, Montreal</p>
+  <h2>Next Race: Monaco Grand Prix</h2>
+  <p class="section-sub">Round 6 &middot; 2026-06-07 &middot; Circuit de Monaco, Monte Carlo</p>
 
   <div class="grid grid-4" id="raceStats">
     <div class="card">
@@ -114,7 +114,7 @@
   </div>
 
   <div class="card">
-    <div class="card-title">Edge Detection Table — Canadian Grand Prix</div>
+    <div class="card-title">Edge Detection Table — Monaco Grand Prix</div>
     <table>
       <thead>
         <tr><th>Driver</th><th>Model %</th><th>Market %</th><th>Edge</th><th>EV/$1</th><th>Kelly %</th><th>Signal</th></tr>
@@ -181,7 +181,7 @@
     <div class="card">
       <div class="card-title">Model Limitations</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        Our model uses current-season form only (4 races). It does not account for circuit-specific performance, weather, car upgrades, or team orders. The market aggregates thousands of informed opinions. Treat edge signals as research starting points, not trading recommendations.
+        Our model uses current-season form only (5 races). It does not account for circuit-specific performance, weather, car upgrades, or team orders. The market aggregates thousands of informed opinions. Treat edge signals as research starting points, not trading recommendations.
       </div>
     </div>
     <div class="card">
@@ -194,28 +194,28 @@
 </div>
 
 <div class="callout callout-amber">
-  <strong>Disclaimer:</strong> This is an analytical comparison between a statistical model and prediction market prices. It is not financial advice. Prediction markets involve real money and risk. The model's edge estimates are based on 4 races of data — a small sample. Past edge does not predict future edge.
+  <strong>Disclaimer:</strong> This is an analytical comparison between a statistical model and prediction market prices. It is not financial advice. Prediction markets involve real money and risk. The model's edge estimates are based on 5 races of data — a small sample. Past edge does not predict future edge.
 </div>
 
 <footer>
-  Model: f1stats form/momentum/consistency &middot; Market: <a href="https://polymarket.com/predictions/formula1">Polymarket</a> &middot; Generated 2026-05-22 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Model: f1stats form/momentum/consistency &middot; Market: <a href="https://polymarket.com/predictions/formula1">Polymarket</a> &middot; Generated 2026-05-23 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
 (function() {
   const drivers = [
-    {name:'Antonelli', fullName:'Andrea Kimi Antonelli', pts:100, wins:3, team:'Mercedes', color:'#00d2be', pos:1},
-    {name:'Russell', fullName:'George Russell', pts:80, wins:1, team:'Mercedes', color:'#00d2be', pos:2},
-    {name:'Leclerc', fullName:'Charles Leclerc', pts:59, wins:0, team:'Ferrari', color:'#dc143c', pos:3},
-    {name:'Norris', fullName:'Lando Norris', pts:51, wins:0, team:'McLaren', color:'#ff8700', pos:4},
-    {name:'Hamilton', fullName:'Lewis Hamilton', pts:51, wins:0, team:'Ferrari', color:'#dc143c', pos:5},
-    {name:'Piastri', fullName:'Oscar Piastri', pts:43, wins:0, team:'McLaren', color:'#ff8700', pos:6},
-    {name:'Verstappen', fullName:'Max Verstappen', pts:26, wins:0, team:'Red Bull', color:'#3671C6', pos:7},
+    {name:'Antonelli', fullName:'Andrea Kimi Antonelli', pts:106, wins:3, team:'Mercedes', color:'#00d2be', pos:1},
+    {name:'Russell', fullName:'George Russell', pts:88, wins:1, team:'Mercedes', color:'#00d2be', pos:2},
+    {name:'Leclerc', fullName:'Charles Leclerc', pts:63, wins:0, team:'Ferrari', color:'#dc143c', pos:3},
+    {name:'Norris', fullName:'Lando Norris', pts:58, wins:0, team:'McLaren', color:'#ff8700', pos:4},
+    {name:'Hamilton', fullName:'Lewis Hamilton', pts:54, wins:0, team:'Ferrari', color:'#dc143c', pos:5},
+    {name:'Piastri', fullName:'Oscar Piastri', pts:48, wins:0, team:'McLaren', color:'#ff8700', pos:6},
+    {name:'Verstappen', fullName:'Max Verstappen', pts:28, wins:0, team:'Red Bull', color:'#3671C6', pos:7},
     {name:'Bearman', fullName:'Oliver Bearman', pts:17, wins:0, team:'Haas', color:'#b6babd', pos:8},
     {name:'Gasly', fullName:'Pierre Gasly', pts:16, wins:0, team:'Alpine', color:'#0090ff', pos:9},
     {name:'Lawson', fullName:'Liam Lawson', pts:10, wins:0, team:'RB', color:'#6692ff', pos:10},
     {name:'Colapinto', fullName:'Franco Colapinto', pts:7, wins:0, team:'Alpine', color:'#0090ff', pos:11},
-    {name:'Lindblad', fullName:'Arvid Lindblad', pts:4, wins:0, team:'RB', color:'#6692ff', pos:12},
+    {name:'Lindblad', fullName:'Arvid Lindblad', pts:5, wins:0, team:'RB', color:'#6692ff', pos:12},
     {name:'Hadjar', fullName:'Isack Hadjar', pts:4, wins:0, team:'Red Bull', color:'#3671C6', pos:13},
     {name:'Sainz', fullName:'Carlos Sainz', pts:4, wins:0, team:'Williams', color:'#64c4ff', pos:14},
     {name:'Bortoleto', fullName:'Gabriel Bortoleto', pts:2, wins:0, team:'Audi', color:'#00e701', pos:15},
@@ -228,9 +228,9 @@
     {name:'Stroll', fullName:'Lance Stroll', pts:0, wins:0, team:'Aston Martin', color:'#006f62', pos:22},
   ];
 
-  const raceOdds = [{"driver": "Kimi Antonelli win the 2026 F1 Canadian Grand Prix?", "market_prob": 0.36, "market_id": "2076828"}, {"driver": "George Russell win the 2026 F1 Canadian Grand Prix?", "market_prob": 0.355, "market_id": "2076837"}, {"driver": "Lando Norris win the 2026 F1 Canadian Grand Prix?", "market_prob": 0.115, "market_id": "2076827"}, {"driver": "Max Verstappen win the 2026 F1 Canadian Grand Prix?", "market_prob": 0.075, "market_id": "2076829"}, {"driver": "Oscar Piastri win the 2026 F1 Canadian Grand Prix?", "market_prob": 0.075, "market_id": "2076836"}, {"driver": "Lewis Hamilton win the 2026 F1 Canadian Grand Prix?", "market_prob": 0.064, "market_id": "2076834"}, {"driver": "Charles Leclerc win the 2026 F1 Canadian Grand Prix?", "market_prob": 0.04, "market_id": "2076825"}];
-  const wdcOdds = [{"driver": "Kimi Antonelli", "market_prob": 0.3825, "volume": "3080633.9694549693"}, {"driver": "George Russell", "market_prob": 0.345, "volume": "1805873.5886020013"}, {"driver": "Lando Norris", "market_prob": 0.102, "volume": "2243061.506650993"}, {"driver": "Max Verstappen", "market_prob": 0.0585, "volume": "2091623.437714986"}, {"driver": "Oscar Piastri", "market_prob": 0.0425, "volume": "1846875.8140950075"}, {"driver": "Charles Leclerc", "market_prob": 0.0395, "volume": "2929368.910051013"}, {"driver": "Lewis Hamilton", "market_prob": 0.0165, "volume": "3903476.967066915"}, {"driver": "Fernando Alonso", "market_prob": 0.0035, "volume": "7285595.714847887"}, {"driver": "Esteban Ocon", "market_prob": 0.0035, "volume": "7815904.460437889"}, {"driver": "Nico H\u00fclkenberg", "market_prob": 0.0035, "volume": "6764484.417985923"}, {"driver": "Gabriel Bortoleto", "market_prob": 0.0035, "volume": "9249212.365306545"}, {"driver": "Franco Colapinto", "market_prob": 0.0035, "volume": "10418285.217520725"}, {"driver": "Alexander Albon", "market_prob": 0.0035, "volume": "10059201.061720291"}, {"driver": "Valtteri Bottas", "market_prob": 0.0035, "volume": "10533975.911054106"}, {"driver": "Liam Lawson", "market_prob": 0.0025, "volume": "9456429.299431704"}, {"driver": "Arvid Lindblad", "market_prob": 0.0025, "volume": "10287051.357038587"}, {"driver": "Carlos Sainz Jr.", "market_prob": 0.0025, "volume": "8942742.454143727"}, {"driver": "Sergio P\u00e9rez", "market_prob": 0.0025, "volume": "8904793.52596271"}, {"driver": "Isack Hadjar", "market_prob": 0.0025, "volume": "7116877.060414755"}, {"driver": "Pierre Gasly", "market_prob": 0.0015, "volume": "8996434.770101821"}, {"driver": "Lance Stroll", "market_prob": 0.0015, "volume": "9860167.41597291"}, {"driver": "Oliver Bearman", "market_prob": 0.0015, "volume": "10118389.251952652"}];
-  const currentRound = 4;
+  const raceOdds = [];
+  const wdcOdds = [{"driver": "George Russell", "market_prob": 0.395, "volume": "1818027.109066001"}, {"driver": "Kimi Antonelli", "market_prob": 0.38, "volume": "3088233.3793699685"}, {"driver": "Lando Norris", "market_prob": 0.0845, "volume": "2269684.474747993"}, {"driver": "Max Verstappen", "market_prob": 0.045, "volume": "2103342.6995029864"}, {"driver": "Oscar Piastri", "market_prob": 0.035, "volume": "1881046.686333008"}, {"driver": "Charles Leclerc", "market_prob": 0.0335, "volume": "2949453.469646013"}, {"driver": "Lewis Hamilton", "market_prob": 0.0155, "volume": "3932607.238510916"}, {"driver": "Fernando Alonso", "market_prob": 0.0035, "volume": "7322111.551490882"}, {"driver": "Esteban Ocon", "market_prob": 0.0035, "volume": "7842283.1587398965"}, {"driver": "Nico H\u00fclkenberg", "market_prob": 0.0035, "volume": "6794650.638269926"}, {"driver": "Gabriel Bortoleto", "market_prob": 0.0035, "volume": "9286977.487940492"}, {"driver": "Franco Colapinto", "market_prob": 0.0035, "volume": "10455339.826497696"}, {"driver": "Alexander Albon", "market_prob": 0.0035, "volume": "10097491.037686277"}, {"driver": "Valtteri Bottas", "market_prob": 0.0035, "volume": "10568617.408351062"}, {"driver": "Liam Lawson", "market_prob": 0.0025, "volume": "9493816.398764683"}, {"driver": "Arvid Lindblad", "market_prob": 0.0025, "volume": "10318022.913371563"}, {"driver": "Carlos Sainz Jr.", "market_prob": 0.0025, "volume": "8975874.8129767"}, {"driver": "Sergio P\u00e9rez", "market_prob": 0.0025, "volume": "8937209.466795692"}, {"driver": "Isack Hadjar", "market_prob": 0.0025, "volume": "7155390.385747728"}, {"driver": "Pierre Gasly", "market_prob": 0.0015, "volume": "9021486.051101824"}, {"driver": "Lance Stroll", "market_prob": 0.0015, "volume": "9888610.078972904"}, {"driver": "Oliver Bearman", "market_prob": 0.0015, "volume": "10130840.452952657"}];
+  const currentRound = 5;
   const totalRounds = 24;
 
   // ── Model probabilities (same as prediction.html) ──────

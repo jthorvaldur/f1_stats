@@ -107,14 +107,14 @@
 <div class="hero">
   <a href="index.html" class="back-link">&larr; back to standings</a>
   <h1>Monte Carlo Championship Projection</h1>
-  <div class="tagline">10,000 simulated seasons, computed in your browser. Each simulation races the remaining 20 rounds using a Dirichlet-multinomial model calibrated to current form, then crowns a champion. The numbers below answer: who wins from here?</div>
+  <div class="tagline">10,000 simulated seasons, computed in your browser. Each simulation races the remaining 19 rounds using a Dirichlet-multinomial model calibrated to current form, then crowns a champion. The numbers below answer: who wins from here?</div>
   <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
     <button class="btn btn-primary" id="runBtn" onclick="runSimulation()">
       <span class="spinner"></span>
       Run Simulation
     </button>
     <span class="badge badge-blue">10,000 seasons</span>
-    <span class="badge badge-amber">20 races remaining</span>
+    <span class="badge badge-amber">19 races remaining</span>
     <span class="badge badge-green">client-side JS</span>
   </div>
   <div class="sim-status" id="simStatus">Click "Run Simulation" to begin.</div>
@@ -177,7 +177,7 @@
   <div class="card method-text">
     <p><strong style="color:#f0f6fc;">Dirichlet-Multinomial Race Simulation</strong></p>
 
-    <p>Each driver's "strength" is derived from their points-per-race average over the first 4 rounds. To prevent zero-point drivers from having zero probability, we add a smoothing floor:</p>
+    <p>Each driver's "strength" is derived from their points-per-race average over the first 5 rounds. To prevent zero-point drivers from having zero probability, we add a smoothing floor:</p>
 
     <div class="formula">
       raw_strength(i) = points_per_race(i) + 0.5<br>
@@ -186,7 +186,7 @@
 
     <p>The <code>concentration</code> parameter (set to 2.0) controls how deterministic races are: higher values mean strength differences dominate, lower values allow more upsets. The alpha vector serves as the parameter for a Dirichlet distribution.</p>
 
-    <p><strong style="color:#f0f6fc;">Sampling race results.</strong> For each of the 20 remaining races, we draw finishing positions using a sequential weighted sampling scheme that approximates a Dirichlet-multinomial draw:</p>
+    <p><strong style="color:#f0f6fc;">Sampling race results.</strong> For each of the 19 remaining races, we draw finishing positions using a sequential weighted sampling scheme that approximates a Dirichlet-multinomial draw:</p>
 
     <div class="formula">
       For position p = 1, 2, ..., N:<br>
@@ -196,7 +196,7 @@
 
     <p>This is equivalent to drawing from a Plackett-Luce model, which is the standard ranking extension of the multinomial-logit. The sequential draw ensures exactly one driver per finishing position.</p>
 
-    <p><strong style="color:#f0f6fc;">Points allocation.</strong> Standard F1 scoring: 25-18-15-12-10-8-6-4-2-1 for positions 1 through 10. After all 20 races, the driver with the highest cumulative points (current + simulated) is crowned champion. Ties are broken by win count.</p>
+    <p><strong style="color:#f0f6fc;">Points allocation.</strong> Standard F1 scoring: 25-18-15-12-10-8-6-4-2-1 for positions 1 through 10. After all 19 races, the driver with the highest cumulative points (current + simulated) is crowned champion. Ties are broken by win count.</p>
 
     <p><strong style="color:#f0f6fc;">Title clinch detection.</strong> After each simulated race, we check whether any driver has mathematically clinched the championship (i.e., their lead exceeds 25 &times; remaining races). If so, the season is flagged as "decided early."</p>
 
@@ -214,12 +214,12 @@
 
   // --- Driver data (injected from Jinja2) ---
   var drivers = [
-    { name: 'Antonelli', pts: 100, wins: 3, team: 'Mercedes', color: '#00d2be' },    { name: 'Russell', pts: 80, wins: 1, team: 'Mercedes', color: '#00d2be' },    { name: 'Leclerc', pts: 59, wins: 0, team: 'Ferrari', color: '#dc143c' },    { name: 'Norris', pts: 51, wins: 0, team: 'McLaren', color: '#ff8700' },    { name: 'Hamilton', pts: 51, wins: 0, team: 'Ferrari', color: '#dc143c' },    { name: 'Piastri', pts: 43, wins: 0, team: 'McLaren', color: '#ff8700' },    { name: 'Verstappen', pts: 26, wins: 0, team: 'Red Bull', color: '#3671C6' },    { name: 'Bearman', pts: 17, wins: 0, team: 'Haas F1 Team', color: '#b6babd' },    { name: 'Gasly', pts: 16, wins: 0, team: 'Alpine F1 Team', color: '#0090ff' },    { name: 'Lawson', pts: 10, wins: 0, team: 'RB F1 Team', color: '#6692ff' },    { name: 'Colapinto', pts: 7, wins: 0, team: 'Alpine F1 Team', color: '#0090ff' },    { name: 'Lindblad', pts: 4, wins: 0, team: 'RB F1 Team', color: '#6692ff' },    { name: 'Hadjar', pts: 4, wins: 0, team: 'Red Bull', color: '#3671C6' },    { name: 'Sainz', pts: 4, wins: 0, team: 'Williams', color: '#64c4ff' },    { name: 'Bortoleto', pts: 2, wins: 0, team: 'Audi', color: '#00e701' },    { name: 'Ocon', pts: 1, wins: 0, team: 'Haas F1 Team', color: '#b6babd' },    { name: 'Albon', pts: 1, wins: 0, team: 'Williams', color: '#64c4ff' },    { name: 'Hülkenberg', pts: 0, wins: 0, team: 'Audi', color: '#00e701' },    { name: 'Bottas', pts: 0, wins: 0, team: 'Cadillac F1 Team', color: '#c0c0c0' },    { name: 'Pérez', pts: 0, wins: 0, team: 'Cadillac F1 Team', color: '#c0c0c0' },    { name: 'Alonso', pts: 0, wins: 0, team: 'Aston Martin', color: '#006f62' },    { name: 'Stroll', pts: 0, wins: 0, team: 'Aston Martin', color: '#006f62' }  ];
+    { name: 'Antonelli', pts: 106, wins: 3, team: 'Mercedes', color: '#00d2be' },    { name: 'Russell', pts: 88, wins: 1, team: 'Mercedes', color: '#00d2be' },    { name: 'Leclerc', pts: 63, wins: 0, team: 'Ferrari', color: '#dc143c' },    { name: 'Norris', pts: 58, wins: 0, team: 'McLaren', color: '#ff8700' },    { name: 'Hamilton', pts: 54, wins: 0, team: 'Ferrari', color: '#dc143c' },    { name: 'Piastri', pts: 48, wins: 0, team: 'McLaren', color: '#ff8700' },    { name: 'Verstappen', pts: 28, wins: 0, team: 'Red Bull', color: '#3671C6' },    { name: 'Bearman', pts: 17, wins: 0, team: 'Haas F1 Team', color: '#b6babd' },    { name: 'Gasly', pts: 16, wins: 0, team: 'Alpine F1 Team', color: '#0090ff' },    { name: 'Lawson', pts: 10, wins: 0, team: 'RB F1 Team', color: '#6692ff' },    { name: 'Colapinto', pts: 7, wins: 0, team: 'Alpine F1 Team', color: '#0090ff' },    { name: 'Lindblad', pts: 5, wins: 0, team: 'RB F1 Team', color: '#6692ff' },    { name: 'Hadjar', pts: 4, wins: 0, team: 'Red Bull', color: '#3671C6' },    { name: 'Sainz', pts: 4, wins: 0, team: 'Williams', color: '#64c4ff' },    { name: 'Bortoleto', pts: 2, wins: 0, team: 'Audi', color: '#00e701' },    { name: 'Ocon', pts: 1, wins: 0, team: 'Haas F1 Team', color: '#b6babd' },    { name: 'Albon', pts: 1, wins: 0, team: 'Williams', color: '#64c4ff' },    { name: 'Hülkenberg', pts: 0, wins: 0, team: 'Audi', color: '#00e701' },    { name: 'Bottas', pts: 0, wins: 0, team: 'Cadillac F1 Team', color: '#c0c0c0' },    { name: 'Pérez', pts: 0, wins: 0, team: 'Cadillac F1 Team', color: '#c0c0c0' },    { name: 'Alonso', pts: 0, wins: 0, team: 'Aston Martin', color: '#006f62' },    { name: 'Stroll', pts: 0, wins: 0, team: 'Aston Martin', color: '#006f62' }  ];
 
   var F1_POINTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   var NUM_SIMS = 10000;
-  var RACES_REMAINING = 20;
-  var RACES_DONE = 4;
+  var RACES_REMAINING = 19;
+  var RACES_DONE = 5;
   var CONCENTRATION = 2.0;
   var N = drivers.length;
 

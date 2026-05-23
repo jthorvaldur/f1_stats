@@ -110,7 +110,7 @@
   <div class="badges">
     <span class="badge badge-blue">Pairwise Elo</span>
     <span class="badge badge-amber">K-factor 4</span>
-    <span class="badge badge-green">4 Races Processed</span>
+    <span class="badge badge-green">5 Races Processed</span>
     <span class="badge badge-purple">DNF-Neutral</span>
   </div>
 </div>
@@ -118,14 +118,14 @@
 <!-- Stats cards -->
 <div class="section">
   <h2>Key Metrics</h2>
-  <p class="section-sub">Headline figures from the Elo model after Round 4</p>
+  <p class="section-sub">Headline figures from the Elo model after Round 5</p>
   <div class="grid grid-3" id="stats-cards"></div>
 </div>
 
 <!-- Bar chart: final Elo ratings -->
 <div class="section section-divider">
   <h2>Final Elo Ratings</h2>
-  <p class="section-sub">Horizontal bar chart after Round 4 — sorted highest to lowest, colored by team</p>
+  <p class="section-sub">Horizontal bar chart after Round 5 — sorted highest to lowest, colored by team</p>
   <div class="chart-container">
     <canvas id="bar-chart"></canvas>
   </div>
@@ -134,7 +134,7 @@
 <!-- Line chart: round-by-round progression -->
 <div class="section section-divider">
   <h2>Elo Progression</h2>
-  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through 4 races</p>
+  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through 5 races</p>
   <div class="chart-container">
     <canvas id="line-chart"></canvas>
   </div>
@@ -289,7 +289,7 @@ const RACES = [
     'Antonelli',    'Piastri',    'Leclerc',    'Russell',    'Norris',    'Hamilton',    'Gasly',    'Verstappen',    'Lawson',    'Ocon',    'Hülkenberg',    'Hadjar',    'Bortoleto',    'Lindblad',    'Sainz',    'Colapinto',    'Pérez',    'Alonso',    'Bottas',    'Albon'  ]},  { label: 'R4 Miami Grand Prix', finishers: [
     'Antonelli',    'Norris',    'Piastri',    'Russell',    'Verstappen',    'Hamilton',    'Colapinto',    'Leclerc',    'Sainz',    'Albon',    'Bearman',    'Bortoleto',    'Ocon',    'Lindblad',    'Alonso',    'Pérez',    'Stroll',    'Bottas'  ]}];
 
-const currentRound = 4;
+const currentRound = 5;
 
 // ── Elo computation ─────────────────────────────────────────────────────
 const K = 4;

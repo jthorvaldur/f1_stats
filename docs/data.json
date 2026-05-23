@@ -1,7 +1,7 @@
 {
   "year": 2026,
-  "current_round": 4,
-  "generated": "2026-05-22",
+  "current_round": 5,
+  "generated": "2026-05-23",
   "drivers": [
     {
       "position": 1,
@@ -12,7 +12,7 @@
       "dob": "2006-08-25",
       "nationality": "Italian",
       "number": "12",
-      "points": 100.0,
+      "points": 106.0,
       "wins": 3,
       "team": "Mercedes",
       "team_id": "mercedes",
@@ -61,7 +61,7 @@
       "dob": "1998-02-15",
       "nationality": "British",
       "number": "63",
-      "points": 80.0,
+      "points": 88.0,
       "wins": 1,
       "team": "Mercedes",
       "team_id": "mercedes",
@@ -77,7 +77,7 @@
       "debut_year": 2019,
       "debut_age": 21,
       "f1_seasons": 8,
-      "progress_pct": 80,
+      "progress_pct": 83,
       "profile": {
         "archetype": "The Analyst",
         "big5": {
@@ -110,7 +110,7 @@
       "dob": "1997-10-16",
       "nationality": "Monegasque",
       "number": "16",
-      "points": 59.0,
+      "points": 63.0,
       "wins": 0,
       "team": "Ferrari",
       "team_id": "ferrari",
@@ -159,7 +159,7 @@
       "dob": "1999-11-13",
       "nationality": "British",
       "number": "1",
-      "points": 51.0,
+      "points": 58.0,
       "wins": 0,
       "team": "McLaren",
       "team_id": "mclaren",
@@ -175,7 +175,7 @@
       "debut_year": 2019,
       "debut_age": 19,
       "f1_seasons": 8,
-      "progress_pct": 51,
+      "progress_pct": 55,
       "profile": {
         "archetype": "The Perfectionist",
         "big5": {
@@ -208,7 +208,7 @@
       "dob": "1985-01-07",
       "nationality": "British",
       "number": "44",
-      "points": 51.0,
+      "points": 54.0,
       "wins": 0,
       "team": "Ferrari",
       "team_id": "ferrari",
@@ -257,7 +257,7 @@
       "dob": "2001-04-06",
       "nationality": "Australian",
       "number": "81",
-      "points": 43.0,
+      "points": 48.0,
       "wins": 0,
       "team": "McLaren",
       "team_id": "mclaren",
@@ -273,7 +273,7 @@
       "debut_year": 2023,
       "debut_age": 21,
       "f1_seasons": 4,
-      "progress_pct": 43,
+      "progress_pct": 45,
       "profile": {
         "archetype": "The Ice Man",
         "big5": {
@@ -306,7 +306,7 @@
       "dob": "1997-09-30",
       "nationality": "Dutch",
       "number": "3",
-      "points": 26.0,
+      "points": 28.0,
       "wins": 0,
       "team": "Red Bull",
       "team_id": "red_bull",
@@ -371,7 +371,7 @@
       "debut_year": 2024,
       "debut_age": 18,
       "f1_seasons": 3,
-      "progress_pct": 17,
+      "progress_pct": 16,
       "profile": {
         "archetype": "The Grinder",
         "big5": {
@@ -420,7 +420,7 @@
       "debut_year": 2017,
       "debut_age": 21,
       "f1_seasons": 10,
-      "progress_pct": 16,
+      "progress_pct": 15,
       "profile": {
         "archetype": "The Survivor",
         "big5": {
@@ -469,7 +469,7 @@
       "debut_year": 2023,
       "debut_age": 21,
       "f1_seasons": 4,
-      "progress_pct": 10,
+      "progress_pct": 9,
       "profile": {
         "archetype": "The Dark Horse",
         "big5": {
@@ -551,7 +551,7 @@
       "dob": "2007-08-08",
       "nationality": "British",
       "number": "41",
-      "points": 4.0,
+      "points": 5.0,
       "wins": 0,
       "team": "RB F1 Team",
       "team_id": "rb",
@@ -567,7 +567,7 @@
       "debut_year": 2026,
       "debut_age": 18,
       "f1_seasons": 1,
-      "progress_pct": 4,
+      "progress_pct": 5,
       "profile": {
         "archetype": "The Rookie",
         "big5": {
@@ -1087,7 +1087,7 @@
       "position": 1,
       "name": "Mercedes",
       "team_id": "mercedes",
-      "points": 180.0,
+      "points": 194.0,
       "wins": 4,
       "team_hex": "#00d2be",
       "team_css": "team-mercedes",
@@ -1098,58 +1098,58 @@
       "budget_m": 135,
       "staff": 1000,
       "factory": "Brackley, UK",
-      "pts_per_million": 1.33
+      "pts_per_million": 1.44
     },
     {
       "position": 2,
       "name": "Ferrari",
       "team_id": "ferrari",
-      "points": 110.0,
+      "points": 117.0,
       "wins": 0,
       "team_hex": "#dc143c",
       "team_css": "team-ferrari",
       "team_display": "Ferrari",
       "car_weight": 770,
       "car_over": 2,
-      "progress_pct": 61,
+      "progress_pct": 60,
       "budget_m": 135,
       "staff": 1100,
       "factory": "Maranello, Italy",
-      "pts_per_million": 0.81
+      "pts_per_million": 0.87
     },
     {
       "position": 3,
       "name": "McLaren",
       "team_id": "mclaren",
-      "points": 94.0,
+      "points": 106.0,
       "wins": 0,
       "team_hex": "#ff8700",
       "team_css": "team-mclaren",
       "team_display": "McLaren",
       "car_weight": 771,
       "car_over": 3,
-      "progress_pct": 52,
+      "progress_pct": 55,
       "budget_m": 135,
       "staff": 900,
       "factory": "Woking, UK",
-      "pts_per_million": 0.7
+      "pts_per_million": 0.79
     },
     {
       "position": 4,
       "name": "Red Bull",
       "team_id": "red_bull",
-      "points": 30.0,
+      "points": 32.0,
       "wins": 0,
       "team_hex": "#3671C6",
       "team_css": "team-redbull",
       "team_display": "Red Bull",
       "car_weight": 778,
       "car_over": 10,
-      "progress_pct": 17,
+      "progress_pct": 16,
       "budget_m": 135,
       "staff": 950,
       "factory": "Milton Keynes, UK",
-      "pts_per_million": 0.22
+      "pts_per_million": 0.24
     },
     {
       "position": 5,
@@ -1162,7 +1162,7 @@
       "team_display": "Alpine",
       "car_weight": 773,
       "car_over": 5,
-      "progress_pct": 13,
+      "progress_pct": 12,
       "budget_m": 130,
       "staff": 800,
       "factory": "Enstone/Viry, UK/France",
@@ -1179,7 +1179,7 @@
       "team_display": "Haas",
       "car_weight": 773,
       "car_over": 5,
-      "progress_pct": 10,
+      "progress_pct": 9,
       "budget_m": 115,
       "staff": 400,
       "factory": "Kannapolis, USA / Maranello",
@@ -1189,7 +1189,7 @@
       "position": 7,
       "name": "RB F1 Team",
       "team_id": "rb",
-      "points": 14.0,
+      "points": 15.0,
       "wins": 0,
       "team_hex": "#6692ff",
       "team_css": "team-rb",
@@ -1200,7 +1200,7 @@
       "budget_m": 125,
       "staff": 700,
       "factory": "Faenza, Italy",
-      "pts_per_million": 0.11
+      "pts_per_million": 0.12
     },
     {
       "position": 8,

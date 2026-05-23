@@ -7,6 +7,7 @@ from . import api, static_data
 from . import coherence as coh
 from . import profiles as prof
 from . import markets
+from . import calendar_data as cal
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = ROOT / "templates"
@@ -139,6 +140,9 @@ PAGES = [
     "profiles.html",
     "qualifying.html",
     "markets.html",
+    "rules.html",
+    "format.html",
+    "circuits.html",
 ]
 
 
@@ -178,6 +182,10 @@ def generate_all(year: int | None = None) -> None:
     data["budgets"] = prof.TEAM_BUDGETS
     data["circuit_types"] = prof.CIRCUIT_TYPES
     data["driver_profiles"] = prof.DRIVER_PROFILES
+    data["calendar"] = cal.CALENDAR_2026
+    data["regulation_changes"] = cal.REGULATION_CHANGES
+    data["weekend_format"] = cal.RACE_WEEKEND_FORMAT
+    data["circuit_details"] = cal.CIRCUIT_DETAILS
 
     print("Fetching prediction market odds...")
     if data["next_race"]:

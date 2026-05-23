@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Race Weekend Format</title>
+<meta name="description" content="How an F1 race weekend works in 2026: standard and sprint formats, qualifying knockout system (Q1/Q2/Q3), points allocation, parc ferm&eacute; rules, and key race regulations.">
+<meta property="og:title" content="F1 2026 — Race Weekend Format">
+<meta property="og:description" content="Complete guide to the 2026 F1 race weekend structure: standard vs sprint formats, qualifying deep dive, points system, and key rules.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/format.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — Race Weekend Format">
+<meta name="twitter:description" content="Complete guide to the 2026 F1 race weekend structure: standard vs sprint formats, qualifying deep dive, points system, and key rules.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+
+  .callout {
+    border-left: 3px solid; padding: 12px 16px; margin: 16px 0;
+    font-size: 12px; line-height: 1.7; background: rgba(255,255,255,0.02);
+    border-radius: 0 8px 8px 0;
+  }
+  .callout-red { border-color: #f85149; }
+  .callout-green { border-color: #3fb950; }
+  .callout-amber { border-color: #d29922; }
+  .callout-blue { border-color: #58a6ff; }
+  .callout-purple { border-color: #bb9af7; }
+
+  /* Timeline / schedule */
+  .timeline-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 24px;
+  }
+  .day-label {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px 0 0 8px;
+    padding: 16px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #f0f6fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    letter-spacing: 0.05em;
+  }
+  .day-sessions {
+    flex: 1;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 0 0 0 12px;
+  }
+  .session-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 16px 20px;
+    flex: 1;
+    min-width: 180px;
+  }
+  .session-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin-bottom: 4px;
+  }
+  .session-duration {
+    font-size: 11px;
+    color: #58a6ff;
+    margin-bottom: 6px;
+  }
+  .session-purpose {
+    font-size: 11px;
+    color: #8b949e;
+    line-height: 1.5;
+  }
+  .session-card.highlight {
+    border-color: #d29922;
+    background: #1a1700;
+  }
+  .session-card.race-highlight {
+    border-color: #3fb950;
+    background: #0d1a10;
+  }
+
+  /* Qualifying funnel */
+  .qual-funnel {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    margin: 16px 0;
+  }
+  .qual-stage {
+    flex: 1;
+    text-align: center;
+    padding: 20px 16px;
+    position: relative;
+  }
+  .qual-stage-inner {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px 12px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .qual-stage-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin-bottom: 4px;
+  }
+  .qual-stage-time {
+    font-size: 11px;
+    color: #58a6ff;
+    margin-bottom: 10px;
+  }
+  .qual-drivers {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .qual-drivers-label {
+    font-size: 10px;
+    color: #8b949e;
+    margin-bottom: 8px;
+  }
+  .qual-eliminated {
+    font-size: 11px;
+    color: #f85149;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #30363d;
+  }
+  .qual-tyre {
+    font-size: 10px;
+    color: #8b949e;
+    margin-top: 6px;
+  }
+  .qual-arrow {
+    display: flex;
+    align-items: center;
+    color: #30363d;
+    font-size: 24px;
+    padding: 0 4px;
+  }
+
+  /* Points tables side by side */
+  .points-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* Sprint calendar list */
+  .sprint-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid #21262d;
+  }
+  .sprint-list-item:last-child { border-bottom: none; }
+  .sprint-round {
+    font-size: 11px;
+    font-weight: 700;
+    color: #d29922;
+    background: #2a1f00;
+    border: 1px solid #3d2e00;
+    border-radius: 4px;
+    padding: 2px 8px;
+    min-width: 44px;
+    text-align: center;
+  }
+  .sprint-name {
+    font-size: 13px;
+    color: #f0f6fc;
+    font-weight: 600;
+    flex: 1;
+  }
+  .sprint-date {
+    font-size: 11px;
+    color: #8b949e;
+  }
+
+  /* Rules grid */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .rule-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .rule-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin-bottom: 6px;
+  }
+  .rule-desc {
+    font-size: 11px;
+    color: #8b949e;
+    line-height: 1.6;
+  }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .points-grid { grid-template-columns: 1fr; }
+    .qual-funnel { flex-direction: column; }
+    .qual-arrow { transform: rotate(90deg); justify-content: center; padding: 8px 0; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .day-label { writing-mode: horizontal-tb; transform: none; border-radius: 8px 8px 0 0; min-width: auto; padding: 10px 16px; }
+    .timeline-row { flex-direction: column; }
+    .day-sessions { padding: 12px 0 0 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Hero ──────────────────────────────────── -->
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Race Weekend Format</h1>
+  <div class="tagline">How an F1 race weekend works in 2026: session schedules, qualifying knockout rounds, sprint weekends, points allocation, parc ferm&eacute;, and key race-day rules.</div>
+  <div class="badges">
+    <span class="badge badge-blue">22 Race Weekends</span>
+    <span class="badge badge-amber">6 Sprint Weekends</span>
+    <span class="badge badge-green">16 Standard Weekends</span>
+  </div>
+</div>
+
+<!-- ── Standard vs Sprint Overview ──────────── -->
+<div class="section">
+  <h2>Standard vs Sprint</h2>
+  <p class="section-sub">The 2026 calendar features two weekend formats with different session structures</p>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Standard Weekend</div>
+      <div class="stat">16</div>
+      <div class="stat-label">Weekends with three practice sessions, qualifying, and race</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sprint Weekend</div>
+      <div class="stat warn">6</div>
+      <div class="stat-label">Weekends with one practice, sprint qualifying, sprint race, qualifying, and main race</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Standard Weekend Schedule ─────────────── -->
+<div class="section section-divider">
+  <h2>Standard Weekend Schedule</h2>
+  <p class="section-sub">The traditional three-day format: practice, qualifying, race</p>
+
+  <div class="timeline-row">
+    <div class="day-label">Friday</div>
+    <div class="day-sessions">
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">60 min</div>
+        <div class="session-purpose">Car setup, tire evaluation, data collection. Teams test different configurations.</div>
+      </div>
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">60 min</div>
+        <div class="session-purpose">Race simulation runs, long-run pace evaluation, fine-tuning setup.</div>
+      </div>
+    </div>
+  </div>
+  <div class="timeline-row">
+    <div class="day-label">Saturday</div>
+    <div class="day-sessions">
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">60 min</div>
+        <div class="session-purpose">Final setup adjustments before qualifying. Often disrupted by weather or red flags.</div>
+      </div>
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">~60 min</div>
+        <div class="session-purpose">Sets the grid for Sunday's race. Three knockout rounds: Q1 (18 min), Q2 (15 min), Q3 (12 min).</div>
+      </div>
+    </div>
+  </div>
+  <div class="timeline-row">
+    <div class="day-label">Sunday</div>
+    <div class="day-sessions">
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">~90 min / 305 km</div>
+        <div class="session-purpose">The race. Maximum 2 hours. Points: 25-18-15-12-10-8-6-4-2-1.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <strong>Standard flow:</strong> Three practice sessions give teams maximum time to dial in car setup, test tyre compounds, and prepare for qualifying. Qualifying on Saturday sets the grid for Sunday's Grand Prix.
+  </div>
+</div>
+
+<!-- ── Sprint Weekend Schedule ───────────────── -->
+<div class="section section-divider">
+  <h2>Sprint Weekend Schedule</h2>
+  <p class="section-sub">Compressed format: one practice session, two qualifying sessions, two races</p>
+
+  <div class="timeline-row">
+    <div class="day-label">Friday</div>
+    <div class="day-sessions">
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">60 min</div>
+        <div class="session-purpose">Only practice session. Must cover setup, long runs, and qualifying prep in one hour.</div>
+      </div>
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">~36 min</div>
+        <div class="session-purpose">Sets Sprint grid. SQ1 (12 min) → SQ2 (10 min) → SQ3 (8 min). Medium tyres in SQ1/SQ2, softs in SQ3.</div>
+      </div>
+    </div>
+  </div>
+  <div class="timeline-row">
+    <div class="day-label">Saturday</div>
+    <div class="day-sessions">
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">~30 min / 100 km</div>
+        <div class="session-purpose">One-third distance race. No mandatory pit stop. Points: 8-7-6-5-4-3-2-1 for top 8.</div>
+      </div>
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">~60 min</div>
+        <div class="session-purpose">Sets Grand Prix grid. Q1 (18 min) → Q2 (15 min) → Q3 (12 min). Independent of Sprint result.</div>
+      </div>
+    </div>
+  </div>
+  <div class="timeline-row">
+    <div class="day-label">Sunday</div>
+    <div class="day-sessions">
+      <div class="session-card">
+        <div class="session-name"></div>
+        <div class="session-duration">~90 min / 305 km</div>
+        <div class="session-purpose">Full race. Grid from Saturday qualifying, not Sprint finishing order.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-amber">
+    <strong>Key differences from standard:</strong> Only one practice session (FP1). Sprint Qualifying on Friday sets the grid for Saturday's Sprint Race. The main Qualifying session moves to Saturday afternoon, after the Sprint. Teams must commit to a setup with far less practice data.
+  </div>
+</div>
+
+<!-- ── Qualifying Deep Dive ──────────────────── -->
+<div class="section section-divider">
+  <h2>Qualifying Deep Dive</h2>
+  <p class="section-sub">The three-phase knockout system that determines the starting grid</p>
+
+  <div class="qual-funnel">
+    <div class="qual-stage">
+      <div class="qual-stage-inner">
+        <div class="qual-stage-name">Q1</div>
+        <div class="qual-stage-time">18 min</div>
+        <div class="qual-drivers" style="color: #58a6ff;">15</div>
+        <div class="qual-drivers-label">drivers continue</div>
+        <div class="qual-eliminated">5 eliminated</div>
+        <div class="qual-tyre">Free choice</div>
+      </div>
+    </div>
+    <div class="qual-arrow">&rarr;</div>
+    <div class="qual-stage">
+      <div class="qual-stage-inner">
+        <div class="qual-stage-name">Q2</div>
+        <div class="qual-stage-time">15 min</div>
+        <div class="qual-drivers" style="color: #d29922;">10</div>
+        <div class="qual-drivers-label">drivers continue</div>
+        <div class="qual-eliminated">5 eliminated</div>
+        <div class="qual-tyre">Free choice</div>
+      </div>
+    </div>
+    <div class="qual-arrow">&rarr;</div>
+    <div class="qual-stage">
+      <div class="qual-stage-inner">
+        <div class="qual-stage-name">Q3</div>
+        <div class="qual-stage-time">12 min</div>
+        <div class="qual-drivers" style="color: #3fb950;">10</div>
+        <div class="qual-drivers-label">drivers continue</div>
+        <div class="qual-tyre">Free choice</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="card">
+      <div class="card-title">Q1 Detail</div>
+      <div class="stat-sm" style="color: #58a6ff;">18 min</div>
+      <div class="stat-label" style="margin-bottom: 8px;">All 22 drivers. Slowest 7 are eliminated (positions 16-22).</div>
+      <div style="font-size: 11px; color: #f85149; margin-top: 4px;">5 slowest drivers eliminated</div>
+      <div style="font-size: 11px; color: #8b949e; margin-top: 4px;">Free choice</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Q2 Detail</div>
+      <div class="stat-sm" style="color: #d29922;">15 min</div>
+      <div class="stat-label" style="margin-bottom: 8px;">15 remaining drivers. Slowest 5 eliminated (positions 11-15).</div>
+      <div style="font-size: 11px; color: #f85149; margin-top: 4px;">5 slowest drivers eliminated</div>
+      <div style="font-size: 11px; color: #8b949e; margin-top: 4px;">Free choice</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Q3 Detail</div>
+      <div class="stat-sm" style="color: #3fb950;">12 min</div>
+      <div class="stat-label" style="margin-bottom: 8px;">Top 10 shootout. Fastest driver takes pole position.</div>
+      <div style="font-size: 11px; color: #8b949e; margin-top: 4px;">Free choice</div>
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <strong>Strategy note:</strong> In Q1 and Q2, drivers must set a fast enough time to avoid elimination. Track evolution (the surface gets faster as more rubber is laid down) means going later in the session can be advantageous &mdash; but risky if traffic or a red flag intervenes. In Q3, all drivers get two runs on fresh tyres to fight for pole position.
+  </div>
+</div>
+
+<!-- ── Points System ─────────────────────────── -->
+<div class="section section-divider">
+  <h2>Points System</h2>
+  <p class="section-sub">How championship points are awarded for race and sprint finishes</p>
+
+  <div class="points-grid">
+    <div class="card">
+      <div class="card-title">Grand Prix Points</div>
+      <table>
+        <thead>
+          <tr><th>Position</th><th>Points</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #ffd700; font-weight: 700;">P1</td>
+            <td style="font-weight: 600; color: #f0f6fc;">25</td>
+          </tr>
+          <tr>
+            <td style="color: #c0c0c0; font-weight: 600;">P2</td>
+            <td style="font-weight: 600; color: #f0f6fc;">18</td>
+          </tr>
+          <tr>
+            <td style="color: #cd7f32; font-weight: 600;">P3</td>
+            <td style="font-weight: 600; color: #f0f6fc;">15</td>
+          </tr>
+          <tr>
+            <td style="">P4</td>
+            <td style="font-weight: 600; color: #f0f6fc;">12</td>
+          </tr>
+          <tr>
+            <td style="">P5</td>
+            <td style="font-weight: 600; color: #f0f6fc;">10</td>
+          </tr>
+          <tr>
+            <td style="">P6</td>
+            <td style="font-weight: 600; color: #f0f6fc;">8</td>
+          </tr>
+          <tr>
+            <td style="">P7</td>
+            <td style="font-weight: 600; color: #f0f6fc;">6</td>
+          </tr>
+          <tr>
+            <td style="">P8</td>
+            <td style="font-weight: 600; color: #f0f6fc;">4</td>
+          </tr>
+          <tr>
+            <td style="">P9</td>
+            <td style="font-weight: 600; color: #f0f6fc;">2</td>
+          </tr>
+          <tr>
+            <td style="">P10</td>
+            <td style="font-weight: 600; color: #f0f6fc;">1</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size: 10px; color: #8b949e; margin-top: 10px; padding-top: 8px; border-top: 1px solid #30363d;">+1 point for fastest lap (if finishing P10 or higher)</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sprint Race Points</div>
+      <table>
+        <thead>
+          <tr><th>Position</th><th>Points</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: #ffd700; font-weight: 700;">P1</td>
+            <td style="font-weight: 600; color: #f0f6fc;">8</td>
+          </tr>
+          <tr>
+            <td style="color: #c0c0c0; font-weight: 600;">P2</td>
+            <td style="font-weight: 600; color: #f0f6fc;">7</td>
+          </tr>
+          <tr>
+            <td style="color: #cd7f32; font-weight: 600;">P3</td>
+            <td style="font-weight: 600; color: #f0f6fc;">6</td>
+          </tr>
+          <tr>
+            <td style="">P4</td>
+            <td style="font-weight: 600; color: #f0f6fc;">5</td>
+          </tr>
+          <tr>
+            <td style="">P5</td>
+            <td style="font-weight: 600; color: #f0f6fc;">4</td>
+          </tr>
+          <tr>
+            <td style="">P6</td>
+            <td style="font-weight: 600; color: #f0f6fc;">3</td>
+          </tr>
+          <tr>
+            <td style="">P7</td>
+            <td style="font-weight: 600; color: #f0f6fc;">2</td>
+          </tr>
+          <tr>
+            <td style="">P8</td>
+            <td style="font-weight: 600; color: #f0f6fc;">1</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size: 10px; color: #8b949e; margin-top: 10px; padding-top: 8px; border-top: 1px solid #30363d;">No fastest lap bonus in sprint races</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 16px;">
+    <div class="card-title">Total Available Points (2026 Season)</div>
+    <div class="grid grid-3">
+      <div>
+        <div class="stat-sm ok">22</div>
+        <div class="stat-label">Grand Prix races (26 pts max each incl. fastest lap)</div>
+      </div>
+      <div>
+        <div class="stat-sm warn">6</div>
+        <div class="stat-label">Sprint races (8 pts max each)</div>
+      </div>
+      <div>
+        <div class="stat-sm" style="color: #bb9af7;">620</div>
+        <div class="stat-label">Maximum points a single driver can score</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Sprint Calendar ───────────────────────── -->
+<div class="section section-divider">
+  <h2>2026 Sprint Calendar</h2>
+  <p class="section-sub">Which races use the sprint weekend format</p>
+
+  <div class="card">
+    <div class="sprint-list-item">
+      <div class="sprint-round">R2</div>
+      <div class="sprint-name">Chinese Grand Prix</div>
+      <div class="sprint-date"></div>
+    </div>
+    <div class="sprint-list-item">
+      <div class="sprint-round">R4</div>
+      <div class="sprint-name">Miami Grand Prix</div>
+      <div class="sprint-date"></div>
+    </div>
+    <div class="sprint-list-item">
+      <div class="sprint-round">R5</div>
+      <div class="sprint-name">Canadian Grand Prix</div>
+      <div class="sprint-date"></div>
+    </div>
+    <div class="sprint-list-item">
+      <div class="sprint-round">R9</div>
+      <div class="sprint-name">British Grand Prix</div>
+      <div class="sprint-date"></div>
+    </div>
+    <div class="sprint-list-item">
+      <div class="sprint-round">R12</div>
+      <div class="sprint-name">Dutch Grand Prix</div>
+      <div class="sprint-date"></div>
+    </div>
+    <div class="sprint-list-item">
+      <div class="sprint-round">R16</div>
+      <div class="sprint-name">Singapore Grand Prix</div>
+      <div class="sprint-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Parc Fermé ────────────────────────────── -->
+<div class="section section-divider">
+  <h2>Parc Ferm&eacute;</h2>
+  <p class="section-sub">Restrictions on car modifications once qualifying begins</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">What is Parc Ferm&eacute;?</div>
+      <div style="font-size: 12px; color: #c9d1d9; line-height: 1.7;">
+        Parc ferm&eacute; (French: "closed park") is a set of FIA regulations that severely restrict changes teams can make to their cars after qualifying begins. Once a car enters parc ferm&eacute; conditions, teams cannot alter the setup, change suspension geometry, swap power unit components, or adjust aerodynamic configuration without incurring a pit-lane start penalty.
+      </div>
+      <div style="margin-top: 12px; font-size: 11px; color: #8b949e; line-height: 1.6;">
+        <strong style="color: #c9d1d9;">Allowed under parc ferm&eacute;:</strong> front wing angle adjustment, tyre selection, brake pad changes, cooling configuration, software parameters, and like-for-like replacements of damaged components.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">When Does it Apply?</div>
+      <div style="font-size: 12px; color: #c9d1d9; line-height: 1.7;">
+        <strong style="color: #58a6ff;">Standard weekend:</strong> Parc ferm&eacute; begins at the start of qualifying (Saturday) and lasts until the race ends (Sunday). Teams have all three practice sessions to finalize setup before committing.
+      </div>
+      <div style="margin-top: 12px; font-size: 12px; color: #c9d1d9; line-height: 1.7;">
+        <strong style="color: #d29922;">Sprint weekend:</strong> Two separate parc ferm&eacute; windows. The first begins at Sprint Qualifying (Friday) and lasts through the Sprint Race (Saturday morning). A second window applies from main Qualifying (Saturday afternoon) through the Grand Prix (Sunday). This creates two setup-lock periods, demanding more strategic planning.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-red">
+    <strong>Penalty:</strong> Any team that breaks parc ferm&eacute; conditions &mdash; changing setup, swapping components beyond what is permitted &mdash; must start the race from the pit lane. Teams sometimes deliberately break parc ferm&eacute; if they believe a setup change is worth the pit-lane start penalty.
+  </div>
+</div>
+
+<!-- ── Key Rules ──────────────────────────────── -->
+<div class="section section-divider">
+  <h2>Key Rules Quick Reference</h2>
+  <p class="section-sub">Essential race-day regulations every viewer should know</p>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-title">Formation Lap</div>
+      <div class="rule-desc">Before the race start, all cars complete one lap in grid order to warm tyres and brakes. Cars must maintain position and not overtake. The field then reforms on the grid for the standing start. Drivers who fall too far behind may need to start from the pit lane.</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">Standing Start</div>
+      <div class="rule-desc">Five red lights illuminate sequentially, then all extinguish simultaneously to signal the start. Any car detected moving before lights out receives a penalty. Reaction times are measured to the millisecond. Jump starts typically incur a 5- or 10-second time penalty.</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">Safety Car</div>
+      <div class="rule-desc">Deployed when conditions are too dangerous for racing at full speed (debris, crashed car, heavy rain). All cars must queue behind the safety car, no overtaking. Lapped cars may be waved through to unlap themselves. The race restarts when the safety car returns to the pits. A Virtual Safety Car (VSC) requires drivers to reduce speed by ~40% across all sectors without bunching the field.</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">Red Flag</div>
+      <div class="rule-desc">Race is stopped entirely and cars return to the pit lane. Used for extreme conditions: major accidents, barrier repair, severe weather. The race can be restarted with a standing or rolling start. If a race cannot be restarted and less than 75% distance is completed, half points may be awarded (though recent rule changes have introduced a sliding scale).</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">Blue Flags</div>
+      <div class="rule-desc">Shown to lapped cars when the race leaders are approaching. A lapped driver must let the faster car through within three flag marshal posts or face a penalty. Ignoring blue flags is one of the most common infringements and carries a 5-second time penalty, potentially escalating to a drive-through penalty for repeat offences.</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">Track Limits</div>
+      <div class="rule-desc">Drivers must keep at least one wheel on (or above) the track surface at all times. Lap times set with all four wheels beyond the white line at a corner exit are deleted. In the race, persistent track limit violations result in a black-and-white flag warning, then a 5-second penalty. Specific corners are monitored electronically at each circuit.</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">Penalties</div>
+      <div class="rule-desc">
+        <strong style="color: #c9d1d9;">5-second:</strong> minor infringements (forcing another off track, unsafe release).<br>
+        <strong style="color: #c9d1d9;">10-second:</strong> more serious incidents (causing a collision).<br>
+        <strong style="color: #c9d1d9;">Drive-through:</strong> must pass through pit lane without stopping.<br>
+        <strong style="color: #c9d1d9;">Stop-go (10s):</strong> pit lane stop for 10 seconds, most severe in-race penalty.<br>
+        <strong style="color: #c9d1d9;">Black flag:</strong> disqualification (extremely rare).
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">DRS (Drag Reduction System)</div>
+      <div class="rule-desc">When a car is within 1 second of the car ahead at a designated detection point, the following driver can open a rear wing flap on the subsequent straight to reduce drag and gain ~10-15 km/h. DRS is not available during the first two laps of the race or after a safety car restart. Multiple DRS zones exist at most circuits.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-23 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+</body>
+</html>

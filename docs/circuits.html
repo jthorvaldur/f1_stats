@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 2026 — Circuit Guide</title>
+<meta name="description" content="Complete guide to every circuit on the 2026 Formula 1 calendar. Track layouts, circuit DNA, key stats, and race history for all 22 Grand Prix venues.">
+<meta property="og:title" content="F1 2026 — Circuit Guide">
+<meta property="og:description" content="Complete guide to every circuit on the 2026 Formula 1 calendar. Track layouts, circuit DNA, key stats, and race history for all 22 venues.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/circuits.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 2026 — Circuit Guide">
+<meta name="twitter:description" content="Complete guide to every circuit on the 2026 Formula 1 calendar. 22 races across 5 continents.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+
+  .type-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .type-permanent { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .type-street { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .type-street-park { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+
+  /* Timeline */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border-left: 2px solid #21262d;
+    position: relative;
+    transition: background 0.15s;
+  }
+  .timeline-item:hover { background: rgba(88,166,255,0.04); }
+  .timeline-item.completed { border-left-color: #3fb950; }
+  .timeline-item.next-race { border-left-color: #58a6ff; border-left-width: 3px; }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #21262d;
+    flex-shrink: 0;
+    margin-left: -22px;
+    border: 2px solid #0d1117;
+  }
+  .timeline-item.completed .timeline-dot { background: #3fb950; }
+  .timeline-item.next-race .timeline-dot { background: #58a6ff; }
+  .timeline-round {
+    width: 32px;
+    color: #8b949e;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .timeline-info { flex: 1; min-width: 0; }
+  .timeline-name { color: #f0f6fc; font-size: 13px; font-weight: 600; }
+  .timeline-meta { color: #8b949e; font-size: 11px; margin-top: 2px; }
+  .timeline-badges { display: flex; gap: 6px; flex-shrink: 0; }
+  .timeline-badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .tb-completed { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .tb-next { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .tb-sprint { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .tb-upcoming { background: #161b22; color: #8b949e; border: 1px solid #30363d; }
+
+  /* Circuit cards */
+  .circuit-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .circuit-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .circuit-round {
+    color: #8b949e;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: #21262d;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .circuit-name { color: #f0f6fc; font-size: 16px; font-weight: 700; }
+  .circuit-location { color: #8b949e; font-size: 12px; }
+
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #21262d;
+  }
+  .stat-item { display: flex; flex-direction: column; gap: 2px; }
+  .stat-item .val { color: #f0f6fc; font-size: 14px; font-weight: 600; }
+  .stat-item .lbl { color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .dna-section { margin-bottom: 16px; }
+  .dna-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .dna-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+  .dna-label { width: 120px; color: #8b949e; text-align: right; flex-shrink: 0; }
+  .dna-bar-bg { flex: 1; height: 8px; background: #21262d; border-radius: 4px; overflow: hidden; max-width: 300px; }
+  .dna-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+  .dna-val { width: 36px; color: #c9d1d9; font-size: 11px; flex-shrink: 0; }
+
+  .circuit-description {
+    font-size: 12px;
+    color: #c9d1d9;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .circuit-meta-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: #8b949e;
+  }
+  .circuit-meta-row strong { color: #c9d1d9; }
+
+  .winner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #0d2818;
+    color: #3fb950;
+    border: 1px solid #1b3d2a;
+    margin-top: 12px;
+  }
+
+  /* Distribution bars */
+  .dist-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .dist-label { width: 100px; font-size: 12px; color: #c9d1d9; text-align: right; flex-shrink: 0; }
+  .dist-bar-bg { flex: 1; height: 24px; background: #21262d; border-radius: 6px; overflow: hidden; position: relative; max-width: 400px; }
+  .dist-bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 11px; font-weight: 700; }
+  .dist-count { width: 30px; font-size: 12px; color: #8b949e; text-align: right; flex-shrink: 0; }
+
+  .highlight-row td { background: rgba(88,166,255,0.06); }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .timeline-item { flex-wrap: wrap; gap: 8px; }
+    .stats-row { gap: 12px; }
+    .circuit-header { flex-direction: column; gap: 4px; }
+    .dna-bar-bg { max-width: 100%; }
+    .dist-bar-bg { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+
+<div class="hero">
+  <a class="back-link" href="index.html">&larr; back to overview</a>
+  <h1>Circuit Guide &mdash; 2026</h1>
+  <div class="tagline">22 races across 5 continents. Every track on the 2026 Formula 1 calendar &mdash; layout characteristics, circuit DNA, and how each venue shapes the racing.</div>
+  <div class="badges">
+    <span class="badge badge-green">22 Circuits</span>
+    <span class="badge badge-blue">19 Countries</span>
+    <span class="badge badge-amber">6 Sprint Weekends</span>
+    <span class="badge badge-purple">1 New Circuit</span>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Calendar Overview</h2>
+  <p class="section-sub">Key numbers from the 2026 race calendar</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Total Circuits</div>
+      <div class="stat ok">22</div>
+      <div class="stat-label">Grand Prix events scheduled</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Countries Visited</div>
+      <div class="stat" style="color:#58a6ff;">19</div>
+      <div class="stat-label">nations hosting races in 2026</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sprint Weekends</div>
+      <div class="stat warn">6</div>
+      <div class="stat-label">shortened format with sprint race</div>
+    </div>
+    <div class="card">
+      <div class="card-title">New Circuits</div>
+      <div class="stat" style="color:#bb9af7;">1</div>
+      <div class="stat-label">first GP in 2026</div>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Race Calendar</h2>
+  <p class="section-sub">All 22 rounds in chronological order</p>
+  <div class="card">
+    <div class="timeline">
+      <div class="timeline-item completed">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R1</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Australian Grand Prix</div>
+          <div class="timeline-meta">06-08 Mar &middot; Melbourne, Australia</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-completed">Completed</span>
+        </div>
+      </div>
+      <div class="timeline-item completed">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R2</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Chinese Grand Prix</div>
+          <div class="timeline-meta">13-15 Mar &middot; Shanghai, China</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-completed">Completed</span>
+          <span class="timeline-badge tb-sprint">Sprint</span>
+        </div>
+      </div>
+      <div class="timeline-item completed">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R3</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Japanese Grand Prix</div>
+          <div class="timeline-meta">27-29 Mar &middot; Suzuka, Japan</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-completed">Completed</span>
+        </div>
+      </div>
+      <div class="timeline-item completed">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R4</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Miami Grand Prix</div>
+          <div class="timeline-meta">01-03 May &middot; Miami, USA</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-completed">Completed</span>
+          <span class="timeline-badge tb-sprint">Sprint</span>
+        </div>
+      </div>
+      <div class="timeline-item completed">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R5</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Canadian Grand Prix</div>
+          <div class="timeline-meta">22-24 May &middot; Montreal, Canada</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-completed">Completed</span>
+          <span class="timeline-badge tb-sprint">Sprint</span>
+        </div>
+      </div>
+      <div class="timeline-item next-race">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R6</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Monaco Grand Prix</div>
+          <div class="timeline-meta">05-07 Jun &middot; Monte Carlo, Monaco</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-next">Next</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R7</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Spanish Grand Prix (Catalunya)</div>
+          <div class="timeline-meta">12-14 Jun &middot; Barcelona, Spain</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R8</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Austrian Grand Prix</div>
+          <div class="timeline-meta">26-28 Jun &middot; Spielberg, Austria</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R9</span>
+        <div class="timeline-info">
+          <div class="timeline-name">British Grand Prix</div>
+          <div class="timeline-meta">03-05 Jul &middot; Silverstone, Great Britain</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+          <span class="timeline-badge tb-sprint">Sprint</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R10</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Belgian Grand Prix</div>
+          <div class="timeline-meta">17-19 Jul &middot; Spa, Belgium</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R11</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Hungarian Grand Prix</div>
+          <div class="timeline-meta">24-26 Jul &middot; Budapest, Hungary</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R12</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Dutch Grand Prix</div>
+          <div class="timeline-meta">21-23 Aug &middot; Zandvoort, Netherlands</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+          <span class="timeline-badge tb-sprint">Sprint</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R13</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Italian Grand Prix</div>
+          <div class="timeline-meta">04-06 Sep &middot; Monza, Italy</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R14</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Spanish Grand Prix (Madrid)</div>
+          <div class="timeline-meta">11-13 Sep &middot; Madrid, Spain</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R15</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Azerbaijan Grand Prix</div>
+          <div class="timeline-meta">24-26 Sep &middot; Baku, Azerbaijan</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R16</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Singapore Grand Prix</div>
+          <div class="timeline-meta">09-11 Oct &middot; Singapore, Singapore</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+          <span class="timeline-badge tb-sprint">Sprint</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R17</span>
+        <div class="timeline-info">
+          <div class="timeline-name">United States Grand Prix</div>
+          <div class="timeline-meta">23-25 Oct &middot; Austin, USA</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R18</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Mexican Grand Prix</div>
+          <div class="timeline-meta">30 Oct-01 Nov &middot; Mexico City, Mexico</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R19</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Sao Paulo Grand Prix</div>
+          <div class="timeline-meta">06-08 Nov &middot; Sao Paulo, Brazil</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R20</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Las Vegas Grand Prix</div>
+          <div class="timeline-meta">19-21 Nov &middot; Las Vegas, USA</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R21</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Qatar Grand Prix</div>
+          <div class="timeline-meta">27-29 Nov &middot; Lusail, Qatar</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <span class="timeline-round">R22</span>
+        <div class="timeline-info">
+          <div class="timeline-name">Abu Dhabi Grand Prix</div>
+          <div class="timeline-meta">04-06 Dec &middot; Abu Dhabi, UAE</div>
+        </div>
+        <div class="timeline-badges">
+          <span class="timeline-badge tb-upcoming">Upcoming</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Circuit Details</h2>
+  <p class="section-sub">Detailed breakdown of every venue on the 2026 calendar</p>
+
+
+  <div class="circuit-card" id="circuit-albert_park">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 1</span>
+      <span class="circuit-name">Albert Park</span>
+      <span class="circuit-location">Melbourne, Australia</span>
+      <span class="timeline-badge tb-completed">Completed</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.278 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">58</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">14</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-street-park">street-park</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Fast, flowing layout around a lake in a public park. Mix of high-speed sweeps and tight chicanes. Resurfaced and reconfigured in 2022 to promote overtaking. The season opener traditionally produces drama.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1996</strong></span>
+      <span>Lap Record: <strong>1:20.235 (Leclerc, 2024)</strong></span>
+    </div>
+
+        <div class="winner-badge">
+          Winner: George Russell
+        </div>
+  </div>
+
+  <div class="circuit-card" id="circuit-shanghai">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 2</span>
+      <span class="circuit-name">Shanghai International Circuit</span>
+      <span class="circuit-location">Shanghai, China</span>
+      <span class="timeline-badge tb-completed">Completed</span>
+      <span class="timeline-badge tb-sprint">Sprint</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.451 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">56</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">16</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Hermann Tilke design with the famous snail-shell Turn 1-2-3 complex. Long back straight rewards power. Heavy braking zones create overtaking opportunities. Weather can be unpredictable.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2004</strong></span>
+      <span>Lap Record: <strong>1:32.238 (M. Schumacher, 2004)</strong></span>
+    </div>
+
+        <div class="winner-badge">
+          Winner: Andrea Kimi Antonelli
+        </div>
+  </div>
+
+  <div class="circuit-card" id="circuit-suzuka">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 3</span>
+      <span class="circuit-name">Suzuka Circuit</span>
+      <span class="circuit-location">Suzuka, Japan</span>
+      <span class="timeline-badge tb-completed">Completed</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.807 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">53</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">18</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:90%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">90%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:30%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">30%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">The drivers' favorite. Figure-eight layout with Esses, Degner curves, 130R, and the Casio Triangle. Extremely high downforce demands. Rewards car balance and driver commitment. One of the few circuits where the track crosses over itself.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1987</strong></span>
+      <span>Lap Record: <strong>1:30.983 (de Vries, 2023 FP)</strong></span>
+    </div>
+
+        <div class="winner-badge">
+          Winner: Andrea Kimi Antonelli
+        </div>
+  </div>
+
+  <div class="circuit-card" id="circuit-miami">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 4</span>
+      <span class="circuit-name">Miami International Autodrome</span>
+      <span class="circuit-location">Miami, USA</span>
+      <span class="timeline-badge tb-completed">Completed</span>
+      <span class="timeline-badge tb-sprint">Sprint</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.412 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">57</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">19</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-street-park">street-park</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Built around Hard Rock Stadium. Mix of high-speed straights and technical sections. Turn 17 hairpin is the primary overtaking spot. Bumpy surface challenges car setup. Florida heat affects tire degradation.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2022</strong></span>
+      <span>Lap Record: <strong>1:29.708 (Verstappen, 2023)</strong></span>
+    </div>
+
+        <div class="winner-badge">
+          Winner: Andrea Kimi Antonelli
+        </div>
+  </div>
+
+  <div class="circuit-card" id="circuit-villeneuve">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 5</span>
+      <span class="circuit-name">Circuit Gilles Villeneuve</span>
+      <span class="circuit-location">Montreal, Canada</span>
+      <span class="timeline-badge tb-completed">Completed</span>
+      <span class="timeline-badge tb-sprint">Sprint</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">4.361 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">70</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">14</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-semi-permanent">semi-permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+
+    <div class="circuit-description">On Ile Notre-Dame island. Stop-start layout with heavy braking zones and long straights. The Wall of Champions at the final chicane has claimed many victims. Low downforce, high on brakes. Safety car frequency is highest on the calendar.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1978</strong></span>
+      <span>Lap Record: <strong>1:13.078 (Bottas, 2019)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-monaco">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 6</span>
+      <span class="circuit-name">Circuit de Monaco</span>
+      <span class="circuit-location">Monte Carlo, Monaco</span>
+      <span class="timeline-badge tb-next">Next</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">3.337 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">78</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">19</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-street">street</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:20%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">20%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:90%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">90%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:10%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">10%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">The crown jewel. Narrow streets, elevation changes, the tunnel, the swimming pool chicane. Qualifying is everything — overtaking is nearly impossible. The slowest circuit on the calendar but the most prestigious. Maximum downforce, minimum margin for error.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1950</strong></span>
+      <span>Lap Record: <strong>1:12.909 (Hamilton, 2021)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-barcelona">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 7</span>
+      <span class="circuit-name">Circuit de Barcelona-Catalunya</span>
+      <span class="circuit-location">Barcelona, Spain</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">4.657 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">66</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">16</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:40%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">40%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">The benchmark circuit. Used extensively for testing, so teams know it intimately. High-speed final sector, demanding Turn 3, and the challenging Turn 9-10 complex. A good indicator of true car performance because every team has extensive data.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1991</strong></span>
+      <span>Lap Record: <strong>1:18.149 (Verstappen, 2023)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-red_bull_ring">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 8</span>
+      <span class="circuit-name">Red Bull Ring</span>
+      <span class="circuit-location">Spielberg, Austria</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">4.318 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">71</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">10</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Short, fast, dramatic. Only 10 turns but significant elevation changes. Three heavy braking zones into uphill corners create overtaking opportunities. Altitude (700m) affects engine performance. Track limits are a constant talking point.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1970</strong></span>
+      <span>Lap Record: <strong>1:05.619 (Sainz, 2020)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-silverstone">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 9</span>
+      <span class="circuit-name">Silverstone Circuit</span>
+      <span class="circuit-location">Silverstone, Great Britain</span>
+      <span class="timeline-badge tb-sprint">Sprint</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.891 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">52</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">18</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:80%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">80%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Home of British motorsport. Maggotts-Becketts-Chapel is the most demanding high-speed complex in F1. Copse and Stowe test courage. High-speed circuit that rewards aerodynamic efficiency. British weather adds unpredictability.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1950</strong></span>
+      <span>Lap Record: <strong>1:27.097 (Verstappen, 2024)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-spa">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 10</span>
+      <span class="circuit-name">Circuit de Spa-Francorchamps</span>
+      <span class="circuit-location">Spa, Belgium</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">7.004 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">44</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">19</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:80%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">80%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">The longest circuit on the calendar. Eau Rouge/Raidillon is iconic — a compression into a blind, high-speed left-right-left over a crest. Long Kemmel Straight, the Bus Stop chicane, and Blanchimont. Micro-climates mean rain can hit one sector while another is dry.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1950</strong></span>
+      <span>Lap Record: <strong>1:46.286 (Bottas, 2018)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-hungaroring">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 11</span>
+      <span class="circuit-name">Hungaroring</span>
+      <span class="circuit-location">Budapest, Hungary</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">4.381 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">70</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">14</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:30%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">30%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:80%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">80%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:20%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">20%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Monaco without walls. Tight, twisty, low-speed. Extremely difficult to overtake. High downforce setup. Track position is king — qualifying pace matters enormously. Summer heat creates extreme tire degradation.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1986</strong></span>
+      <span>Lap Record: <strong>1:16.627 (Hamilton, 2020)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-zandvoort">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 12</span>
+      <span class="circuit-name">Circuit Zandvoort</span>
+      <span class="circuit-location">Zandvoort, Netherlands</span>
+      <span class="timeline-badge tb-sprint">Sprint</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">4.259 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">72</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">14</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:40%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">40%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:30%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">30%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Old-school circuit in the dunes. Banked final turn (18° banking) is unique in modern F1. Narrow, technical, rewards driver confidence. The Dutch fans create an electric atmosphere. Limited overtaking makes strategy critical.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1952</strong></span>
+      <span>Lap Record: <strong>1:11.097 (Hamilton, 2023)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-monza">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 13</span>
+      <span class="circuit-name">Autodromo Nazionale Monza</span>
+      <span class="circuit-location">Monza, Italy</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.793 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">53</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">11</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:95%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">95%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:20%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">20%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:80%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">80%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">The Temple of Speed. Lowest downforce configuration of the year. Long straights connected by chicanes. Slipstreaming battles are legendary. Parabolica (now Curva Alboreto) rewards bravery. The tifosi make it the most atmospheric race on the calendar.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1950</strong></span>
+      <span>Lap Record: <strong>1:21.046 (Barrichello, 2004)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-madrid">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 14</span>
+      <span class="circuit-name">Madrid Street Circuit</span>
+      <span class="circuit-location">Madrid, Spain</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.473 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">56</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">18</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-street">street</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+
+    <div class="circuit-description">Brand new for 2026. Street circuit through the Spanish capital. Expected to feature a mix of high-speed sections along wide boulevards and tighter technical zones. First F1 race in Madrid. The newest addition to the calendar.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2026</strong></span>
+      <span>Lap Record: <strong>N/A (new circuit)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-baku">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 15</span>
+      <span class="circuit-name">Baku City Circuit</span>
+      <span class="circuit-location">Baku, Azerbaijan</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">6.003 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">51</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">20</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-street">street</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:80%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">80%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:40%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">40%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">The most dramatic street circuit. 2.2 km main straight produces extreme top speeds. Turn 8 castle section is impossibly narrow. Always produces chaotic races, safety cars, and surprise results. Walls on both sides leave zero margin.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2016</strong></span>
+      <span>Lap Record: <strong>1:43.009 (Leclerc, 2019)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-singapore">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 16</span>
+      <span class="circuit-name">Marina Bay Street Circuit</span>
+      <span class="circuit-location">Singapore, Singapore</span>
+      <span class="timeline-badge tb-sprint">Sprint</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">4.94 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">62</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">19</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-street">street</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:30%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">30%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:80%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">80%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:30%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">30%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">The original night race. Humid, hot, physically brutal — drivers lose 3-4 kg per race. Bumpy surface, tight corners, no room for error. High downforce, low speed. Safety car probability is extremely high. One of the most demanding races on the calendar.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2008</strong></span>
+      <span>Lap Record: <strong>1:35.867 (Hamilton, 2023)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-americas">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 17</span>
+      <span class="circuit-name">Circuit of The Americas</span>
+      <span class="circuit-location">Austin, USA</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.513 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">56</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">20</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Purpose-built for F1. Turn 1 uphill braking zone is iconic. The Esses (turns 3-6) demand commitment. Mix of high and low-speed corners tests all aspects of car performance. Bumpy surface has been a persistent issue.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2012</strong></span>
+      <span>Lap Record: <strong>1:36.169 (Leclerc, 2019)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-rodriguez">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 18</span>
+      <span class="circuit-name">Autodromo Hermanos Rodriguez</span>
+      <span class="circuit-location">Mexico City, Mexico</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">4.304 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">71</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">17</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+
+    <div class="circuit-description">At 2,240m altitude — the highest circuit on the calendar. Thin air reduces engine power by ~20% and downforce significantly. Unique challenge for power units and cooling. The stadium section through the baseball stadium is atmospheric. Peraltada corner is a classic.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1963</strong></span>
+      <span>Lap Record: <strong>1:17.774 (Bottas, 2021)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-interlagos">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 19</span>
+      <span class="circuit-name">Autodromo Jose Carlos Pace</span>
+      <span class="circuit-location">Sao Paulo, Brazil</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">4.309 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">71</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">15</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Anti-clockwise, short, and dramatic. Senna S is a natural amphitheater. The long run down to Turn 4 is one of the best overtaking spots in F1. Elevation changes, unpredictable weather, and passionate fans. Counter-clockwise running uniquely stresses the left side of the car.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>1973</strong></span>
+      <span>Lap Record: <strong>1:10.540 (Bottas, 2018)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-las_vegas">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 20</span>
+      <span class="circuit-name">Las Vegas Strip Circuit</span>
+      <span class="circuit-location">Las Vegas, USA</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">6.201 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">50</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">17</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-street">street</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:80%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">80%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:40%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">40%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Night race on the Strip. 1.9 km main straight past the casinos produces extreme top speeds. Low-grip surface due to road paint and residual materials. Cold desert night temperatures challenge tire warm-up. The spectacle matches the racing.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2023</strong></span>
+      <span>Lap Record: <strong>1:35.490 (Piastri, 2024)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-losail">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 21</span>
+      <span class="circuit-name">Lusail International Circuit</span>
+      <span class="circuit-location">Lusail, Qatar</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.419 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">57</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">16</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:70%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">70%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">Fast, flowing desert circuit. High-speed corners dominate — Turn 12-13-14 complex is taken nearly flat out. Extreme heat and abrasive surface destroy tires. Kerb severity caused tire failures in 2023, leading to modifications. Night race under floodlights.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2021</strong></span>
+      <span>Lap Record: <strong>1:24.319 (Verstappen, 2023)</strong></span>
+    </div>
+
+  </div>
+
+  <div class="circuit-card" id="circuit-yas_marina">
+    <div class="circuit-header">
+      <span class="circuit-round">Round 22</span>
+      <span class="circuit-name">Yas Marina Circuit</span>
+      <span class="circuit-location">Abu Dhabi, UAE</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <span class="val">5.281 km</span>
+        <span class="lbl">Length</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">58</span>
+        <span class="lbl">Laps</span>
+      </div>
+      <div class="stat-item">
+        <span class="val">16</span>
+        <span class="lbl">Turns</span>
+      </div>
+      <div class="stat-item">
+        <span class="type-badge type-permanent">permanent</span>
+        <span class="lbl">Type</span>
+      </div>
+    </div>
+
+    <div class="dna-section">
+      <div class="dna-title">Circuit DNA</div>
+      <div class="dna-row">
+        <span class="dna-label">Power Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#f85149;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Downforce Demand</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:60%;background:#58a6ff;"></div>
+        </div>
+        <span class="dna-val">60%</span>
+      </div>
+      <div class="dna-row">
+        <span class="dna-label">Overtaking Opportunity</span>
+        <div class="dna-bar-bg">
+          <div class="dna-bar-fill" style="width:50%;background:#3fb950;"></div>
+        </div>
+        <span class="dna-val">50%</span>
+      </div>
+    </div>
+
+    <div class="circuit-description">The season finale. Redesigned in 2021 to improve racing — chicane replaced by high-speed sweeper, new hairpin. Twilight race transitioning from daylight to floodlights. The Yas Hotel straddling the track is iconic. Often decides championships.</div>
+
+    <div class="circuit-meta-row">
+      <span>First GP: <strong>2009</strong></span>
+      <span>Lap Record: <strong>1:26.103 (Verstappen, 2021)</strong></span>
+    </div>
+
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Circuit Type Distribution</h2>
+  <p class="section-sub">Breakdown of track types on the 2026 calendar</p>
+
+
+  <div class="card">
+    <div class="dist-row">
+      <span class="dist-label">
+        <span class="type-badge type-permanent">permanent</span>
+      </span>
+      <div class="dist-bar-bg">
+        <div class="dist-bar-fill" style="width:64%;background:#3fb950;">
+          14
+        </div>
+      </div>
+      <span class="dist-count">64%</span>
+    </div>
+    <div class="dist-row">
+      <span class="dist-label">
+        <span class="type-badge type-street">street</span>
+      </span>
+      <div class="dist-bar-bg">
+        <div class="dist-bar-fill" style="width:23%;background:#f85149;">
+          5
+        </div>
+      </div>
+      <span class="dist-count">23%</span>
+    </div>
+    <div class="dist-row">
+      <span class="dist-label">
+        <span class="type-badge type-street-park">street-park</span>
+      </span>
+      <div class="dist-bar-bg">
+        <div class="dist-bar-fill" style="width:9%;background:#d29922;">
+          2
+        </div>
+      </div>
+      <span class="dist-count">9%</span>
+    </div>
+    <div class="dist-row">
+      <span class="dist-label">
+        <span class="type-badge type-semi-permanent">semi-permanent</span>
+      </span>
+      <div class="dist-bar-bg">
+        <div class="dist-bar-fill" style="width:5%;background:#8b949e;">
+          1
+        </div>
+      </div>
+      <span class="dist-count">5%</span>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Track Stats Comparison</h2>
+  <p class="section-sub">All circuits sorted by lap length &mdash; shortest to longest</p>
+
+
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Circuit</th>
+          <th>Country</th>
+          <th>Length (km)</th>
+          <th>Laps</th>
+          <th>Turns</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td style="color:#f0f6fc;font-weight:600;">
+            Circuit de Monaco
+            <span style="color:#d29922;font-size:10px;font-weight:400;"> (shortest)</span>
+          </td>
+          <td>Monaco</td>
+          <td>3.337</td>
+          <td>78</td>
+          <td>19</td>
+          <td>
+            <span class="type-badge type-street">street</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Circuit Zandvoort
+          </td>
+          <td>Netherlands</td>
+          <td>4.259</td>
+          <td>72</td>
+          <td>14</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Autodromo Hermanos Rodriguez
+          </td>
+          <td>Mexico</td>
+          <td>4.304</td>
+          <td>71</td>
+          <td>17</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Autodromo Jose Carlos Pace
+          </td>
+          <td>Brazil</td>
+          <td>4.309</td>
+          <td>71</td>
+          <td>15</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Red Bull Ring
+          </td>
+          <td>Austria</td>
+          <td>4.318</td>
+          <td>71</td>
+          <td>10</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Circuit Gilles Villeneuve
+          </td>
+          <td>Canada</td>
+          <td>4.361</td>
+          <td>70</td>
+          <td>14</td>
+          <td>
+            <span class="type-badge type-semi-permanent">semi-permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Hungaroring
+          </td>
+          <td>Hungary</td>
+          <td>4.381</td>
+          <td>70</td>
+          <td>14</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Circuit de Barcelona-Catalunya
+          </td>
+          <td>Spain</td>
+          <td>4.657</td>
+          <td>66</td>
+          <td>16</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Marina Bay Street Circuit
+          </td>
+          <td>Singapore</td>
+          <td>4.94</td>
+          <td>62</td>
+          <td>19</td>
+          <td>
+            <span class="type-badge type-street">street</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Albert Park
+          </td>
+          <td>Australia</td>
+          <td>5.278</td>
+          <td>58</td>
+          <td>14</td>
+          <td>
+            <span class="type-badge type-street-park">street-park</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Yas Marina Circuit
+          </td>
+          <td>UAE</td>
+          <td>5.281</td>
+          <td>58</td>
+          <td>16</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Miami International Autodrome
+          </td>
+          <td>USA</td>
+          <td>5.412</td>
+          <td>57</td>
+          <td>19</td>
+          <td>
+            <span class="type-badge type-street-park">street-park</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Lusail International Circuit
+          </td>
+          <td>Qatar</td>
+          <td>5.419</td>
+          <td>57</td>
+          <td>16</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Shanghai International Circuit
+          </td>
+          <td>China</td>
+          <td>5.451</td>
+          <td>56</td>
+          <td>16</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Madrid Street Circuit
+          </td>
+          <td>Spain</td>
+          <td>5.473</td>
+          <td>56</td>
+          <td>18</td>
+          <td>
+            <span class="type-badge type-street">street</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Circuit of The Americas
+          </td>
+          <td>USA</td>
+          <td>5.513</td>
+          <td>56</td>
+          <td>20</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Autodromo Nazionale Monza
+          </td>
+          <td>Italy</td>
+          <td>5.793</td>
+          <td>53</td>
+          <td>11</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Suzuka Circuit
+          </td>
+          <td>Japan</td>
+          <td>5.807</td>
+          <td>53</td>
+          <td>18</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Silverstone Circuit
+          </td>
+          <td>Great Britain</td>
+          <td>5.891</td>
+          <td>52</td>
+          <td>18</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Baku City Circuit
+          </td>
+          <td>Azerbaijan</td>
+          <td>6.003</td>
+          <td>51</td>
+          <td>20</td>
+          <td>
+            <span class="type-badge type-street">street</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="color:#f0f6fc;font-weight:600;">
+            Las Vegas Strip Circuit
+          </td>
+          <td>USA</td>
+          <td>6.201</td>
+          <td>50</td>
+          <td>17</td>
+          <td>
+            <span class="type-badge type-street">street</span>
+          </td>
+        </tr>
+        <tr class="highlight-row">
+          <td style="color:#f0f6fc;font-weight:600;">
+            Circuit de Spa-Francorchamps
+            <span style="color:#58a6ff;font-size:10px;font-weight:400;"> (longest)</span>
+          </td>
+          <td>Belgium</td>
+          <td>7.004</td>
+          <td>44</td>
+          <td>19</td>
+          <td>
+            <span class="type-badge type-permanent">permanent</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-05-23 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+</body>
+</html>
