@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Prediction Markets &amp; Edge Detection</title>
+<meta name="description" content="Model vs market odds comparison. Edge detection, Kelly criterion sizing, and expected value analysis using Polymarket F1 prediction markets.">
+<meta property="og:title" content="F1 {{ data.year }} — Prediction Markets &amp; Edge Detection">
+<meta property="og:description" content="Our model vs Polymarket. Where the market is wrong on F1 {{ data.year }}.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/markets.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Prediction Markets">
+<meta name="twitter:description" content="Edge detection: model vs Polymarket on F1 {{ data.year }}. Kelly sizing, EV per contract.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace; background: #0d1117; color: #c9d1d9; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero { padding: 60px 32px 40px; max-width: 1400px; margin: 0 auto; border-bottom: 1px solid #21262d; }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .signal-strong-buy { color: #3fb950; font-weight: 700; }
+  .signal-buy { color: #3fb950; }
+  .signal-neutral { color: #8b949e; }
+  .signal-sell { color: #f85149; }
+  .signal-strong-sell { color: #f85149; font-weight: 700; }
+  .chart-container { position: relative; width: 100%; height: 420px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+  .callout { border-left: 3px solid; padding: 12px 16px; margin: 16px 0; font-size: 12px; line-height: 1.7; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+  .callout-blue { border-color: #58a6ff; }
+  .callout-green { border-color: #3fb950; }
+  .callout-amber { border-color: #d29922; }
+  .formula-block { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 16px 20px; margin: 12px 0; font-size: 13px; color: #d29922; line-height: 1.8; overflow-x: auto; }
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+  @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .hero { padding: 40px 16px 24px; } .section { padding: 24px 16px; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Prediction Markets</h1>
+  <div class="tagline">Our model's implied probabilities compared to live <a href="https://polymarket.com/predictions/formula1">Polymarket</a> odds. Edge = model probability minus market probability. Positive edge = the market underprices this driver relative to our model.</div>
+  <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+    <span class="badge badge-blue">Polymarket CLOB</span>
+    <span class="badge badge-green">Live Odds</span>
+    <span class="badge badge-amber">Kelly Sizing</span>
+  </div>
+</div>
+
+{% if data.next_race %}
+<!-- ── Next Race ──────────────────────────────── -->
+<div class="section">
+  <h2>Next Race: {{ data.next_race.name }}</h2>
+  <p class="section-sub">Round {{ data.next_race.round }} &middot; {{ data.next_race.date }} &middot; {{ data.next_race.circuit }}, {{ data.next_race.location }}</p>
+
+  <div class="grid grid-4" id="raceStats">
+    <div class="card">
+      <div class="card-title">Best Edge (Model)</div>
+      <div class="stat-sm ok" id="bestEdgeDriver">--</div>
+      <div class="stat-label" id="bestEdgeVal">computing...</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Biggest Overpriced</div>
+      <div class="stat-sm neg" id="worstEdgeDriver">--</div>
+      <div class="stat-label" id="worstEdgeVal">market too high</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Market Favorite</div>
+      <div class="stat-sm" id="marketFav">--</div>
+      <div class="stat-label" id="marketFavProb">--</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Model Favorite</div>
+      <div class="stat-sm" id="modelFav">--</div>
+      <div class="stat-label" id="modelFavProb">--</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title">Model vs Market — Race Winner</div>
+    <div class="chart-container">
+      <canvas id="edgeChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Edge Detection Table — {{ data.next_race.name }}</div>
+    <table>
+      <thead>
+        <tr><th>Driver</th><th>Model %</th><th>Market %</th><th>Edge</th><th>EV/$1</th><th>Kelly %</th><th>Signal</th></tr>
+      </thead>
+      <tbody id="raceEdgeTable"></tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Championship ──────────────────────────── -->
+<div class="section section-divider">
+  <h2>Championship Winner Market</h2>
+  <p class="section-sub">Season-long championship odds from <a href="https://polymarket.com/event/2026-f1-drivers-champion">Polymarket</a> ($153M+ volume)</p>
+
+  <div class="card">
+    <div class="card-title">Model vs Market — WDC Winner</div>
+    <div class="chart-container" style="height:360px;">
+      <canvas id="wdcChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Championship Edge Table</div>
+    <table>
+      <thead>
+        <tr><th>Driver</th><th>Model %</th><th>Market %</th><th>Edge</th><th>EV/$1</th><th>Kelly %</th><th>Signal</th></tr>
+      </thead>
+      <tbody id="wdcEdgeTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── Methodology ───────────────────────────── -->
+<div class="section section-divider">
+  <h2>Methodology</h2>
+  <p class="section-sub">How we detect edge and size positions</p>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Edge Detection</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        <p>Edge = P<sub>model</sub> - P<sub>market</sub></p>
+        <p>Positive edge means our model assigns a higher probability than the market. If our model is better calibrated, this represents expected value.</p>
+        <div class="formula-block">
+          Edge = P<sub>model</sub> - P<sub>market</sub><br>
+          EV = P<sub>model</sub> &times; (1/P<sub>market</sub> - 1) - (1 - P<sub>model</sub>)<br>
+          Signal: &gt;+5% = Strong Buy, +2-5% = Buy, &plusmn;2% = Neutral, -2-5% = Sell, &lt;-5% = Strong Sell
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Kelly Criterion</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        <p>Optimal bet sizing for maximizing long-run geometric growth:</p>
+        <div class="formula-block">
+          f* = (p &times; b - q) / b<br><br>
+          where:<br>
+          &nbsp;&nbsp;p = model probability<br>
+          &nbsp;&nbsp;q = 1 - p<br>
+          &nbsp;&nbsp;b = implied odds - 1 = (1/P<sub>market</sub>) - 1
+        </div>
+        <p>Kelly % = fraction of bankroll to wager. Half-Kelly (f*/2) is the practical standard — full Kelly is too volatile for most bankrolls.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Model Limitations</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        Our model uses current-season form only ({{ data.current_round }} races). It does not account for circuit-specific performance, weather, car upgrades, or team orders. The market aggregates thousands of informed opinions. Treat edge signals as research starting points, not trading recommendations.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Data Source</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        Market odds from <a href="https://polymarket.com/predictions/formula1">Polymarket</a> CLOB (Central Limit Order Book). Prices reflect real-money predictions from thousands of traders. Championship market: $153M+ volume. Race markets: $100K+ per race. Fetched live via the Gamma API at generation time.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="callout callout-amber">
+  <strong>Disclaimer:</strong> This is an analytical comparison between a statistical model and prediction market prices. It is not financial advice. Prediction markets involve real money and risk. The model's edge estimates are based on {{ data.current_round }} races of data — a small sample. Past edge does not predict future edge.
+</div>
+
+<footer>
+  Model: f1stats form/momentum/consistency &middot; Market: <a href="https://polymarket.com/predictions/formula1">Polymarket</a> &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  const drivers = [
+    {% for d in data.drivers %}
+    {name:'{{ d.family_name }}', fullName:'{{ d.name }}', pts:{{ d.points|int }}, wins:{{ d.wins }}, team:'{{ d.team_display }}', color:'{{ d.team_hex }}', pos:{{ d.position }}},
+    {% endfor %}
+  ];
+
+  const raceOdds = {{ data.race_odds | tojson }};
+  const wdcOdds = {{ data.championship_odds | tojson }};
+  const currentRound = {{ data.current_round }};
+  const totalRounds = {{ data.total_rounds }};
+
+  // ── Model probabilities (same as prediction.html) ──────
+  function computeModelProbs(drivers) {
+    const n = drivers.length;
+    const ptsPerRace = drivers.map(d => d.pts / Math.max(currentRound, 1));
+    const maxPPR = Math.max(...ptsPerRace, 1);
+    const strengths = ptsPerRace.map(p => Math.max(p / maxPPR, 0.02));
+    const total = strengths.reduce((a, b) => a + b, 0);
+    return drivers.map((d, i) => ({
+      ...d,
+      model_prob: strengths[i] / total,
+    }));
+  }
+
+  // ── Championship model (simplified Monte Carlo) ────────
+  function computeWDCProbs(drivers) {
+    const n = drivers.length;
+    const remainingRaces = totalRounds - currentRound;
+    const maxPossible = remainingRaces * 25;
+    const ptsPerRace = drivers.map(d => d.pts / Math.max(currentRound, 1));
+    const maxPPR = Math.max(...ptsPerRace, 1);
+    const strengths = ptsPerRace.map(p => Math.max(p / maxPPR, 0.02));
+    const totalStr = strengths.reduce((a, b) => a + b, 0);
+
+    const projectedPts = drivers.map((d, i) => {
+      const expectedPerRace = (strengths[i] / totalStr) * 25 * n * 0.15;
+      return d.pts + expectedPerRace * remainingRaces;
+    });
+
+    const maxProj = Math.max(...projectedPts);
+    const rawProbs = projectedPts.map(p => Math.pow(p / maxProj, 4));
+    const probTotal = rawProbs.reduce((a, b) => a + b, 0);
+    return drivers.map((d, i) => ({
+      ...d,
+      model_prob: rawProbs[i] / probTotal,
+    }));
+  }
+
+  // ── Match model to market ──────────────────────────────
+  function matchAndCompute(modelDrivers, marketOdds) {
+    return modelDrivers.map(d => {
+      const market = marketOdds.find(m =>
+        m.driver.toLowerCase().includes(d.name.toLowerCase()) ||
+        d.fullName.toLowerCase().includes(m.driver.toLowerCase().replace(' jr.', ''))
+      );
+      const marketProb = market ? market.market_prob : 0;
+      const edge = marketProb > 0 ? d.model_prob - marketProb : 0;
+      const impliedOdds = marketProb > 0 ? 1 / marketProb : 0;
+      const ev = marketProb > 0 ? d.model_prob * (impliedOdds - 1) - (1 - d.model_prob) : 0;
+      const kelly = marketProb > 0 && impliedOdds > 1 ? Math.max(0, (d.model_prob * (impliedOdds - 1) - (1 - d.model_prob)) / (impliedOdds - 1)) : 0;
+
+      let signal = 'neutral';
+      if (edge > 0.05) signal = 'strong_buy';
+      else if (edge > 0.02) signal = 'buy';
+      else if (edge < -0.05) signal = 'strong_sell';
+      else if (edge < -0.02) signal = 'sell';
+
+      return { ...d, marketProb, edge, ev, kelly, impliedOdds, signal };
+    }).sort((a, b) => b.edge - a.edge);
+  }
+
+  const signalLabels = {strong_buy:'STRONG BUY', buy:'BUY', neutral:'HOLD', sell:'SELL', strong_sell:'STRONG SELL'};
+  const signalCSS = {strong_buy:'signal-strong-buy', buy:'signal-buy', neutral:'signal-neutral', sell:'signal-sell', strong_sell:'signal-strong-sell'};
+
+  function renderTable(containerId, data) {
+    const tbody = document.getElementById(containerId);
+    if (!tbody) return;
+    tbody.innerHTML = data.filter(d => d.marketProb > 0 || d.model_prob > 0.01).map(d => `
+      <tr>
+        <td class="driver-name" style="color:${d.color}">${d.name}</td>
+        <td>${(d.model_prob * 100).toFixed(1)}%</td>
+        <td>${d.marketProb > 0 ? (d.marketProb * 100).toFixed(1) + '%' : '—'}</td>
+        <td class="${d.edge > 0 ? 'ok' : d.edge < 0 ? 'neg' : ''}">${d.edge > 0 ? '+' : ''}${(d.edge * 100).toFixed(1)}%</td>
+        <td class="${d.ev > 0 ? 'ok' : d.ev < 0 ? 'neg' : ''}">${d.ev > 0 ? '+' : ''}${d.ev.toFixed(3)}</td>
+        <td>${(d.kelly * 100).toFixed(1)}%</td>
+        <td class="${signalCSS[d.signal]}">${signalLabels[d.signal]}</td>
+      </tr>
+    `).join('');
+  }
+
+  // ── Edge chart ─────────────────────────────────────────
+  function drawEdgeChart(canvasId, data, title) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+
+    const w = rect.width, h = rect.height;
+    const pad = {top:30, right:30, bottom:40, left:120};
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+
+    const filtered = data.filter(d => d.marketProb > 0.005 || d.model_prob > 0.02);
+    const barH = Math.min((chartH / filtered.length) - 3, 18);
+    const gap = (chartH - barH * filtered.length) / (filtered.length + 1);
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Zero line
+    const maxProb = Math.max(...filtered.map(d => Math.max(d.model_prob, d.marketProb)), 0.4);
+    function xPos(v) { return pad.left + (v / maxProb) * chartW; }
+
+    // Grid
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    for (let v = 0; v <= maxProb; v += 0.1) {
+      const x = xPos(v);
+      ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + chartH); ctx.stroke();
+      ctx.fillStyle = '#8b949e'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+      ctx.fillText((v * 100).toFixed(0) + '%', x, h - 16);
+    }
+
+    filtered.forEach((d, i) => {
+      const y = pad.top + gap + i * (barH + gap);
+
+      // Market bar (gray)
+      const mw = (d.marketProb / maxProb) * chartW;
+      ctx.fillStyle = '#30363d';
+      ctx.globalAlpha = 0.6;
+      ctx.beginPath(); ctx.roundRect(pad.left, y, mw, barH, 2); ctx.fill();
+
+      // Model bar (team color)
+      const modelW = (d.model_prob / maxProb) * chartW;
+      ctx.fillStyle = d.color;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath(); ctx.roundRect(pad.left, y, modelW, barH / 2, 2); ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Name
+      ctx.fillStyle = '#c9d1d9'; ctx.font = '10px monospace'; ctx.textAlign = 'right';
+      ctx.fillText(d.name, pad.left - 6, y + barH - 4);
+
+      // Edge label
+      const edgePct = (d.edge * 100).toFixed(1);
+      ctx.fillStyle = d.edge > 0 ? '#3fb950' : d.edge < 0 ? '#f85149' : '#8b949e';
+      ctx.font = '9px monospace'; ctx.textAlign = 'left';
+      ctx.fillText((d.edge > 0 ? '+' : '') + edgePct + '%', Math.max(xPos(d.model_prob), xPos(d.marketProb)) + 6, y + barH - 4);
+    });
+
+    // Legend
+    ctx.font = '10px monospace'; ctx.textAlign = 'left';
+    const ly = pad.top + 5;
+    ctx.fillStyle = '#30363d'; ctx.fillRect(pad.left, ly, 12, 8);
+    ctx.fillStyle = '#8b949e'; ctx.fillText('Market', pad.left + 16, ly + 8);
+    ctx.fillStyle = '#58a6ff'; ctx.fillRect(pad.left + 70, ly, 12, 4);
+    ctx.fillStyle = '#8b949e'; ctx.fillText('Model', pad.left + 86, ly + 8);
+  }
+
+  // ── Run everything ─────────────────────────────────────
+  const raceModel = computeModelProbs(drivers);
+  const raceComparison = matchAndCompute(raceModel, raceOdds);
+
+  const wdcModel = computeWDCProbs(drivers);
+  const wdcComparison = matchAndCompute(wdcModel, wdcOdds);
+
+  // Race stats
+  const bestEdge = raceComparison.find(d => d.marketProb > 0);
+  const worstEdge = [...raceComparison].filter(d => d.marketProb > 0).sort((a, b) => a.edge - b.edge)[0];
+  const marketFav = [...raceComparison].filter(d => d.marketProb > 0).sort((a, b) => b.marketProb - a.marketProb)[0];
+  const modelFav = [...raceComparison].sort((a, b) => b.model_prob - a.model_prob)[0];
+
+  if (bestEdge) {
+    const el = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    el('bestEdgeDriver', bestEdge.name);
+    el('bestEdgeVal', '+' + (bestEdge.edge * 100).toFixed(1) + '% edge, EV $' + bestEdge.ev.toFixed(3));
+    el('worstEdgeDriver', worstEdge ? worstEdge.name : '--');
+    el('worstEdgeVal', worstEdge ? (worstEdge.edge * 100).toFixed(1) + '% edge' : '--');
+    el('marketFav', marketFav ? marketFav.name : '--');
+    el('marketFavProb', marketFav ? (marketFav.marketProb * 100).toFixed(1) + '% market implied' : '--');
+    el('modelFav', modelFav ? modelFav.name : '--');
+    el('modelFavProb', modelFav ? (modelFav.model_prob * 100).toFixed(1) + '% model implied' : '--');
+  }
+
+  renderTable('raceEdgeTable', raceComparison);
+  renderTable('wdcEdgeTable', wdcComparison);
+  drawEdgeChart('edgeChart', raceComparison, 'Race Winner');
+  drawEdgeChart('wdcChart', wdcComparison, 'Championship');
+
+  window.addEventListener('resize', () => {
+    drawEdgeChart('edgeChart', raceComparison, 'Race Winner');
+    drawEdgeChart('wdcChart', wdcComparison, 'Championship');
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -6,6 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 from . import api, static_data
 from . import coherence as coh
 from . import profiles as prof
+from . import markets
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = ROOT / "templates"
@@ -137,6 +138,7 @@ PAGES = [
     "seasonality.html",
     "profiles.html",
     "qualifying.html",
+    "markets.html",
 ]
 
 
@@ -176,6 +178,13 @@ def generate_all(year: int | None = None) -> None:
     data["budgets"] = prof.TEAM_BUDGETS
     data["circuit_types"] = prof.CIRCUIT_TYPES
     data["driver_profiles"] = prof.DRIVER_PROFILES
+
+    print("Fetching prediction market odds...")
+    if data["next_race"]:
+        data["race_odds"] = markets.get_race_odds(data["next_race"]["date"])
+    else:
+        data["race_odds"] = []
+    data["championship_odds"] = markets.get_championship_odds()
 
     env = build_template_env()
     DOCS_DIR.mkdir(exist_ok=True)
