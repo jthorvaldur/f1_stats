@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} — Power Unit Supply Chain</title>
+<meta name="description" content="Which manufacturer builds each F1 engine, who shares with whom, customer economics, and competitive dynamics of the {{ data.year }} power unit map.">
+<meta property="og:title" content="F1 {{ data.year }} — Power Unit Supply Chain">
+<meta property="og:description" content="5 manufacturers, 11 teams. The F1 engine supply map.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/engines.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="F1 {{ data.year }} — Power Unit Supply Chain">
+<meta name="twitter:description" content="5 PU manufacturers supply 11 teams. Full supply map and economics.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace; background: #0d1117; color: #c9d1d9; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero { padding: 60px 32px 40px; max-width: 1400px; margin: 0 auto; border-bottom: 1px solid #21262d; }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 700px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-5 { grid-template-columns: repeat(5, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .driver-name { color: #f0f6fc; font-weight: 600; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .callout { border-left: 3px solid; padding: 12px 16px; margin: 16px 0; font-size: 12px; line-height: 1.7; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+  .callout-blue { border-color: #58a6ff; }
+  .callout-amber { border-color: #d29922; }
+  .callout-green { border-color: #3fb950; }
+  .chart-container { position: relative; width: 100%; height: 350px; margin: 16px 0; }
+  canvas { width: 100%; height: 100%; }
+  .pu-card { border-left: 4px solid; }
+  .team-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+  @media (max-width: 768px) { .grid-2, .grid-3, .grid-5 { grid-template-columns: 1fr; } .hero { padding: 40px 16px 24px; } .section { padding: 24px 16px; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to standings</a>
+  <h1>Power Unit Supply Chain</h1>
+  <div class="tagline">5 manufacturers build every engine on the {{ data.year }} grid. Some supply a single team; Mercedes powers nearly half the field. The PU supply map defines the competitive landscape.</div>
+</div>
+
+<div class="section">
+  <h2>The Supply Map</h2>
+  <p class="section-sub">Who builds what — and for whom</p>
+  <div class="grid grid-5">
+    {% for pu_id, pu in data.pu_suppliers.items() %}
+    <div class="card" style="border-top: 3px solid {{ pu.color }};">
+      <div class="card-title" style="color:{{ pu.color }};">{{ pu_id.replace('_', ' ').replace('red bull ford', 'Red Bull / Ford').title() }}</div>
+      <div class="stat">{{ pu.teams | length }}</div>
+      <div class="stat-label">team{{ 's' if pu.teams | length != 1 else '' }} supplied</div>
+      <div style="margin-top:12px;">
+        {% for team_name in pu.team_names %}
+        <div style="font-size:11px;color:#c9d1d9;padding:3px 0;">
+          <span class="team-dot" style="background:{{ pu.color }};"></span>
+          {{ team_name }}{% if loop.index == 1 %} <span style="font-size:9px;color:#8b949e;">(works)</span>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Supply Chain Visualization</h2>
+  <p class="section-sub">Manufacturer &rarr; team relationships with constructor points</p>
+  <div class="card">
+    <div class="chart-container">
+      <canvas id="supplyChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Manufacturer Detail</h2>
+  <p class="section-sub">Each power unit supplier — history, teams, HQ, and competitive position</p>
+  {% for pu_id, pu in data.pu_suppliers.items() %}
+  <div class="card pu-card" style="border-left-color:{{ pu.color }};">
+    <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h2 style="color:{{ pu.color }};margin-bottom:4px;">{{ pu.name }}</h2>
+        <div style="font-size:11px;color:#8b949e;">{{ pu.hq }} &middot; {{ pu.years_in_f1 }} &middot; {{ pu.titles_pu }} constructor titles</div>
+      </div>
+      <span class="badge badge-blue">{{ pu.teams | length }} team{{ 's' if pu.teams | length != 1 else '' }}</span>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:#c9d1d9;line-height:1.7;">{{ pu.notable }}</div>
+    <div style="margin-top:12px;">
+      <div style="font-size:10px;color:#8b949e;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Teams Supplied</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        {% for team_name in pu.team_names %}
+        <span class="badge" style="background:rgba(255,255,255,0.04);border:1px solid #30363d;color:#c9d1d9;">
+          <span class="team-dot" style="background:{{ pu.color }};"></span>{{ team_name }}
+        </span>
+        {% endfor %}
+      </div>
+    </div>
+    {% set ns = namespace(total_pts=0) %}
+    {% for team_id in pu.teams %}
+    {% for c in data.constructors if c.team_id == team_id %}
+    {% set ns.total_pts = ns.total_pts + c.points %}
+    {% endfor %}
+    {% endfor %}
+    <div style="margin-top:12px;font-size:11px;color:#8b949e;">
+      Combined constructor points: <span style="color:#f0f6fc;font-weight:600;">{{ ns.total_pts | int }}</span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="section section-divider">
+  <h2>Full Grid — Engine Assignment</h2>
+  <p class="section-sub">Every team and their power unit supplier with constructor standings</p>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Pos</th><th>Team</th><th>PU Manufacturer</th><th>Relationship</th><th>Points</th></tr>
+      </thead>
+      <tbody>
+        {% for c in data.constructors %}
+        <tr>
+          <td>{{ c.position }}</td>
+          <td class="driver-name" style="color:{{ c.team_hex }};">{{ c.team_display }}</td>
+          <td>
+            {% for pu_id, pu in data.pu_suppliers.items() %}
+            {% if c.team_id in pu.teams %}
+            <span style="color:{{ pu.color }};">{{ pu_id.replace('_', ' ').replace('red bull ford', 'Red Bull / Ford').title() }}</span>
+            {% endif %}
+            {% endfor %}
+          </td>
+          <td>
+            {% for pu_id, pu in data.pu_suppliers.items() %}
+            {% if c.team_id in pu.teams %}
+            {% if c.team_id == pu.teams[0] %}
+            <span class="badge badge-green" style="font-size:9px;">Works</span>
+            {% else %}
+            <span class="badge badge-amber" style="font-size:9px;">Customer</span>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+          </td>
+          <td>{{ c.points | int }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Economics of Engine Supply</h2>
+  <p class="section-sub">The business of building and selling F1 power units</p>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-title">Customer PU Cost</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        Customer teams pay approximately <strong>$15-20 million per season</strong> for a PU supply contract. This covers 4 complete power units per car (8 total per team), plus engineering support, on-track personnel, and software updates. The FIA caps PU pricing to prevent manufacturers from charging prohibitive rates.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Works vs Customer Advantage</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        Works teams get the latest upgrades first, deeper integration between chassis and PU development, and bespoke engine mapping. Customer teams receive identical hardware (FIA-mandated) but typically run the manufacturer's software with less customization. The gap has narrowed under the cost cap — but works teams still hold an integration advantage worth 0.1-0.3s per lap.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Why Supply?</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        Manufacturers supply customer teams for several reasons: <strong>revenue</strong> ($15-20M per customer offsets PU development costs of ~$100M/year), <strong>data</strong> (more cars running the PU means more operational data across different chassis philosophies), and <strong>FIA requirement</strong> (manufacturers must supply at least one customer team if asked).
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The Renault Exit</div>
+      <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
+        {{ data.year }} is the first season without a Renault engine since 2000. Alpine switched to Mercedes customer PUs — an acknowledgment that Renault's in-house PU couldn't compete. The 2026 regulations (no MGU-H, simpler architecture) were supposed to level the field, but Renault chose to exit rather than invest in the new spec.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section section-divider">
+  <h2>Competitive Analysis</h2>
+  <p class="section-sub">How PU performance correlates with results</p>
+  <div class="card">
+    <div class="card-title">Constructor Points by PU Manufacturer</div>
+    <div class="chart-container" style="height:280px;">
+      <canvas id="puPointsChart"></canvas>
+    </div>
+  </div>
+  <div class="callout callout-blue">
+    <strong>Key question:</strong> Can a customer team beat the works team using the same engine? In {{ data.year }}, McLaren (Mercedes customer) is outscoring several works teams. Historically, customer teams rarely win championships — the last was Red Bull with Renault power in 2010-2013. The integration advantage of being a works team is real but not insurmountable.
+  </div>
+</div>
+
+<footer>
+  Data: Jolpica/Ergast F1 API &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  const puData = {{ data.pu_suppliers | tojson }};
+  const constructors = [
+    {% for c in data.constructors %}
+    {name:'{{ c.team_display }}', teamId:'{{ c.team_id }}', pts:{{ c.points|int }}, color:'{{ c.team_hex }}'},
+    {% endfor %}
+  ];
+
+  // ── Supply chain visualization ────────────────
+  function drawSupplyChart() {
+    const canvas = document.getElementById('supplyChart');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+    const w = rect.width, h = rect.height;
+
+    ctx.clearRect(0, 0, w, h);
+    const puList = Object.entries(puData);
+    const leftX = 120, rightX = w - 160;
+    const puSpacing = h / (puList.length + 1);
+
+    puList.forEach(([id, pu], i) => {
+      const y = puSpacing * (i + 1);
+      ctx.fillStyle = pu.color;
+      ctx.beginPath(); ctx.arc(leftX, y, 16, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#0d1117'; ctx.font = 'bold 9px monospace'; ctx.textAlign = 'center';
+      ctx.fillText(pu.teams.length.toString(), leftX, y + 3);
+      ctx.fillStyle = pu.color; ctx.font = '11px monospace'; ctx.textAlign = 'right';
+      ctx.fillText(id.replace('_', ' ').replace('red bull ford', 'RB/Ford').toUpperCase(), leftX - 24, y + 4);
+
+      const teamIds = pu.teams;
+      const matchedTeams = constructors.filter(c => teamIds.includes(c.teamId));
+      const teamSpacing = matchedTeams.length > 1 ? Math.min(40, (h * 0.6) / matchedTeams.length) : 0;
+      const startY = y - (matchedTeams.length - 1) * teamSpacing / 2;
+
+      matchedTeams.forEach((team, j) => {
+        const ty = startY + j * teamSpacing;
+        const allTeams = constructors;
+        const tIdx = allTeams.findIndex(c => c.teamId === team.teamId);
+        const teamY = (h / (allTeams.length + 1)) * (tIdx + 1);
+
+        ctx.strokeStyle = pu.color;
+        ctx.globalAlpha = 0.3;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(leftX + 20, y);
+        ctx.bezierCurveTo(leftX + (rightX - leftX) * 0.4, y, rightX - (rightX - leftX) * 0.4, teamY, rightX - 20, teamY);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = team.color;
+        ctx.beginPath(); ctx.arc(rightX, teamY, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#c9d1d9'; ctx.font = '10px monospace'; ctx.textAlign = 'left';
+        ctx.fillText(team.name + ' (' + team.pts + ' pts)', rightX + 14, teamY + 4);
+      });
+    });
+
+    ctx.fillStyle = '#8b949e'; ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('MANUFACTURER', leftX, h - 8);
+    ctx.fillText('TEAM', rightX, h - 8);
+  }
+
+  // ── Points by PU ──────────────────────────────
+  function drawPuPoints() {
+    const canvas = document.getElementById('puPointsChart');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+    const w = rect.width, h = rect.height;
+    const pad = {top:20, right:30, bottom:40, left:100};
+
+    ctx.clearRect(0, 0, w, h);
+    const puList = Object.entries(puData);
+    const puPoints = puList.map(([id, pu]) => {
+      const total = constructors.filter(c => pu.teams.includes(c.teamId)).reduce((s, c) => s + c.pts, 0);
+      return {name: id.replace('_', ' ').replace('red bull ford', 'RB/Ford'), pts: total, color: pu.color, teams: pu.teams.length};
+    }).sort((a, b) => b.pts - a.pts);
+
+    const maxPts = Math.max(...puPoints.map(p => p.pts), 1);
+    const barH = Math.min(((h - pad.top - pad.bottom) / puPoints.length) - 6, 28);
+    const gap = ((h - pad.top - pad.bottom) - barH * puPoints.length) / (puPoints.length + 1);
+
+    puPoints.forEach((p, i) => {
+      const y = pad.top + gap + i * (barH + gap);
+      const barW = (p.pts / maxPts) * (w - pad.left - pad.right);
+
+      ctx.fillStyle = p.color; ctx.globalAlpha = 0.75;
+      ctx.beginPath(); ctx.roundRect(pad.left, y, barW, barH, 3); ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#c9d1d9'; ctx.font = '11px monospace'; ctx.textAlign = 'right';
+      ctx.fillText(p.name.toUpperCase(), pad.left - 8, y + barH - 6);
+
+      ctx.fillStyle = '#f0f6fc'; ctx.font = '10px monospace'; ctx.textAlign = 'left';
+      ctx.fillText(p.pts + ' pts (' + p.teams + ' teams)', pad.left + barW + 6, y + barH - 6);
+    });
+  }
+
+  drawSupplyChart();
+  drawPuPoints();
+  window.addEventListener('resize', () => { drawSupplyChart(); drawPuPoints(); });
+})();
+</script>
+
+</body>
+</html>

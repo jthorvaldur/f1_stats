@@ -204,32 +204,32 @@
 <script>
 (function() {
   const drivers = [
-    {name:'Antonelli', fullName:'Andrea Kimi Antonelli', pts:106, wins:3, team:'Mercedes', color:'#00d2be', pos:1},
+    {name:'Antonelli', fullName:'Andrea Kimi Antonelli', pts:131, wins:4, team:'Mercedes', color:'#00d2be', pos:1},
     {name:'Russell', fullName:'George Russell', pts:88, wins:1, team:'Mercedes', color:'#00d2be', pos:2},
-    {name:'Leclerc', fullName:'Charles Leclerc', pts:63, wins:0, team:'Ferrari', color:'#dc143c', pos:3},
-    {name:'Norris', fullName:'Lando Norris', pts:58, wins:0, team:'McLaren', color:'#ff8700', pos:4},
-    {name:'Hamilton', fullName:'Lewis Hamilton', pts:54, wins:0, team:'Ferrari', color:'#dc143c', pos:5},
+    {name:'Leclerc', fullName:'Charles Leclerc', pts:75, wins:0, team:'Ferrari', color:'#dc143c', pos:3},
+    {name:'Hamilton', fullName:'Lewis Hamilton', pts:72, wins:0, team:'Ferrari', color:'#dc143c', pos:4},
+    {name:'Norris', fullName:'Lando Norris', pts:58, wins:0, team:'McLaren', color:'#ff8700', pos:5},
     {name:'Piastri', fullName:'Oscar Piastri', pts:48, wins:0, team:'McLaren', color:'#ff8700', pos:6},
-    {name:'Verstappen', fullName:'Max Verstappen', pts:28, wins:0, team:'Red Bull', color:'#3671C6', pos:7},
-    {name:'Bearman', fullName:'Oliver Bearman', pts:17, wins:0, team:'Haas', color:'#b6babd', pos:8},
-    {name:'Gasly', fullName:'Pierre Gasly', pts:16, wins:0, team:'Alpine', color:'#0090ff', pos:9},
-    {name:'Lawson', fullName:'Liam Lawson', pts:10, wins:0, team:'RB', color:'#6692ff', pos:10},
-    {name:'Colapinto', fullName:'Franco Colapinto', pts:7, wins:0, team:'Alpine', color:'#0090ff', pos:11},
-    {name:'Lindblad', fullName:'Arvid Lindblad', pts:5, wins:0, team:'RB', color:'#6692ff', pos:12},
-    {name:'Hadjar', fullName:'Isack Hadjar', pts:4, wins:0, team:'Red Bull', color:'#3671C6', pos:13},
-    {name:'Sainz', fullName:'Carlos Sainz', pts:4, wins:0, team:'Williams', color:'#64c4ff', pos:14},
+    {name:'Verstappen', fullName:'Max Verstappen', pts:43, wins:0, team:'Red Bull', color:'#3671C6', pos:7},
+    {name:'Gasly', fullName:'Pierre Gasly', pts:20, wins:0, team:'Alpine', color:'#0090ff', pos:8},
+    {name:'Bearman', fullName:'Oliver Bearman', pts:18, wins:0, team:'Haas', color:'#b6babd', pos:9},
+    {name:'Lawson', fullName:'Liam Lawson', pts:16, wins:0, team:'RB', color:'#6692ff', pos:10},
+    {name:'Colapinto', fullName:'Franco Colapinto', pts:15, wins:0, team:'Alpine', color:'#0090ff', pos:11},
+    {name:'Hadjar', fullName:'Isack Hadjar', pts:14, wins:0, team:'Red Bull', color:'#3671C6', pos:12},
+    {name:'Sainz', fullName:'Carlos Sainz', pts:6, wins:0, team:'Williams', color:'#64c4ff', pos:13},
+    {name:'Lindblad', fullName:'Arvid Lindblad', pts:5, wins:0, team:'RB', color:'#6692ff', pos:14},
     {name:'Bortoleto', fullName:'Gabriel Bortoleto', pts:2, wins:0, team:'Audi', color:'#00e701', pos:15},
     {name:'Ocon', fullName:'Esteban Ocon', pts:1, wins:0, team:'Haas', color:'#b6babd', pos:16},
     {name:'Albon', fullName:'Alexander Albon', pts:1, wins:0, team:'Williams', color:'#64c4ff', pos:17},
     {name:'Hülkenberg', fullName:'Nico Hülkenberg', pts:0, wins:0, team:'Audi', color:'#00e701', pos:18},
     {name:'Bottas', fullName:'Valtteri Bottas', pts:0, wins:0, team:'Cadillac', color:'#c0c0c0', pos:19},
     {name:'Pérez', fullName:'Sergio Pérez', pts:0, wins:0, team:'Cadillac', color:'#c0c0c0', pos:20},
-    {name:'Alonso', fullName:'Fernando Alonso', pts:0, wins:0, team:'Aston Martin', color:'#006f62', pos:21},
-    {name:'Stroll', fullName:'Lance Stroll', pts:0, wins:0, team:'Aston Martin', color:'#006f62', pos:22},
+    {name:'Stroll', fullName:'Lance Stroll', pts:0, wins:0, team:'Aston Martin', color:'#006f62', pos:21},
+    {name:'Alonso', fullName:'Fernando Alonso', pts:0, wins:0, team:'Aston Martin', color:'#006f62', pos:22},
   ];
 
   const raceOdds = [];
-  const wdcOdds = [{"driver": "George Russell", "market_prob": 0.425, "volume": "1848195.9675810013"}, {"driver": "Kimi Antonelli", "market_prob": 0.3735, "volume": "3117368.8390309685"}, {"driver": "Lando Norris", "market_prob": 0.085, "volume": "2287153.138701993"}, {"driver": "Oscar Piastri", "market_prob": 0.0345, "volume": "1892745.838145008"}, {"driver": "Max Verstappen", "market_prob": 0.0285, "volume": "2123714.437143985"}, {"driver": "Charles Leclerc", "market_prob": 0.0255, "volume": "2972973.4889060142"}, {"driver": "Lewis Hamilton", "market_prob": 0.0135, "volume": "3959717.414469913"}, {"driver": "Fernando Alonso", "market_prob": 0.0035, "volume": "7359394.350445887"}, {"driver": "Nico H\u00fclkenberg", "market_prob": 0.0035, "volume": "6898449.186233915"}, {"driver": "Gabriel Bortoleto", "market_prob": 0.0035, "volume": "9380080.351909447"}, {"driver": "Franco Colapinto", "market_prob": 0.0035, "volume": "10500303.971463671"}, {"driver": "Alexander Albon", "market_prob": 0.0035, "volume": "10135222.451980265"}, {"driver": "Valtteri Bottas", "market_prob": 0.0035, "volume": "10614418.036981037"}, {"driver": "Esteban Ocon", "market_prob": 0.0025, "volume": "7883570.772476886"}, {"driver": "Liam Lawson", "market_prob": 0.0025, "volume": "9573559.83176464"}, {"driver": "Arvid Lindblad", "market_prob": 0.0025, "volume": "10368142.895871576"}, {"driver": "Carlos Sainz Jr.", "market_prob": 0.0025, "volume": "9020347.547976663"}, {"driver": "Sergio P\u00e9rez", "market_prob": 0.0025, "volume": "8976714.20279567"}, {"driver": "Isack Hadjar", "market_prob": 0.0025, "volume": "7201582.237747693"}, {"driver": "Pierre Gasly", "market_prob": 0.0015, "volume": "9054711.594101839"}, {"driver": "Lance Stroll", "market_prob": 0.0015, "volume": "9914226.604972906"}, {"driver": "Oliver Bearman", "market_prob": 0.0015, "volume": "10176575.517952662"}];
+  const wdcOdds = [{"driver": "Kimi Antonelli", "market_prob": 0.571, "volume": "3159822.0014249682"}, {"driver": "George Russell", "market_prob": 0.28, "volume": "1896702.3983090015"}, {"driver": "Lando Norris", "market_prob": 0.0385, "volume": "2314666.165950992"}, {"driver": "Max Verstappen", "market_prob": 0.025, "volume": "2149962.2725499873"}, {"driver": "Charles Leclerc", "market_prob": 0.0225, "volume": "2983961.863520015"}, {"driver": "Lewis Hamilton", "market_prob": 0.015, "volume": "4013732.8392889136"}, {"driver": "Oscar Piastri", "market_prob": 0.0145, "volume": "1908597.0152100076"}, {"driver": "Fernando Alonso", "market_prob": 0.0035, "volume": "7366106.9380988795"}, {"driver": "Nico H\u00fclkenberg", "market_prob": 0.0035, "volume": "6905881.308222911"}, {"driver": "Gabriel Bortoleto", "market_prob": 0.0035, "volume": "9387079.78689844"}, {"driver": "Franco Colapinto", "market_prob": 0.0035, "volume": "10506820.663455665"}, {"driver": "Alexander Albon", "market_prob": 0.0035, "volume": "10142213.724963266"}, {"driver": "Valtteri Bottas", "market_prob": 0.0035, "volume": "10621323.820637036"}, {"driver": "Esteban Ocon", "market_prob": 0.0025, "volume": "7890188.670476883"}, {"driver": "Liam Lawson", "market_prob": 0.0025, "volume": "9580785.918764628"}, {"driver": "Arvid Lindblad", "market_prob": 0.0025, "volume": "10374330.988371572"}, {"driver": "Carlos Sainz Jr.", "market_prob": 0.0025, "volume": "9028080.858976655"}, {"driver": "Sergio P\u00e9rez", "market_prob": 0.0025, "volume": "8983657.545295661"}, {"driver": "Isack Hadjar", "market_prob": 0.0025, "volume": "7209844.291080691"}, {"driver": "Pierre Gasly", "market_prob": 0.0015, "volume": "9061464.772101834"}, {"driver": "Lance Stroll", "market_prob": 0.0015, "volume": "9922549.966972906"}, {"driver": "Oliver Bearman", "market_prob": 0.0015, "volume": "10188451.338952659"}];
   const currentRound = 5;
   const totalRounds = 24;
 

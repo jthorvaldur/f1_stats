@@ -105,7 +105,7 @@
   <div class="tagline">How much does qualifying position predict race results? Scatter plots, position-change heatmaps, and disruption indices for the 2026 season through Round 5.</div>
   <div class="badges">
     <span class="badge badge-blue">5 Qualifying Sessions</span>
-    <span class="badge badge-green">4 Races</span>
+    <span class="badge badge-green">5 Races</span>
     <span class="badge badge-purple">Grid-to-Finish Analysis</span>
   </div>
 </div>
@@ -1066,6 +1066,131 @@
           team_hex: "##3671C6",
           grid: 22,
           is_retired: true,
+          is_dns: false
+        }      ]
+    },    {
+      round: 5,
+      name: "Canadian Grand Prix",
+      results: [
+        {
+          position: 1,
+          driver: "Andrea Kimi Antonelli",
+          code: "ANT",
+          team: "Mercedes",
+          team_id: "mercedes",
+          team_hex: "##00d2be",
+          grid: 2,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 2,
+          driver: "Lewis Hamilton",
+          code: "HAM",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 5,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 3,
+          driver: "Max Verstappen",
+          code: "VER",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 6,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 4,
+          driver: "Charles Leclerc",
+          code: "LEC",
+          team: "Ferrari",
+          team_id: "ferrari",
+          team_hex: "##dc143c",
+          grid: 8,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 5,
+          driver: "Isack Hadjar",
+          code: "HAD",
+          team: "Red Bull",
+          team_id: "red_bull",
+          team_hex: "##3671C6",
+          grid: 7,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 6,
+          driver: "Franco Colapinto",
+          code: "COL",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 10,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 7,
+          driver: "Liam Lawson",
+          code: "LAW",
+          team: "RB F1 Team",
+          team_id: "rb",
+          team_hex: "##6692ff",
+          grid: 12,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 8,
+          driver: "Pierre Gasly",
+          code: "GAS",
+          team: "Alpine F1 Team",
+          team_id: "alpine",
+          team_hex: "##0090ff",
+          grid: 14,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 9,
+          driver: "Carlos Sainz",
+          code: "SAI",
+          team: "Williams",
+          team_id: "williams",
+          team_hex: "##64c4ff",
+          grid: 15,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 10,
+          driver: "Oliver Bearman",
+          code: "BEA",
+          team: "Haas F1 Team",
+          team_id: "haas",
+          team_hex: "##b6babd",
+          grid: 16,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 11,
+          driver: "Oscar Piastri",
+          code: "PIA",
+          team: "McLaren",
+          team_id: "mclaren",
+          team_hex: "##ff8700",
+          grid: 4,
+          is_retired: false,
+          is_dns: false
+        },        {
+          position: 12,
+          driver: "Nico Hülkenberg",
+          code: "HUL",
+          team: "Audi",
+          team_id: "audi",
+          team_hex: "##00e701",
+          grid: 11,
+          is_retired: false,
           is_dns: false
         }      ]
     }  ];
@@ -2081,17 +2206,17 @@
       team_id: "ferrari",
       team_hex: "##dc143c"
     },    {
-      name: "Lando Norris",
-      code: "NOR",
-      team: "McLaren",
-      team_id: "mclaren",
-      team_hex: "##ff8700"
-    },    {
       name: "Lewis Hamilton",
       code: "HAM",
       team: "Ferrari",
       team_id: "ferrari",
       team_hex: "##dc143c"
+    },    {
+      name: "Lando Norris",
+      code: "NOR",
+      team: "McLaren",
+      team_id: "mclaren",
+      team_hex: "##ff8700"
     },    {
       name: "Oscar Piastri",
       code: "PIA",
@@ -2105,17 +2230,17 @@
       team_id: "red_bull",
       team_hex: "##3671C6"
     },    {
-      name: "Oliver Bearman",
-      code: "BEA",
-      team: "Haas",
-      team_id: "haas",
-      team_hex: "##b6babd"
-    },    {
       name: "Pierre Gasly",
       code: "GAS",
       team: "Alpine",
       team_id: "alpine",
       team_hex: "##0090ff"
+    },    {
+      name: "Oliver Bearman",
+      code: "BEA",
+      team: "Haas",
+      team_id: "haas",
+      team_hex: "##b6babd"
     },    {
       name: "Liam Lawson",
       code: "LAW",
@@ -2129,12 +2254,6 @@
       team_id: "alpine",
       team_hex: "##0090ff"
     },    {
-      name: "Arvid Lindblad",
-      code: "LIN",
-      team: "RB",
-      team_id: "rb",
-      team_hex: "##6692ff"
-    },    {
       name: "Isack Hadjar",
       code: "HAD",
       team: "Red Bull",
@@ -2146,6 +2265,12 @@
       team: "Williams",
       team_id: "williams",
       team_hex: "##64c4ff"
+    },    {
+      name: "Arvid Lindblad",
+      code: "LIN",
+      team: "RB",
+      team_id: "rb",
+      team_hex: "##6692ff"
     },    {
       name: "Gabriel Bortoleto",
       code: "BOR",
@@ -2183,14 +2308,14 @@
       team_id: "cadillac",
       team_hex: "##c0c0c0"
     },    {
-      name: "Fernando Alonso",
-      code: "ALO",
+      name: "Lance Stroll",
+      code: "STR",
       team: "Aston Martin",
       team_id: "aston_martin",
       team_hex: "##006f62"
     },    {
-      name: "Lance Stroll",
-      code: "STR",
+      name: "Fernando Alonso",
+      code: "ALO",
       team: "Aston Martin",
       team_id: "aston_martin",
       team_hex: "##006f62"

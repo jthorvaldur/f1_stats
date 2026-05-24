@@ -151,6 +151,7 @@ PAGES = [
     "hft.html",
     "hft-tech.html",
     "hft-routes.html",
+    "engines.html",
 ]
 
 
@@ -190,6 +191,7 @@ def generate_all(year: int | None = None) -> None:
     data["budgets"] = prof.TEAM_BUDGETS
     data["circuit_types"] = prof.CIRCUIT_TYPES
     data["driver_profiles"] = prof.DRIVER_PROFILES
+    data["pu_suppliers"] = prof.PU_SUPPLIERS
     data["calendar"] = cal.CALENDAR_2026
     data["regulation_changes"] = cal.REGULATION_CHANGES
     data["weekend_format"] = cal.RACE_WEEKEND_FORMAT

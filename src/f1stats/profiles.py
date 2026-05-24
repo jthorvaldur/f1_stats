@@ -1,4 +1,57 @@
-"""Driver psychological profiles and team economics data."""
+"""Driver psychological profiles, team economics, and power unit supply data."""
+
+PU_SUPPLIERS = {
+    "mercedes": {
+        "name": "Mercedes-AMG High Performance Powertrains",
+        "hq": "Brixworth, UK",
+        "teams": ["mercedes", "mclaren", "williams", "alpine"],
+        "team_names": ["Mercedes", "McLaren", "Williams", "Alpine"],
+        "color": "#00d2be",
+        "years_in_f1": "1994-present (as Ilmor/Mercedes)",
+        "titles_pu": 15,
+        "notable": "Dominant hybrid-era supplier (2014-2021). Supplies 4 of 11 teams — the largest customer base on the grid. Alpine switched from Renault to Mercedes for 2026.",
+    },
+    "ferrari": {
+        "name": "Scuderia Ferrari Power Unit",
+        "hq": "Maranello, Italy",
+        "teams": ["ferrari", "haas", "cadillac"],
+        "team_names": ["Ferrari", "Haas", "Cadillac"],
+        "color": "#dc143c",
+        "years_in_f1": "1950-present",
+        "titles_pu": 16,
+        "notable": "The oldest and most successful F1 constructor. Supplies Cadillac's customer PU for their first two seasons (2026-2027) until GM develops its own unit.",
+    },
+    "red_bull_ford": {
+        "name": "Red Bull Powertrains / Ford",
+        "hq": "Milton Keynes, UK",
+        "teams": ["red_bull", "rb"],
+        "team_names": ["Red Bull", "Racing Bulls"],
+        "color": "#3671C6",
+        "years_in_f1": "2026-present (RBPT); Ford returning after 2004",
+        "titles_pu": 0,
+        "notable": "Brand-new PU operation. Red Bull built its own engine facility after Honda's initial departure. Ford partnership adds branding, funding, and some engineering. First in-house Red Bull power unit.",
+    },
+    "honda": {
+        "name": "Honda Racing Corporation",
+        "hq": "Sakura, Japan",
+        "teams": ["aston_martin"],
+        "team_names": ["Aston Martin"],
+        "color": "#006f62",
+        "years_in_f1": "1964-1968, 1983-1992, 2000-2008, 2015-2021, 2026-present",
+        "titles_pu": 6,
+        "notable": "Returned to F1 as works supplier for Aston Martin. Previously powered Red Bull to 2021-2022 titles. Exclusive single-team partnership — no customer teams.",
+    },
+    "audi": {
+        "name": "Audi Formula Racing GmbH",
+        "hq": "Neuburg an der Donau, Germany",
+        "teams": ["audi"],
+        "team_names": ["Audi"],
+        "color": "#00e701",
+        "years_in_f1": "2026-present",
+        "titles_pu": 0,
+        "notable": "Volkswagen Group entry. Acquired Sauber as factory team. Developing PU in-house. The MGU-H deletion was a key factor enabling their entry — it removed the most complex component that new manufacturers couldn't catch up on.",
+    },
+}
 
 TEAM_BUDGETS = {
     "mercedes": {"budget_m": 135, "staff": 1000, "factory": "Brackley, UK"},

@@ -243,28 +243,28 @@ TEAMS['Russell'] = { team: 'Mercedes', color: '#00d2be' };
 DRIVER_LIST.push('Russell');
 TEAMS['Leclerc'] = { team: 'Ferrari', color: '#dc143c' };
 DRIVER_LIST.push('Leclerc');
-TEAMS['Norris'] = { team: 'McLaren', color: '#ff8700' };
-DRIVER_LIST.push('Norris');
 TEAMS['Hamilton'] = { team: 'Ferrari', color: '#dc143c' };
 DRIVER_LIST.push('Hamilton');
+TEAMS['Norris'] = { team: 'McLaren', color: '#ff8700' };
+DRIVER_LIST.push('Norris');
 TEAMS['Piastri'] = { team: 'McLaren', color: '#ff8700' };
 DRIVER_LIST.push('Piastri');
 TEAMS['Verstappen'] = { team: 'Red Bull', color: '#3671C6' };
 DRIVER_LIST.push('Verstappen');
-TEAMS['Bearman'] = { team: 'Haas F1 Team', color: '#b6babd' };
-DRIVER_LIST.push('Bearman');
 TEAMS['Gasly'] = { team: 'Alpine F1 Team', color: '#0090ff' };
 DRIVER_LIST.push('Gasly');
+TEAMS['Bearman'] = { team: 'Haas F1 Team', color: '#b6babd' };
+DRIVER_LIST.push('Bearman');
 TEAMS['Lawson'] = { team: 'RB F1 Team', color: '#6692ff' };
 DRIVER_LIST.push('Lawson');
 TEAMS['Colapinto'] = { team: 'Alpine F1 Team', color: '#0090ff' };
 DRIVER_LIST.push('Colapinto');
-TEAMS['Lindblad'] = { team: 'RB F1 Team', color: '#6692ff' };
-DRIVER_LIST.push('Lindblad');
 TEAMS['Hadjar'] = { team: 'Red Bull', color: '#3671C6' };
 DRIVER_LIST.push('Hadjar');
 TEAMS['Sainz'] = { team: 'Williams', color: '#64c4ff' };
 DRIVER_LIST.push('Sainz');
+TEAMS['Lindblad'] = { team: 'RB F1 Team', color: '#6692ff' };
+DRIVER_LIST.push('Lindblad');
 TEAMS['Bortoleto'] = { team: 'Audi', color: '#00e701' };
 DRIVER_LIST.push('Bortoleto');
 TEAMS['Ocon'] = { team: 'Haas F1 Team', color: '#b6babd' };
@@ -277,17 +277,18 @@ TEAMS['Bottas'] = { team: 'Cadillac F1 Team', color: '#c0c0c0' };
 DRIVER_LIST.push('Bottas');
 TEAMS['Pérez'] = { team: 'Cadillac F1 Team', color: '#c0c0c0' };
 DRIVER_LIST.push('Pérez');
-TEAMS['Alonso'] = { team: 'Aston Martin', color: '#006f62' };
-DRIVER_LIST.push('Alonso');
 TEAMS['Stroll'] = { team: 'Aston Martin', color: '#006f62' };
 DRIVER_LIST.push('Stroll');
+TEAMS['Alonso'] = { team: 'Aston Martin', color: '#006f62' };
+DRIVER_LIST.push('Alonso');
 
 const RACES = [
   { label: 'R1 Australian Grand Prix', finishers: [
     'Russell',    'Antonelli',    'Leclerc',    'Hamilton',    'Norris',    'Verstappen',    'Bearman',    'Lindblad',    'Bortoleto',    'Gasly',    'Ocon',    'Albon',    'Lawson',    'Colapinto',    'Sainz',    'Pérez',    'Stroll'  ]},  { label: 'R2 Chinese Grand Prix', finishers: [
     'Antonelli',    'Russell',    'Hamilton',    'Leclerc',    'Bearman',    'Gasly',    'Lawson',    'Hadjar',    'Sainz',    'Colapinto',    'Hülkenberg',    'Lindblad',    'Bottas',    'Ocon',    'Pérez'  ]},  { label: 'R3 Japanese Grand Prix', finishers: [
     'Antonelli',    'Piastri',    'Leclerc',    'Russell',    'Norris',    'Hamilton',    'Gasly',    'Verstappen',    'Lawson',    'Ocon',    'Hülkenberg',    'Hadjar',    'Bortoleto',    'Lindblad',    'Sainz',    'Colapinto',    'Pérez',    'Alonso',    'Bottas',    'Albon'  ]},  { label: 'R4 Miami Grand Prix', finishers: [
-    'Antonelli',    'Norris',    'Piastri',    'Russell',    'Verstappen',    'Hamilton',    'Colapinto',    'Leclerc',    'Sainz',    'Albon',    'Bearman',    'Bortoleto',    'Ocon',    'Lindblad',    'Alonso',    'Pérez',    'Stroll',    'Bottas'  ]}];
+    'Antonelli',    'Norris',    'Piastri',    'Russell',    'Verstappen',    'Hamilton',    'Colapinto',    'Leclerc',    'Sainz',    'Albon',    'Bearman',    'Bortoleto',    'Ocon',    'Lindblad',    'Alonso',    'Pérez',    'Stroll',    'Bottas'  ]},  { label: 'R5 Canadian Grand Prix', finishers: [
+    'Antonelli',    'Hamilton',    'Verstappen',    'Leclerc',    'Hadjar',    'Colapinto',    'Lawson',    'Gasly',    'Sainz',    'Bearman',    'Piastri',    'Hülkenberg'  ]}];
 
 const currentRound = 5;
 
@@ -619,10 +620,10 @@ teamOrder.push('Red Bull');
 teamColorMap['Red Bull'] = '#3671C6';
 teamOrder.push('Alpine F1 Team');
 teamColorMap['Alpine F1 Team'] = '#0090ff';
-teamOrder.push('Haas F1 Team');
-teamColorMap['Haas F1 Team'] = '#b6babd';
 teamOrder.push('RB F1 Team');
 teamColorMap['RB F1 Team'] = '#6692ff';
+teamOrder.push('Haas F1 Team');
+teamColorMap['Haas F1 Team'] = '#b6babd';
 teamOrder.push('Williams');
 teamColorMap['Williams'] = '#64c4ff';
 teamOrder.push('Audi');
