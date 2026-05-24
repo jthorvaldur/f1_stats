@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 {{ data.year }} &mdash; Microwave Routes &amp; The Tower Wars</title>
+<meta name="description" content="Every major HFT microwave route, tower by tower. Chicago-NJ, London-Frankfurt, Tokyo-Osaka and more. Line speeds, operator maps, tower locations, and the arbitrage economics of low-latency infrastructure.">
+<meta property="og:title" content="F1 {{ data.year }} &mdash; Microwave Routes &amp; The Tower Wars">
+<meta property="og:description" content="Every major low-latency route, tower by tower. The infrastructure that moves billions at the speed of light.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jthorvaldur.github.io/f1_stats/hft-routes.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Microwave Routes &amp; The Tower Wars">
+<meta name="twitter:description" content="HFT microwave infrastructure: routes, towers, operators, and the physics of latency arbitrage.">
+<meta name="keywords" content="HFT, microwave, tower wars, latency, Chicago NJ, McKay Brothers, Jump Trading, Spread Networks, CME, low latency, line of sight, arbitrage, market microstructure, FIX protocol">
+<link rel="canonical" href="https://jthorvaldur.github.io/f1_stats/hft-routes.html">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+    padding: 0;
+  }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .hero {
+    padding: 60px 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-bottom: 1px solid #21262d;
+  }
+  .hero h1 { color: #f0f6fc; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .hero .tagline { color: #8b949e; font-size: 14px; line-height: 1.6; max-width: 800px; }
+  .back-link { display: inline-block; margin-bottom: 16px; font-size: 12px; color: #8b949e; }
+  .back-link:hover { color: #58a6ff; }
+
+  .section { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section-divider { border-top: 1px solid #21262d; }
+  h2 { color: #f0f6fc; font-size: 18px; margin-bottom: 6px; }
+  h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; margin: 24px 0 10px; }
+  .section-sub { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+  .card-title { color: #58a6ff; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat { font-size: 28px; font-weight: bold; color: #f0f6fc; }
+  .stat-lg { font-size: 48px; font-weight: 800; color: #f0f6fc; letter-spacing: -2px; }
+  .stat-sm { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+  .stat-label { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .ok { color: #3fb950; }
+  .warn { color: #d29922; }
+  .neg { color: #f85149; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #0d2818; color: #3fb950; border: 1px solid #1b3d2a; }
+  .badge-red { background: #2d0f0f; color: #f85149; border: 1px solid #4a1b1b; }
+  .badge-amber { background: #2a1f00; color: #d29922; border: 1px solid #3d2e00; }
+  .badge-blue { background: #0d1830; color: #58a6ff; border: 1px solid #1b2d4a; }
+  .badge-purple { background: #1c1530; color: #bb9af7; border: 1px solid #2d2050; }
+  .badge-cyan { background: #0a1f2e; color: #56d4dd; border: 1px solid #153040; }
+
+  .prose { font-size: 13px; color: #c9d1d9; line-height: 1.8; }
+  .prose p { margin-bottom: 12px; }
+  .prose strong { color: #f0f6fc; }
+
+  .callout {
+    border-left: 3px solid; padding: 12px 16px; margin: 16px 0;
+    font-size: 12px; line-height: 1.7; background: rgba(255,255,255,0.02);
+    border-radius: 0 8px 8px 0;
+  }
+  .callout-blue { border-color: #58a6ff; }
+  .callout-green { border-color: #3fb950; }
+  .callout-amber { border-color: #d29922; }
+  .callout-red { border-color: #f85149; }
+  .callout-purple { border-color: #bb9af7; }
+
+  .formula {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: #bb9af7;
+    font-style: italic;
+    overflow-x: auto;
+  }
+  .formula .label { color: #8b949e; font-style: normal; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
+  .formula .note { color: #484f58; font-style: normal; font-size: 11px; margin-top: 4px; }
+
+  /* Hero stat */
+  .hero-stat {
+    background: linear-gradient(135deg, #161b22 0%, #0d1830 100%);
+    border: 1px solid #1b2d4a;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    margin: 16px 0;
+  }
+  .hero-stat .stat-lg { font-size: 64px; background: linear-gradient(135deg, #58a6ff, #3fb950); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  /* Timeline */
+  .timeline { position: relative; padding: 20px 0; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #30363d;
+  }
+  .timeline-item {
+    position: relative;
+    padding-left: 56px;
+    margin-bottom: 28px;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #d29922;
+    background: #0d1117;
+    box-shadow: 0 0 8px rgba(210,153,34,0.3);
+    z-index: 1;
+  }
+  .timeline-year {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f0f6fc;
+    margin-bottom: 2px;
+  }
+  .timeline-event {
+    font-size: 13px;
+    font-weight: 600;
+    color: #c9d1d9;
+    margin-bottom: 4px;
+  }
+  .timeline-detail {
+    font-size: 12px;
+    color: #8b949e;
+    line-height: 1.6;
+  }
+
+  /* Route card */
+  .route-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .route-card.golden {
+    border-color: #d29922;
+    box-shadow: 0 0 16px rgba(210,153,34,0.1);
+  }
+  .route-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .route-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f0f6fc;
+  }
+  .route-endpoints {
+    font-size: 13px;
+    color: #8b949e;
+    margin-bottom: 16px;
+  }
+  .route-endpoints .from, .route-endpoints .to {
+    color: #58a6ff;
+    font-weight: 600;
+  }
+  .route-endpoints .arrow { color: #3fb950; margin: 0 8px; }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .stat-box {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 6px;
+    padding: 10px 14px;
+    text-align: center;
+    flex: 1;
+    min-width: 100px;
+  }
+  .stat-box .val { font-size: 18px; font-weight: 700; color: #f0f6fc; }
+  .stat-box .lbl { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+  /* Tower chain */
+  .tower-chain {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 16px 8px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  .tower-node {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 6px 10px;
+    text-align: center;
+    font-size: 10px;
+    color: #c9d1d9;
+    min-width: 60px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .tower-node.endpoint {
+    border-color: #58a6ff;
+    color: #58a6ff;
+    font-weight: 700;
+    background: #0d1830;
+  }
+  .tower-node .tower-num {
+    font-size: 8px;
+    color: #484f58;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .tower-link {
+    color: #30363d;
+    font-size: 12px;
+    padding: 0 3px;
+    flex-shrink: 0;
+  }
+
+  /* Latency bar */
+  .latency-bars {
+    margin: 12px 0;
+  }
+  .latency-bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .latency-bar-label {
+    width: 100px;
+    font-size: 11px;
+    color: #8b949e;
+    flex-shrink: 0;
+  }
+  .latency-bar-track {
+    flex: 1;
+    background: #21262d;
+    border-radius: 4px;
+    height: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+  .latency-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #0d1117;
+  }
+
+  /* Arb callout */
+  .arb-callout {
+    background: linear-gradient(135deg, #0d1830 0%, #161b22 100%);
+    border: 1px solid #1b2d4a;
+    border-left: 3px solid #d29922;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #c9d1d9;
+  }
+  .arb-callout .arb-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #d29922;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+
+  .chart-container { position: relative; width: 100%; height: 480px; margin: 16px 0; }
+  .chart-container-tall { height: 560px; }
+  .chart-container-short { height: 360px; }
+  canvas { width: 100%; height: 100%; }
+
+  footer { max-width: 1400px; margin: 0 auto; padding: 32px; border-top: 1px solid #21262d; text-align: center; font-size: 11px; color: #484f58; }
+  footer a { color: #58a6ff; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero { padding: 40px 16px 24px; }
+    .section { padding: 24px 16px; }
+    .hero-stat .stat-lg { font-size: 40px; }
+    .stats-row { flex-direction: column; }
+    .tower-chain { flex-wrap: wrap; justify-content: center; }
+    .route-header { flex-direction: column; align-items: flex-start; }
+    .chart-container { height: 360px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================================================================= HERO -->
+<div class="hero">
+  <a href="index.html" class="back-link">&larr; back to championship</a>
+  <h1>Microwave Routes &amp; Tower Wars</h1>
+  <div class="tagline">Every major low-latency route, tower by tower. The infrastructure that moves billions at the speed of light.</div>
+  <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <span class="badge badge-green">0.9997c</span>
+    <span class="badge badge-amber">Microwave</span>
+    <span class="badge badge-red">Fiber Obsoleted</span>
+    <span class="badge badge-blue">Tower Infrastructure</span>
+    <span class="badge badge-purple">Line of Sight</span>
+    <span class="badge badge-cyan">CME FIX</span>
+  </div>
+</div>
+
+<!-- ============================================== LINE SPEED COMPARISON -->
+<div class="section">
+  <h2>Line Speed Comparison</h2>
+  <p class="section-sub">The physics of propagation &mdash; why air beats glass by 32%</p>
+
+  <div class="card">
+    <div class="card-title">Transmission Media &mdash; {{ data.hft_line_speeds | length }} Technologies</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Medium</th>
+          <th>Speed (fraction of c)</th>
+          <th>Speed (km/s)</th>
+          <th>Latency / km (&micro;s)</th>
+          <th>Bandwidth</th>
+          <th>Reliability</th>
+          <th>Cost Tier</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for line in data.hft_line_speeds %}
+        <tr>
+          <td style="color: #f0f6fc; font-weight: 600;">{{ line.medium }}</td>
+          <td>{{ line.speed_c }}</td>
+          <td>{{ line.speed_kms }}</td>
+          <td>{{ line.latency_us_km }}</td>
+          <td>{{ line.bandwidth }}</td>
+          <td>{{ line.reliability }}</td>
+          <td style="color: #d29922;">{{ line.cost_tier }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Propagation Speed &mdash; Fraction of c</h3>
+  <div class="card">
+    <div class="card-title">The gap IS the arbitrage opportunity</div>
+    <div class="chart-container chart-container-short">
+      <canvas id="lineSpeedChart"></canvas>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <strong>The refractive index of glass (n=1.47) means light travels at 0.68c in fiber. In air, it's 0.9997c. This 32% speed difference is the entire basis of the microwave arbitrage industry.</strong> Every microwave tower, every line-of-sight relay, every weather-redundancy system &mdash; all of it exists because photons interact with silicon dioxide electron clouds in glass fiber, introducing a tiny delay at each atomic interaction. Summed over 1,200 km of fiber, those delays cost ~2ms. In HFT, 2ms is a lifetime.
+  </div>
+</div>
+
+<!-- ============================================== ROUTE CARDS -->
+<div class="section section-divider">
+  <h2>Microwave Routes</h2>
+  <p class="section-sub">Every major low-latency corridor &mdash; distance, operators, towers, and the arbitrage each route enables</p>
+
+  {% for route in data.hft_microwave_routes %}
+  <div class="route-card{% if 'chicago' in route.name|lower or 'chi' in route.name|lower and 'nj' in route.name|lower %} golden{% endif %}" id="route-{{ loop.index }}">
+
+    <div class="route-header">
+      <div class="route-name">{{ route.name }}</div>
+      <div>
+        <span class="badge badge-green">{{ route.num_towers }} towers</span>
+        <span class="badge badge-amber">{{ route.advantage_pct }} faster</span>
+      </div>
+    </div>
+
+    <div class="route-endpoints">
+      <span class="from">{{ route.endpoints.from }}</span>
+      <span class="arrow">&xrarr;</span>
+      <span class="to">{{ route.endpoints.to }}</span>
+    </div>
+
+    <!-- Key stats -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="val">{{ route.distance_km }}</div>
+        <div class="lbl">Distance (km)</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" style="color: #f85149;">{{ route.fiber_latency_ms }}</div>
+        <div class="lbl">Fiber Latency (ms)</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" style="color: #3fb950;">{{ route.microwave_latency_ms }}</div>
+        <div class="lbl">Microwave Latency (ms)</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" style="color: #d29922;">{{ route.advantage_ms }}</div>
+        <div class="lbl">Advantage (ms)</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" style="color: #d29922;">{{ route.advantage_pct }}</div>
+        <div class="lbl">Advantage (%)</div>
+      </div>
+    </div>
+
+    <!-- Latency comparison bars -->
+    <div class="latency-bars">
+      <div class="latency-bar-row">
+        <div class="latency-bar-label">Fiber</div>
+        <div class="latency-bar-track">
+          <canvas class="latency-canvas" data-fiber="{{ route.fiber_latency_ms }}" data-microwave="{{ route.microwave_latency_ms }}" data-type="fiber" style="width:100%;height:100%;"></canvas>
+        </div>
+      </div>
+      <div class="latency-bar-row" style="margin-top: 4px;">
+        <div class="latency-bar-label">Microwave</div>
+        <div class="latency-bar-track">
+          <canvas class="latency-canvas" data-fiber="{{ route.fiber_latency_ms }}" data-microwave="{{ route.microwave_latency_ms }}" data-type="microwave" style="width:100%;height:100%;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operators table -->
+    {% if route.operators %}
+    <h3 style="margin-top: 20px;">Operators</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Operator</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for op in route.operators %}
+        <tr>
+          <td style="color: #f0f6fc; font-weight: 600;">{{ op.name }}</td>
+          <td>
+            <span class="badge {% if op.type == 'proprietary' or op.type == 'Proprietary' %}badge-purple{% elif op.type == 'commercial' or op.type == 'Commercial' %}badge-blue{% else %}badge-amber{% endif %}" style="font-size: 9px; padding: 2px 8px;">{{ op.type }}</span>
+          </td>
+          <td>
+            <span class="badge {% if op.status == 'active' or op.status == 'Active' %}badge-green{% elif op.status == 'defunct' or op.status == 'Defunct' %}badge-red{% else %}badge-amber{% endif %}" style="font-size: 9px; padding: 2px 8px;">{{ op.status }}</span>
+          </td>
+          <td style="font-size: 11px; color: #8b949e;">{{ op.note }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <!-- Tower locations -->
+    {% if route.tower_locations and route.tower_locations | length > 0 %}
+    <h3 style="margin-top: 20px;">Tower Chain</h3>
+    <div class="tower-chain">
+      <div class="tower-node endpoint">
+        <div class="tower-num">START</div>
+        {{ route.endpoints.from }}
+      </div>
+      {% for tower in route.tower_locations %}
+      <div class="tower-link">&rarr;</div>
+      <div class="tower-node">
+        <div class="tower-num">#{{ loop.index }}</div>
+        {{ tower }}
+      </div>
+      {% endfor %}
+      <div class="tower-link">&rarr;</div>
+      <div class="tower-node endpoint">
+        <div class="tower-num">END</div>
+        {{ route.endpoints.to }}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- The Arb -->
+    {% if route.arb_math %}
+    <div class="arb-callout">
+      <div class="arb-title">The Arb</div>
+      {{ route.arb_math }}
+    </div>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ============================================== THE GOLDEN ROUTE -->
+<div class="section section-divider">
+  <h2>The Golden Route: Chicago &ndash; New Jersey</h2>
+  <p class="section-sub">The most fought-over data path in finance &mdash; 1,200 km of tower wars, $300M fiber routes, and nanosecond arms races</p>
+
+  <div class="grid grid-3">
+    <div class="card" style="border-left: 3px solid #58a6ff;">
+      <div class="card-title">The NJ Triangle</div>
+      <div class="prose">
+        <p><strong>Mahwah, NJ</strong> &mdash; NYSE matching engine. 400,000 sq ft facility. The physical successor to 11 Wall Street.</p>
+        <p><strong>Carteret, NJ</strong> &mdash; NASDAQ matching engine (Equinix NY5). Also hosts dark pools and ATS operators.</p>
+        <p><strong>Secaucus, NJ</strong> &mdash; CBOE options matching engine (Equinix NY4/NY5). SPX options, VIX futures.</p>
+      </div>
+      <div class="callout callout-blue" style="margin-top: 12px; margin-bottom: 0;">
+        Three data centers, three exchanges, all within 60 km of each other. Every microwave route from Chicago terminates at one of these three points &mdash; with cross-connects between them measured in microseconds. The triangle creates a secondary latency game: once the Chicago signal arrives, how fast can you relay between Mahwah, Carteret, and Secaucus?
+      </div>
+    </div>
+
+    <div class="card" style="border-left: 3px solid #f85149;">
+      <div class="card-title">Spread Networks &mdash; The $300M Fiber</div>
+      <div class="prose">
+        <p><strong>2010:</strong> Spread Networks laid a new dark fiber route from Chicago to Carteret, NJ &mdash; the straightest possible path, drilled through mountains and under rivers. Cost: approximately $300 million. The route shaved 3ms off the previous best fiber path.</p>
+        <p><strong>Round-trip latency:</strong> 13.1ms, down from ~16ms on existing routes. For two years, it was the fastest path between CME and NASDAQ/NYSE.</p>
+        <p><strong>2012:</strong> McKay Brothers launched commercial microwave service on the same corridor at ~8ms round-trip. Spread Networks' $300M fiber was instantly obsoleted for latency-sensitive traffic. The fiber still carries bulk data &mdash; but the latency race moved to the towers.</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-left: 3px solid #3fb950;">
+      <div class="card-title">The Microwave Pioneers</div>
+      <div class="prose">
+        <p><strong>McKay Brothers (2012):</strong> First commercial microwave service on the Chicago&ndash;NJ corridor. Founded by Bob Meade and Stephane Tyc. Offered shared-access microwave at ~4ms one-way. Proved the commercial viability of microwave for HFT.</p>
+        <p><strong>New Line Networks:</strong> Joint venture between Jump Trading and Virtu Financial. Built a proprietary microwave network with an antenna directly across the street from CME's Aurora data center. Achieved sub-4ms one-way latency.</p>
+        <p><strong>The competition:</strong> By 2015, at least a dozen microwave networks were operating on the corridor. Each shaved fractions of a microsecond through better tower placement, higher-gain antennas, and adaptive modulation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================== THE TOWER WARS -->
+<div class="section section-divider">
+  <h2>The Tower Wars</h2>
+  <p class="section-sub">{{ data.hft_microwave_games.tower_wars.title }}</p>
+
+  <div class="timeline">
+    {% for event in data.hft_microwave_games.tower_wars.events %}
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-year">{{ event.year }}</div>
+      <div class="timeline-event">{{ event.event }}</div>
+      <div class="timeline-detail">{{ event.detail }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card" style="border-left: 3px solid #bb9af7;">
+      <div class="card-title">The West Chicago Mystery Antenna</div>
+      <div class="prose">
+        <p>In 2019, researchers and journalists discovered a large shortwave antenna installation in West Chicago, near CME's Aurora data center. Unlike microwave towers that communicate line-of-sight over hundreds of kilometers, shortwave (HF) radio can bounce off the ionosphere &mdash; potentially reaching London or Frankfurt in a single hop.</p>
+        <p>The implication: someone was attempting to trade transatlantic latency arbitrage using ionospheric skip propagation. HF radio travels at the speed of light through air and the ionosphere, potentially beating both undersea fiber and the most optimized microwave chains across the Atlantic.</p>
+        <p>The operator was never publicly confirmed. Jump Trading and Citadel Securities were both rumored to be experimenting with the technology.</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-left: 3px solid #d29922;">
+      <div class="card-title">The Bloomberg "Gazillion-Dollar Standoff"</div>
+      <div class="prose">
+        <p>Bloomberg's 2018 feature documented the escalating arms race between tower operators on the Chicago&ndash;NJ route. Firms were buying rural properties solely for tower placement, engaging in bidding wars with farmers for hilltop access, and filing competing FCC license applications for the same relay points.</p>
+        <p>The standoff: multiple firms needed the same geographic choke points &mdash; hilltops with clear line-of-sight in both directions. In some cases, a single hilltop was the only viable relay point for 100 km in either direction. The owner of that hilltop held leverage over billions in potential trading revenue.</p>
+        <p>Some firms resorted to building taller towers to shoot over obstacles. Others negotiated shared-access agreements. A few simply bought the entire property.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================== THE LAST MILE PROBLEM -->
+<div class="section section-divider">
+  <h2>The Last Mile Problem</h2>
+  <p class="section-sub">{{ data.hft_microwave_games.last_mile.title }}</p>
+
+  <div class="card">
+    <div class="prose">
+      {{ data.hft_microwave_games.last_mile.detail }}
+    </div>
+  </div>
+</div>
+
+<!-- ============================================== WEATHER RISK -->
+<div class="section section-divider">
+  <h2>Weather Risk</h2>
+  <p class="section-sub">{{ data.hft_microwave_games.weather.title }}</p>
+
+  <div class="card">
+    <div class="prose">
+      {{ data.hft_microwave_games.weather.detail }}
+    </div>
+    <div class="callout callout-red" style="margin-bottom: 0;">
+      <strong>Rain fade:</strong> At microwave frequencies (6&ndash;42 GHz), water droplets absorb and scatter the signal. A moderate rainstorm can increase path loss by 10&ndash;20 dB, causing link failure. At higher frequencies (E-band, 71&ndash;86 GHz), even light rain degrades the signal. This is why every serious microwave operator maintains a fiber backup &mdash; and why the most sophisticated systems use adaptive modulation, reducing data rate to maintain the link during marginal conditions. The latency penalty of reduced modulation (microseconds) is still far better than falling back to fiber (milliseconds).
+    </div>
+  </div>
+</div>
+
+<!-- ============================================== THE ECONOMICS -->
+<div class="section section-divider">
+  <h2>The Economics of Microseconds</h2>
+  <p class="section-sub">{{ data.hft_microwave_games.economics.title }}</p>
+
+  <div class="card">
+    <div class="prose">
+      {{ data.hft_microwave_games.economics.detail }}
+    </div>
+    <div class="formula">
+      <span class="label">Back-of-envelope ROI</span>
+      Tower lease: ~$30K&ndash;$100K/year per site<br>
+      Equipment per tower: ~$50K&ndash;$200K (radios, antennas, power, backup)<br>
+      20-tower route: ~$2M&ndash;$6M total build + ~$1M&ndash;$2M/year maintenance<br><br>
+      Revenue per microsecond advantage: estimated $10M&ndash;$100M/year for a top-5 firm<br>
+      &Delta;t &asymp; 2ms advantage over fiber &times; thousands of arbitrage opportunities/day<br>
+      <div class="note">Exact ROI is proprietary. Public estimates from McKay Brothers' SEC filings and Jump Trading's FCC applications suggest the infrastructure pays for itself within 3&ndash;6 months for a firm with sufficient trading volume.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================== ROUTE SUMMARY TABLE -->
+<div class="section section-divider">
+  <h2>Route Summary</h2>
+  <p class="section-sub">All microwave routes at a glance &mdash; the global infrastructure of low-latency trading</p>
+
+  <div class="card">
+    <div class="card-title">All Routes Compared</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Route</th>
+          <th>Distance (km)</th>
+          <th>Fiber (ms)</th>
+          <th>Microwave (ms)</th>
+          <th>Advantage (ms)</th>
+          <th>Advantage (%)</th>
+          <th>Towers</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for route in data.hft_microwave_routes %}
+        <tr>
+          <td style="color: #f0f6fc; font-weight: 600;">{{ route.name }}</td>
+          <td>{{ route.distance_km }}</td>
+          <td style="color: #f85149;">{{ route.fiber_latency_ms }}</td>
+          <td style="color: #3fb950;">{{ route.microwave_latency_ms }}</td>
+          <td style="color: #d29922; font-weight: 600;">{{ route.advantage_ms }}</td>
+          <td style="color: #d29922;">{{ route.advantage_pct }}</td>
+          <td>{{ route.num_towers }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Latency Comparison &mdash; All Routes</h3>
+  <div class="card">
+    <div class="card-title">Fiber vs. Microwave &mdash; The Visual Gap</div>
+    <div class="chart-container chart-container-short">
+      <canvas id="routeComparisonChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ FOOTER -->
+<footer>
+  HFT microwave route infrastructure reference &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  var lineSpeeds = {{ data.hft_line_speeds | tojson }};
+  var routes = {{ data.hft_microwave_routes | tojson }};
+
+  // ── Utility ────────────────────────────────────────────────
+  function setupCanvas(canvasOrId) {
+    var canvas = typeof canvasOrId === 'string' ? document.getElementById(canvasOrId) : canvasOrId;
+    if (!canvas) return null;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+    return { ctx: ctx, w: rect.width, h: rect.height };
+  }
+
+  // ── 1. LINE SPEED BAR CHART ──────────────────────────────
+  function drawLineSpeedChart() {
+    var setup = setupCanvas('lineSpeedChart');
+    if (!setup) return;
+    var ctx = setup.ctx, w = setup.w, h = setup.h;
+    var pad = { top: 30, right: 60, bottom: 40, left: 160 };
+    var chartW = w - pad.left - pad.right;
+    var chartH = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    var items = [];
+    lineSpeeds.forEach(function(ls) {
+      var speed = parseFloat(String(ls.speed_c).replace('c', '').replace('~', '').replace(' ', ''));
+      if (isNaN(speed)) {
+        // Try extracting number
+        var match = String(ls.speed_c).match(/([\d.]+)/);
+        speed = match ? parseFloat(match[1]) : 0;
+      }
+      items.push({ name: ls.medium, speed: speed });
+    });
+
+    // Sort descending by speed
+    items.sort(function(a, b) { return b.speed - a.speed; });
+
+    var colors = {
+      'microwave': '#3fb950',
+      'free-space': '#d29922',
+      'laser': '#d29922',
+      'hollow': '#bb9af7',
+      'fiber': '#58a6ff',
+      'standard': '#58a6ff',
+      'copper': '#8b949e',
+      'millimeter': '#56d4dd',
+      'shortwave': '#f85149'
+    };
+
+    function getColor(name) {
+      var lower = name.toLowerCase();
+      for (var key in colors) {
+        if (lower.indexOf(key) !== -1) return colors[key];
+      }
+      return '#8b949e';
+    }
+
+    var barH = Math.min(32, (chartH / items.length) - 8);
+    var gap = (chartH - barH * items.length) / (items.length + 1);
+
+    // Grid
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    [0, 0.25, 0.5, 0.75, 1.0].forEach(function(v) {
+      var x = pad.left + v * chartW;
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, pad.top + chartH);
+      ctx.stroke();
+      ctx.fillStyle = '#484f58';
+      ctx.font = '9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText((v * 100).toFixed(0) + '% c', x, h - 12);
+    });
+
+    items.forEach(function(item, i) {
+      var y = pad.top + gap + i * (barH + gap);
+      var barW = item.speed * chartW;
+      var color = getColor(item.name);
+
+      // Bar
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.75;
+      ctx.beginPath();
+      ctx.roundRect(pad.left, y, Math.max(barW, 2), barH, 3);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Label
+      ctx.fillStyle = '#c9d1d9';
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(item.name, pad.left - 8, y + barH / 2 + 4);
+
+      // Value
+      ctx.fillStyle = color;
+      ctx.font = 'bold 10px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText((item.speed * 100).toFixed(1) + '% c', pad.left + barW + 8, y + barH / 2 + 4);
+    });
+
+    // Title
+    ctx.fillStyle = '#f0f6fc';
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('Propagation Speed by Medium', pad.left, pad.top - 10);
+
+    // Annotation: the gap
+    var fiberItem = items.find(function(x) { return x.name.toLowerCase().indexOf('fiber') !== -1 && x.name.toLowerCase().indexOf('hollow') === -1; });
+    var mwItem = items.find(function(x) { return x.name.toLowerCase().indexOf('microwave') !== -1; });
+    if (fiberItem && mwItem) {
+      var fiberX = pad.left + fiberItem.speed * chartW;
+      var mwX = pad.left + mwItem.speed * chartW;
+      if (mwX - fiberX > 20) {
+        ctx.strokeStyle = '#d29922';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        var midY = pad.top + chartH / 2;
+        ctx.beginPath();
+        ctx.moveTo(fiberX, midY - 30);
+        ctx.lineTo(fiberX, midY + 30);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(mwX, midY - 30);
+        ctx.lineTo(mwX, midY + 30);
+        ctx.stroke();
+        // Arrow between
+        ctx.beginPath();
+        ctx.moveTo(fiberX + 4, midY);
+        ctx.lineTo(mwX - 4, midY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#d29922';
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('32% gap = the arb', (fiberX + mwX) / 2, midY - 8);
+      }
+    }
+  }
+
+  // ── 2. LATENCY COMPARISON BARS (per route) ───────────────
+  function drawLatencyBars() {
+    var canvases = document.querySelectorAll('.latency-canvas');
+    canvases.forEach(function(canvas) {
+      var fiberMs = parseFloat(canvas.getAttribute('data-fiber'));
+      var mwMs = parseFloat(canvas.getAttribute('data-microwave'));
+      var type = canvas.getAttribute('data-type');
+      if (isNaN(fiberMs) || isNaN(mwMs)) return;
+
+      var ctx = canvas.getContext('2d');
+      var dpr = window.devicePixelRatio || 1;
+      var rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.scale(dpr, dpr);
+      var w = rect.width, h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      var maxMs = fiberMs * 1.05;
+      var val = type === 'fiber' ? fiberMs : mwMs;
+      var pct = val / maxMs;
+      var barW = pct * w;
+
+      var color = type === 'fiber' ? '#f85149' : '#3fb950';
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, barW, h, 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Label
+      ctx.fillStyle = '#f0f6fc';
+      ctx.font = 'bold 9px monospace';
+      ctx.textAlign = 'left';
+      var labelText = val + 'ms';
+      var textW = ctx.measureText(labelText).width;
+      if (barW > textW + 12) {
+        ctx.fillText(labelText, barW - textW - 6, h / 2 + 3);
+      } else {
+        ctx.fillStyle = color;
+        ctx.fillText(labelText, barW + 4, h / 2 + 3);
+      }
+    });
+  }
+
+  // ── 3. ROUTE COMPARISON CHART ────────────────────────────
+  function drawRouteComparisonChart() {
+    var setup = setupCanvas('routeComparisonChart');
+    if (!setup) return;
+    var ctx = setup.ctx, w = setup.w, h = setup.h;
+    var pad = { top: 40, right: 40, bottom: 40, left: 160 };
+    var chartW = w - pad.left - pad.right;
+    var chartH = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    var maxMs = 0;
+    routes.forEach(function(r) {
+      var fiber = parseFloat(r.fiber_latency_ms);
+      if (fiber > maxMs) maxMs = fiber;
+    });
+    maxMs *= 1.15;
+
+    var groupH = Math.min(50, (chartH / routes.length) - 8);
+    var barH = (groupH - 4) / 2;
+    var gap = (chartH - groupH * routes.length) / (routes.length + 1);
+
+    // Grid
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 1;
+    var gridStep = maxMs > 6 ? 2 : 1;
+    for (var v = 0; v <= maxMs; v += gridStep) {
+      var x = pad.left + (v / maxMs) * chartW;
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, pad.top + chartH);
+      ctx.stroke();
+      ctx.fillStyle = '#484f58';
+      ctx.font = '9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(v + 'ms', x, h - 12);
+    }
+
+    routes.forEach(function(r, i) {
+      var y = pad.top + gap + i * (groupH + gap);
+      var fiberMs = parseFloat(r.fiber_latency_ms);
+      var mwMs = parseFloat(r.microwave_latency_ms);
+
+      var fiberW = (fiberMs / maxMs) * chartW;
+      var mwW = (mwMs / maxMs) * chartW;
+
+      // Fiber bar
+      ctx.fillStyle = '#f85149';
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.roundRect(pad.left, y, fiberW, barH, 3);
+      ctx.fill();
+
+      // Microwave bar
+      ctx.fillStyle = '#3fb950';
+      ctx.beginPath();
+      ctx.roundRect(pad.left, y + barH + 4, mwW, barH, 3);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Advantage annotation — the gap
+      var gapX = pad.left + mwW;
+      var gapW = fiberW - mwW;
+      if (gapW > 4) {
+        ctx.fillStyle = '#d29922';
+        ctx.globalAlpha = 0.2;
+        ctx.fillRect(pad.left + mwW, y, gapW, groupH);
+        ctx.globalAlpha = 1;
+
+        // Advantage text
+        if (gapW > 30) {
+          ctx.fillStyle = '#d29922';
+          ctx.font = 'bold 9px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(r.advantage_ms + 'ms', gapX + gapW / 2, y + groupH / 2 + 3);
+        }
+      }
+
+      // Values on bars
+      ctx.font = 'bold 9px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#f85149';
+      ctx.fillText(fiberMs + 'ms', pad.left + fiberW + 4, y + barH / 2 + 3);
+      ctx.fillStyle = '#3fb950';
+      ctx.fillText(mwMs + 'ms', pad.left + mwW + 4, y + barH + 4 + barH / 2 + 3);
+
+      // Route name
+      ctx.fillStyle = '#c9d1d9';
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(r.name, pad.left - 8, y + groupH / 2 + 4);
+    });
+
+    // Legend
+    ctx.font = 'bold 10px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f85149';
+    ctx.fillRect(pad.left, pad.top - 28, 12, 10);
+    ctx.fillText('Fiber', pad.left + 16, pad.top - 19);
+    ctx.fillStyle = '#3fb950';
+    ctx.fillRect(pad.left + 80, pad.top - 28, 12, 10);
+    ctx.fillText('Microwave', pad.left + 96, pad.top - 19);
+    ctx.fillStyle = '#d29922';
+    ctx.fillRect(pad.left + 190, pad.top - 28, 12, 10);
+    ctx.fillText('Advantage', pad.left + 206, pad.top - 19);
+  }
+
+  // ── Draw all ──────────────────────────────────────────────
+  drawLineSpeedChart();
+  drawLatencyBars();
+  drawRouteComparisonChart();
+
+  // Redraw on resize
+  var resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      drawLineSpeedChart();
+      drawLatencyBars();
+      drawRouteComparisonChart();
+    }, 150);
+  });
+
+})();
+</script>
+
+</body>
+</html>

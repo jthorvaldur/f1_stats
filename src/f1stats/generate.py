@@ -150,6 +150,7 @@ PAGES = [
     "technology.html",
     "hft.html",
     "hft-tech.html",
+    "hft-routes.html",
 ]
 
 
@@ -201,6 +202,9 @@ def generate_all(year: int | None = None) -> None:
     data["hft_tech_stack"] = hft_data.TECHNOLOGY_STACK
     data["hft_venues"] = hft_data.MARKET_VENUES
     data["hft_strategies"] = hft_data.STRATEGIES
+    data["hft_microwave_routes"] = hft_data.MICROWAVE_ROUTES
+    data["hft_line_speeds"] = hft_data.LINE_SPEED_COMPARISON
+    data["hft_microwave_games"] = hft_data.MICROWAVE_GAMES
 
     print("Fetching prediction market odds...")
     if data["next_race"]:

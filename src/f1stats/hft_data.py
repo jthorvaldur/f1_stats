@@ -1,4 +1,4 @@
-"""HFT historical data — timeline, firms, technology evolution, market structure."""
+"""HFT historical data — timeline, firms, technology evolution, market structure, microwave routes."""
 
 TIMELINE = [
     {"year": 1969, "event": "Instinet founded", "category": "infrastructure", "detail": "First electronic communication network (ECN). Institutional block trading without exchange floor."},
@@ -148,3 +148,165 @@ STRATEGIES = [
     {"name": "Cross-Asset Arbitrage", "holding": "Microseconds–seconds", "edge": "Lead-lag between markets", "risk": "Execution risk", "desc": "E-mini S&P futures lead SPY ETF by ~200ms. Trade the follower when the leader moves. Requires presence on multiple venues."},
     {"name": "MEV (Crypto)", "holding": "Milliseconds (block time)", "edge": "Transaction ordering within blocks", "risk": "Protocol risk, competition", "desc": "Maximal Extractable Value. Reorder, insert, or censor transactions within a blockchain block. Sandwich attacks, liquidation frontrunning, arbitrage."},
 ]
+
+MICROWAVE_ROUTES = [
+    {
+        "name": "Chicago–New Jersey (The Golden Route)",
+        "endpoints": {"from": "CME Aurora, IL", "to": "NYSE Mahwah / NASDAQ Carteret / Equinix Secaucus, NJ"},
+        "distance_km": 1130,
+        "fiber_latency_ms": 6.55,
+        "microwave_latency_ms": 3.97,
+        "advantage_ms": 2.58,
+        "advantage_pct": 39,
+        "num_towers": 20,
+        "operators": [
+            {"name": "McKay Brothers", "type": "Independent", "status": "Active", "note": "Pioneer. Operational since 2012. Aviat Networks hardware. ~4.09ms one-way. Sells access to multiple firms."},
+            {"name": "New Line Networks (NLN)", "type": "Jump/Virtu JV", "status": "Active", "note": "Joint venture of Jump Trading + Virtu Financial. Shortest path. Antenna directly across from CME datacenter. ~3.97ms one-way."},
+            {"name": "Spread Networks", "type": "Fiber", "status": "Active (fiber)", "note": "The original $300M dark fiber (2010). 827 miles, 13.1ms → optimized to ~6.55ms. Still used for bandwidth-heavy data."},
+            {"name": "Anova Technologies", "type": "Independent", "status": "Active", "note": "Microwave + millimeter wave + laser hybrid. Multiple redundant paths. Sells to buy-side and sell-side."},
+            {"name": "Custom Connect", "type": "Independent", "status": "Active", "note": "European-based provider expanding to US routes."},
+        ],
+        "tower_locations": [
+            "Aurora, IL (CME datacenter)", "West Chicago, IL", "Elburn, IL", "Rochelle, IL",
+            "Shabbona, IL", "Waterman, IL", "Paw Paw, IL", "Earlville, IL",
+            "Wanatah, IN", "Plymouth, IN", "Warsaw, IN", "Fort Wayne, IN",
+            "Van Wert, OH", "Upper Sandusky, OH", "Mansfield, OH",
+            "Youngstown, OH", "Mercer, PA", "Stroudsburg, PA",
+            "Blairstown, NJ", "Mahwah, NJ / Carteret, NJ / Secaucus, NJ"
+        ],
+        "arb_math": "E-mini S&P 500 (CME Aurora) vs SPY ETF (NYSE Mahwah). Price change at CME takes 3.97ms to reach NJ via microwave vs 6.55ms via fiber. The 2.58ms advantage window allows capturing the price dislocation before fiber-connected firms react. At peak, this was worth ~$1-5M/day across the industry.",
+    },
+    {
+        "name": "London–Frankfurt",
+        "endpoints": {"from": "LD4/Slough (London)", "to": "FR2/Frankfurt"},
+        "distance_km": 637,
+        "fiber_latency_ms": 4.67,
+        "microwave_latency_ms": 2.13,
+        "advantage_ms": 2.54,
+        "advantage_pct": 54,
+        "num_towers": 12,
+        "operators": [
+            {"name": "McKay Brothers (Quincy Data)", "type": "Independent", "status": "Active", "note": "European arm. ~2.15ms one-way."},
+            {"name": "Jump Trading", "type": "Proprietary", "status": "Active", "note": "Bought radio tower in Hounslow (near Heathrow) for last-mile advantage. Millimeter wave links."},
+            {"name": "Custom Connect", "type": "Independent", "status": "Active", "note": "Dutch provider. Microwave and millimeter wave."},
+            {"name": "Anova Technologies", "type": "Independent", "status": "Active", "note": "Laser + microwave hybrid. Belgian route."},
+        ],
+        "tower_locations": [
+            "Slough, UK (Equinix LD4)", "Swingate, UK (Dover cliffs)",
+            "Dunkerque, France", "Oostende, Belgium", "Bruges, Belgium",
+            "Antwerp, Belgium", "Eindhoven, Netherlands", "Venlo, Netherlands",
+            "Duisburg, Germany", "Dusseldorf, Germany", "Cologne, Germany",
+            "Frankfurt, Germany (Equinix FR2)"
+        ],
+        "arb_math": "Eurex (Frankfurt) vs LSE/ICE (London). Bund futures vs UK gilts, Euro Stoxx vs FTSE. 2.54ms advantage enables cross-listing and index arbitrage between the two largest European financial centers.",
+    },
+    {
+        "name": "Tokyo–Osaka",
+        "endpoints": {"from": "Equinix TY3 (Tokyo)", "to": "Equinix OS1 (Osaka)"},
+        "distance_km": 400,
+        "fiber_latency_ms": 3.0,
+        "microwave_latency_ms": 1.5,
+        "advantage_ms": 1.5,
+        "advantage_pct": 50,
+        "num_towers": 8,
+        "operators": [
+            {"name": "McKay Brothers", "type": "Independent", "status": "Active", "note": "Japan network operational. Mountain terrain makes routing challenging."},
+        ],
+        "tower_locations": [
+            "Tokyo (Equinix TY3)", "Yokohama", "Shizuoka", "Hamamatsu",
+            "Nagoya", "Suzuka", "Kyoto", "Osaka (Equinix OS1)"
+        ],
+        "arb_math": "JPX (Tokyo) vs Osaka Exchange (derivatives). Nikkei 225 futures (Osaka) vs constituent stocks (Tokyo). Japan's equity-futures lead-lag arbitrage.",
+    },
+    {
+        "name": "Chicago–Toronto",
+        "endpoints": {"from": "CME Aurora, IL", "to": "TMX/MX (Toronto/Montreal)"},
+        "distance_km": 700,
+        "fiber_latency_ms": 5.0,
+        "microwave_latency_ms": 2.5,
+        "advantage_ms": 2.5,
+        "advantage_pct": 50,
+        "num_towers": 10,
+        "operators": [
+            {"name": "McKay Brothers", "type": "Independent", "status": "Active", "note": "Cross-border microwave. Crosses Lake Michigan routing challenges."},
+        ],
+        "tower_locations": [
+            "Aurora, IL", "Gary, IN", "South Bend, IN", "Kalamazoo, MI",
+            "Lansing, MI", "Flint, MI", "Port Huron, MI (border)",
+            "London, ON", "Hamilton, ON", "Toronto, ON (TMX)"
+        ],
+        "arb_math": "S&P/TSX futures vs US index products. CAD/USD FX correlation trades. Cross-border ETF arbitrage (XIU vs SPY).",
+    },
+    {
+        "name": "NJ Triangle (Last Mile)",
+        "endpoints": {"from": "NYSE Mahwah", "to": "NASDAQ Carteret / CBOE Secaucus"},
+        "distance_km": 56,
+        "fiber_latency_ms": 0.35,
+        "microwave_latency_ms": 0.19,
+        "advantage_ms": 0.16,
+        "advantage_pct": 46,
+        "num_towers": 3,
+        "operators": [
+            {"name": "Multiple firms", "type": "Various", "status": "Active", "note": "Short-range millimeter wave and laser links. Every microsecond matters for cross-exchange arb."},
+        ],
+        "tower_locations": [
+            "Mahwah, NJ (NYSE)", "Secaucus, NJ (CBOE/IEX/MEMX)", "Carteret, NJ (NASDAQ)"
+        ],
+        "arb_math": "Cross-exchange equity arbitrage. Same stock listed on NYSE, NASDAQ, BATS. Price update at one venue creates 160μs window to trade at the others. This is pure latency arbitrage — the strategy that Flash Boys made famous.",
+    },
+    {
+        "name": "London–Paris",
+        "endpoints": {"from": "Equinix LD4 (Slough)", "to": "Equinix PA3 (Paris)"},
+        "distance_km": 340,
+        "fiber_latency_ms": 2.8,
+        "microwave_latency_ms": 1.15,
+        "advantage_ms": 1.65,
+        "advantage_pct": 59,
+        "num_towers": 6,
+        "operators": [
+            {"name": "McKay Brothers", "type": "Independent", "status": "Active", "note": "Channel crossing via microwave. Short route, high advantage percentage."},
+        ],
+        "tower_locations": [
+            "Slough, UK", "Swingate/Dover, UK", "Calais, France",
+            "Arras, France", "Compiègne, France", "Paris (Equinix PA3)"
+        ],
+        "arb_math": "Euronext Paris vs LSE. CAC 40 vs FTSE cross-index arbitrage. FX correlation with EUR/GBP.",
+    },
+]
+
+LINE_SPEED_COMPARISON = [
+    {"medium": "Standard fiber (dark)", "speed_c": 0.67, "speed_kms": 200000, "latency_us_km": 5.0, "bandwidth": "100+ Gbps", "reliability": "99.999%", "cost_tier": 2},
+    {"medium": "Hollow-core fiber", "speed_c": 0.997, "speed_kms": 299000, "latency_us_km": 3.34, "bandwidth": "10+ Gbps", "reliability": "99.99%", "cost_tier": 5},
+    {"medium": "Microwave (6-11 GHz)", "speed_c": 0.9997, "speed_kms": 299900, "latency_us_km": 3.34, "bandwidth": "0.1-1 Gbps", "reliability": "99.9%", "cost_tier": 3},
+    {"medium": "Millimeter wave (60-90 GHz)", "speed_c": 0.9997, "speed_kms": 299900, "latency_us_km": 3.34, "bandwidth": "1-10 Gbps", "reliability": "99.5%", "cost_tier": 4},
+    {"medium": "Free-space optical (laser)", "speed_c": 0.9997, "speed_kms": 299900, "latency_us_km": 3.34, "bandwidth": "10-100 Gbps", "reliability": "99.0%", "cost_tier": 5},
+    {"medium": "LEO satellite (Starlink)", "speed_c": 0.9997, "speed_kms": 299900, "latency_us_km": 3.34, "bandwidth": "0.1-1 Gbps", "reliability": "99.0%", "cost_tier": 3},
+]
+
+MICROWAVE_GAMES = {
+    "tower_wars": {
+        "title": "The Tower Wars",
+        "events": [
+            {"year": 2011, "event": "McKay Brothers builds first CHI-NJ microwave", "detail": "~20 towers, 4.1ms one-way. First commercial HFT microwave network. Sold access to multiple firms."},
+            {"year": 2013, "event": "Jump Trading builds proprietary network", "detail": "Jump invests ~$100M in its own tower infrastructure. Won't share with competitors. Shortest possible path."},
+            {"year": 2015, "event": "New Line Networks (Jump + Virtu JV)", "detail": "Jump and Virtu pool resources. Antenna placed directly across the street from CME datacenter in Aurora, IL. Shaves ~1μs off last-mile."},
+            {"year": 2016, "event": "Jump buys Hounslow tower (London)", "detail": "Jump Trading acquires radio tower near Heathrow for London-Frankfurt last-mile advantage. Millimeter wave link to LD4 datacenter in Slough."},
+            {"year": 2017, "event": "West Chicago mystery antenna", "detail": "Mysterious shortwave antenna appears in empty field near CME. Linked to 10Band LLC. Purpose: shortwave radio to Europe (~10ms advantage over any other medium for transatlantic). Physics: shortwave bounces off ionosphere."},
+            {"year": 2018, "event": "Laser links deployed", "detail": "Anova Technologies deploys free-space optical (laser) links. Higher bandwidth than microwave, same speed, but fog/rain dependent. Hybrid networks emerge."},
+            {"year": 2019, "event": "Gazillion-dollar standoff (Bloomberg)", "detail": "Bloomberg profiles the escalating tower arms race. Two firms build competing towers on adjacent properties. Each tower costs $5-14M. The advantage sought: <1 microsecond."},
+            {"year": 2021, "event": "LEO satellite experiments", "detail": "SpaceX Starlink investigated for inter-continental low-latency links. Advantage: great-circle routing vs. cable routing. For transatlantic, satellite could beat undersea fiber."},
+        ],
+    },
+    "last_mile": {
+        "title": "The Last Mile Problem",
+        "detail": "The most expensive microseconds are the first and last. Getting signal from the antenna to the exchange matching engine involves: antenna → cable → building entry → patch panel → switch → server NIC. Each component adds nanoseconds. Firms pay millions to be in the closest rack to the exchange switch. CME and NYSE offer 'equalized cable lengths' — all co-located servers have the same cable distance to the matching engine — but the last-mile from the antenna to the building is not equalized.",
+    },
+    "weather": {
+        "title": "Weather Risk",
+        "detail": "Microwave networks fail in heavy rain (signal attenuation). Firms maintain fiber backup circuits that activate automatically. The latency penalty for falling back to fiber (~2.5ms on CHI-NJ) means losing the race during rain events. Some firms have built redundant microwave paths through different weather zones to mitigate correlated rain fade. The reliability vs. speed tradeoff is a core engineering decision.",
+    },
+    "economics": {
+        "title": "The Economics of Microseconds",
+        "detail": "A single microsecond of advantage on the CHI-NJ route is estimated to be worth $1-10M per year to a top HFT firm. Building a microwave tower costs $5-14M. Annual spectrum licensing, maintenance, and power: ~$1-2M per tower. A 20-tower network: $100-280M build + $20-40M/year operating. The ROI depends on exclusive vs. shared access — proprietary networks (Jump) capture full value; shared networks (McKay) amortize across clients but allow competing firms to access the same speed.",
+    },
+}
