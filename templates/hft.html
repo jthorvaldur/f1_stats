@@ -366,7 +366,7 @@
       <div class="firm-meta">{{ firm.hq }} &middot; Founded {{ firm.founded }}</div>
       <span class="firm-type {% if firm.type == 'Market Maker' %}firm-type-mm{% elif firm.type == 'Prop Trading' %}firm-type-prop{% elif firm.type == 'Quant Hedge Fund' %}firm-type-quant{% else %}firm-type-algo{% endif %}">{{ firm.type }}</span>
       <div class="firm-markets">
-        {% for market in firm.markets %}
+        {% for market in firm.markets.split(', ') %}
         <span class="market-tag">{{ market }}</span>
         {% endfor %}
       </div>
