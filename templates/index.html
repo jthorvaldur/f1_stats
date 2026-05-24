@@ -310,59 +310,6 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!-- HFT SECTION                                     -->
-<!-- ═══════════════════════════════════════════════ -->
-
-<div class="section section-divider" style="margin-top:2rem;">
-  <h2 style="font-size:24px;margin-bottom:12px;">High-Frequency Trading</h2>
-  <p class="section-sub" style="max-width:700px;">From the first electronic network (1969) to nanosecond execution (2026). The firms, technology, infrastructure, and regulatory battles that reshaped global markets.</p>
-  <div class="grid grid-4">
-    <div class="card">
-      <div class="card-title">Latency Improvement</div>
-      <div class="stat" style="color:#3fb950;">2M&times;</div>
-      <div class="stat-label">1000ms (1995) &rarr; 0.5&mu;s (2023)</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Firms Profiled</div>
-      <div class="stat">{{ data.hft_firms|length }}</div>
-      <div class="stat-label">from Renaissance to Wintermute</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Microwave Routes</div>
-      <div class="stat">{{ data.hft_microwave_routes|length }}</div>
-      <div class="stat-label">CHI-NJ, LDN-FRA, TKY-OSA, &hellip;</div>
-    </div>
-    <div class="card">
-      <div class="card-title">Timeline Events</div>
-      <div class="stat">{{ data.hft_timeline|length }}</div>
-      <div class="stat-label">1969 &ndash; {{ data.year }}</div>
-    </div>
-  </div>
-</div>
-
-<div class="section section-divider">
-  <h2>HFT Pages</h2>
-  <p class="section-sub">History, technology, and infrastructure deep dives</p>
-  <div class="nav-grid">
-    <a class="nav-card" href="hft.html">
-      <h4>History &amp; Firms</h4>
-      <p>40+ timeline events from Instinet (1969) through Flash Crash, Flash Boys, and CAT (2026). 18 major firms with daily volumes. Market venues across equities, futures, FX, and crypto. 8 trading strategies from market making to MEV.</p>
-      <div class="arrow">view HFT history &rarr;</div>
-    </a>
-    <a class="nav-card" href="hft-tech.html">
-      <h4>The Latency Stack</h4>
-      <p>Log-scale latency chart (1000ms &rarr; 0.5&mu;s). Network infrastructure (fiber &rarr; microwave &rarr; laser). Compute hardware (CPU &rarr; FPGA &rarr; ASIC). Software stack: kernel bypass, lock-free structures, custom allocators. The physics limit.</p>
-      <div class="arrow">view HFT tech &rarr;</div>
-    </a>
-    <a class="nav-card" href="hft-routes.html">
-      <h4>Microwave Routes &amp; Tower Wars</h4>
-      <p>Every major low-latency route tower by tower. Fiber vs microwave latency per route. The arb math (E-mini vs SPY, Bund vs Gilts). Operators (McKay, New Line, Anova). Tower wars, last-mile games, and the economics of microseconds.</p>
-      <div class="arrow">view microwave routes &rarr;</div>
-    </a>
-  </div>
-</div>
-
 <footer>
   Data: Jolpica/Ergast F1 API &middot; Generated {{ data.generated }} &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
