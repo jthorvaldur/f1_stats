@@ -9,6 +9,7 @@ from . import profiles as prof
 from . import markets
 from . import calendar_data as cal
 from . import sponsors as spn
+from . import hft_data
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TEMPLATES_DIR = ROOT / "templates"
@@ -147,6 +148,8 @@ PAGES = [
     "sponsors.html",
     "physics.html",
     "technology.html",
+    "hft.html",
+    "hft-tech.html",
 ]
 
 
@@ -192,6 +195,12 @@ def generate_all(year: int | None = None) -> None:
     data["circuit_details"] = cal.CIRCUIT_DETAILS
     data["team_sponsors"] = spn.TEAM_SPONSORS
     data["sector_colors"] = spn.SECTOR_COLORS
+    data["hft_timeline"] = hft_data.TIMELINE
+    data["hft_firms"] = hft_data.FIRMS
+    data["hft_latency"] = hft_data.LATENCY_EVOLUTION
+    data["hft_tech_stack"] = hft_data.TECHNOLOGY_STACK
+    data["hft_venues"] = hft_data.MARKET_VENUES
+    data["hft_strategies"] = hft_data.STRATEGIES
 
     print("Fetching prediction market odds...")
     if data["next_race"]:
