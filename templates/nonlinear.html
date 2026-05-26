@@ -277,7 +277,7 @@
 
   var drivers = [
     {% for d in data.drivers %}
-    { name: '{{ d.name }}', familyName: '{{ d.family_name }}', pts: {{ d.points|int }}, color: '#{{ d.team_hex }}', teamCss: '{{ d.team_css }}', team: '{{ d.team_display }}' }{% if not loop.last %},{% endif %}
+    { name: '{{ d.name }}', familyName: '{{ d.family_name }}', pts: {{ d.points|int }}, color: '{{ d.team_hex }}', teamCss: '{{ d.team_css }}', team: '{{ d.team_display }}' }{% if not loop.last %},{% endif %}
     {% endfor %}
   ];
 

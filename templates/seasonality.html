@@ -278,7 +278,7 @@ const RACES = [
         driver: '{{ r.driver | replace("'", "\\'") }}',
         team: '{{ r.team | replace("'", "\\'") }}',
         teamId: '{{ r.team_id }}',
-        teamColor: '#{{ r.team_hex }}',
+        teamColor: '{{ r.team_hex }}',
         position: {{ r.position }},
         grid: {{ r.grid if r.grid and r.grid != '0' else 0 }},
         points: {{ r.points }},
@@ -296,7 +296,7 @@ const CONSTRUCTORS = [
   {
     teamId: '{{ c.team_id }}',
     name: '{{ c.team_display }}',
-    color: '#{{ c.team_hex }}',
+    color: '{{ c.team_hex }}',
     points: {{ c.points }}
   }{% if not loop.last %},{% endif %}
   {% endfor %}
