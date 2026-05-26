@@ -291,7 +291,7 @@
       nDrivers: {{ h.n_drivers }},
       standings: [
         {% for s in h.standings %}
-        { driver: '{{ s.driver }}', points: {{ s.points }}, wins: {{ s.wins }}, team: '{{ s.team }}' }{% if not loop.last %},{% endif %}
+        { driver: '{{ s.driver|jsstr }}', points: {{ s.points }}, wins: {{ s.wins }}, team: '{{ s.team|jsstr }}' }{% if not loop.last %},{% endif %}
         {% endfor %}
       ]
     }{% if not loop.last %},{% endif %}

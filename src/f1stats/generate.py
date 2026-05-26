@@ -28,6 +28,7 @@ def build_template_env() -> Environment:
     env.filters["team_css"] = lambda tid: static_data.get_team_color(tid)["css"]
     env.filters["team_display"] = static_data.get_team_display
     env.filters["tojson"] = lambda v: json.dumps(v)
+    env.filters["jsstr"] = lambda v: str(v).replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
     return env
 
 
