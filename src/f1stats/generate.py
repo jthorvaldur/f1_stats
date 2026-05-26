@@ -9,6 +9,7 @@ from . import profiles as prof
 from . import markets
 from . import calendar_data as cal
 from . import sponsors as spn
+from . import og_images
 from . import hft_data
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -253,6 +254,10 @@ def generate_all(year: int | None = None) -> None:
     print(f"  OK   data.json")
 
     generate_sitemap(data)
+
+    print("Generating OG preview images...")
+    og_images.generate_all()
+
     print("Done.")
 
 

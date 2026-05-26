@@ -64,6 +64,9 @@
   footer a { color: #58a6ff; }
   @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .hero { padding: 40px 16px 24px; } .section { padding: 24px 16px; } }
 </style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"F1 2026 — Prediction Markets and Edge Detection","description":"Model vs Polymarket odds comparison. Edge detection, Kelly criterion sizing, and expected value analysis for F1 2026.","author":{"@type":"Person","name":"Joel Thorarinson","url":"https://jthorvaldur.github.io"},"dateModified":"2026-05-25","url":"https://jthorvaldur.github.io/f1_stats/markets.html"}
+</script>
 </head>
 <body>
 
@@ -198,7 +201,7 @@
 </div>
 
 <footer>
-  Model: f1stats form/momentum/consistency &middot; Market: <a href="https://polymarket.com/predictions/formula1">Polymarket</a> &middot; Generated 2026-05-24 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Model: f1stats form/momentum/consistency &middot; Market: <a href="https://polymarket.com/predictions/formula1">Polymarket</a> &middot; Generated 2026-05-25 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -229,7 +232,7 @@
   ];
 
   const raceOdds = [];
-  const wdcOdds = [{"driver": "Kimi Antonelli", "market_prob": 0.571, "volume": "3159822.0014249682"}, {"driver": "George Russell", "market_prob": 0.28, "volume": "1896702.3983090015"}, {"driver": "Lando Norris", "market_prob": 0.0385, "volume": "2314666.165950992"}, {"driver": "Max Verstappen", "market_prob": 0.025, "volume": "2149962.2725499873"}, {"driver": "Charles Leclerc", "market_prob": 0.0225, "volume": "2983961.863520015"}, {"driver": "Lewis Hamilton", "market_prob": 0.015, "volume": "4013732.8392889136"}, {"driver": "Oscar Piastri", "market_prob": 0.0145, "volume": "1908597.0152100076"}, {"driver": "Fernando Alonso", "market_prob": 0.0035, "volume": "7366106.9380988795"}, {"driver": "Nico H\u00fclkenberg", "market_prob": 0.0035, "volume": "6905881.308222911"}, {"driver": "Gabriel Bortoleto", "market_prob": 0.0035, "volume": "9387079.78689844"}, {"driver": "Franco Colapinto", "market_prob": 0.0035, "volume": "10506820.663455665"}, {"driver": "Alexander Albon", "market_prob": 0.0035, "volume": "10142213.724963266"}, {"driver": "Valtteri Bottas", "market_prob": 0.0035, "volume": "10621323.820637036"}, {"driver": "Esteban Ocon", "market_prob": 0.0025, "volume": "7890188.670476883"}, {"driver": "Liam Lawson", "market_prob": 0.0025, "volume": "9580785.918764628"}, {"driver": "Arvid Lindblad", "market_prob": 0.0025, "volume": "10374330.988371572"}, {"driver": "Carlos Sainz Jr.", "market_prob": 0.0025, "volume": "9028080.858976655"}, {"driver": "Sergio P\u00e9rez", "market_prob": 0.0025, "volume": "8983657.545295661"}, {"driver": "Isack Hadjar", "market_prob": 0.0025, "volume": "7209844.291080691"}, {"driver": "Pierre Gasly", "market_prob": 0.0015, "volume": "9061464.772101834"}, {"driver": "Lance Stroll", "market_prob": 0.0015, "volume": "9922549.966972906"}, {"driver": "Oliver Bearman", "market_prob": 0.0015, "volume": "10188451.338952659"}];
+  const wdcOdds = [{"driver": "Kimi Antonelli", "market_prob": 0.5495, "volume": "3181085.6728739683"}, {"driver": "George Russell", "market_prob": 0.275, "volume": "1921704.1668200009"}, {"driver": "Lando Norris", "market_prob": 0.0715, "volume": "2345598.514899993"}, {"driver": "Max Verstappen", "market_prob": 0.0245, "volume": "2186583.9083119873"}, {"driver": "Charles Leclerc", "market_prob": 0.0245, "volume": "3023119.9789750157"}, {"driver": "Oscar Piastri", "market_prob": 0.0165, "volume": "1930198.5095730065"}, {"driver": "Lewis Hamilton", "market_prob": 0.0165, "volume": "4039404.517686913"}, {"driver": "Fernando Alonso", "market_prob": 0.0035, "volume": "7394900.101066872"}, {"driver": "Nico H\u00fclkenberg", "market_prob": 0.0035, "volume": "6942787.794535902"}, {"driver": "Gabriel Bortoleto", "market_prob": 0.0035, "volume": "9435171.330212422"}, {"driver": "Franco Colapinto", "market_prob": 0.0035, "volume": "10541238.486423649"}, {"driver": "Alexander Albon", "market_prob": 0.0035, "volume": "10182712.823610267"}, {"driver": "Valtteri Bottas", "market_prob": 0.0035, "volume": "10646715.345282035"}, {"driver": "Esteban Ocon", "market_prob": 0.0025, "volume": "7927890.091476855"}, {"driver": "Pierre Gasly", "market_prob": 0.0025, "volume": "9807855.365601826"}, {"driver": "Liam Lawson", "market_prob": 0.0025, "volume": "9641832.0787646"}, {"driver": "Arvid Lindblad", "market_prob": 0.0025, "volume": "10426696.084871577"}, {"driver": "Carlos Sainz Jr.", "market_prob": 0.0025, "volume": "9063768.649476634"}, {"driver": "Sergio P\u00e9rez", "market_prob": 0.0025, "volume": "9022445.548795633"}, {"driver": "Isack Hadjar", "market_prob": 0.0025, "volume": "7246579.973080662"}, {"driver": "Lance Stroll", "market_prob": 0.0025, "volume": "10644869.981472889"}, {"driver": "Oliver Bearman", "market_prob": 0.0025, "volume": "10972588.61702667"}];
   const currentRound = 5;
   const totalRounds = 24;
 
