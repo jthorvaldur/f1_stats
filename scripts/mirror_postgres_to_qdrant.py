@@ -44,18 +44,23 @@ TABLES = {
     "facts": {
         "collection": "case_facts_semantic",
         "batch_size": 20,
-        "text_fn": lambda r: r.get("fact_text", "")[:300],
+        "text_fn": lambda r: r.get("statement", "")[:300],
         "id_fn": lambda r: str(uuid.uuid5(uuid.NAMESPACE_DNS, f"fact_{r['id']}")),
         "query": """
-            SELECT id, fact_text, confidence, domain, category, source_ref,
-                   COALESCE(case_id, '') as case_id
-            FROM facts WHERE fact_text IS NOT NULL AND fact_text != '' ORDER BY id
+            SELECT id, COALESCE(statement, '') as statement,
+                   COALESCE(confidence, '') as confidence,
+                   COALESCE(category, '') as category,
+                   COALESCE(status, '') as status,
+                   COALESCE(case_id, '') as case_id,
+                   COALESCE(exact_party, '') as exact_party,
+                   utility_score
+            FROM facts WHERE statement IS NOT NULL AND statement != '' ORDER BY id
         """,
         "payload_fn": lambda r: {
-            "fact_text": r["fact_text"][:500], "confidence": r.get("confidence", ""),
-            "domain": r.get("domain", ""), "category": r.get("category", ""),
-            "source_ref": r.get("source_ref", ""), "case_id": r.get("case_id", ""),
-            "pg_id": r["id"],
+            "statement": r["statement"][:500], "confidence": r.get("confidence", ""),
+            "category": r.get("category", ""), "status": r.get("status", ""),
+            "case_id": r.get("case_id", ""), "exact_party": r.get("exact_party", ""),
+            "utility_score": r.get("utility_score"), "pg_id": r["id"],
         },
     },
     "statutory_concepts": {
@@ -80,35 +85,44 @@ TABLES = {
     "statute_raw": {
         "collection": "statute_raw",
         "batch_size": 20,
-        "text_fn": lambda r: f"{r.get('statute_ref','')} {r.get('title','')} — {r.get('body','')[:200]}",
+        "text_fn": lambda r: f"{r.get('statute_cite','')} {r.get('statute_name','')} — {r.get('summary', r.get('full_text',''))[:200]}",
         "id_fn": lambda r: str(uuid.uuid5(uuid.NAMESPACE_DNS, f"sr_{r['id']}")),
         "query": """
-            SELECT id, COALESCE(statute_ref, '') as statute_ref,
-                   COALESCE(title, '') as title, COALESCE(body, '') as body,
-                   COALESCE(jurisdiction, '') as jurisdiction
+            SELECT id, COALESCE(statute_cite, '') as statute_cite,
+                   COALESCE(statute_name, '') as statute_name,
+                   COALESCE(summary, '') as summary,
+                   COALESCE(LEFT(full_text, 500), '') as full_text,
+                   COALESCE(jurisdiction, '') as jurisdiction,
+                   COALESCE(domain, '') as domain
             FROM statute_raw ORDER BY id
         """,
         "payload_fn": lambda r: {
-            "statute_ref": r["statute_ref"], "title": r["title"],
-            "body": r["body"][:500], "jurisdiction": r["jurisdiction"], "pg_id": r["id"],
+            "statute_cite": r["statute_cite"], "statute_name": r["statute_name"],
+            "summary": r["summary"][:500], "full_text": r["full_text"][:500],
+            "jurisdiction": r["jurisdiction"], "domain": r["domain"], "pg_id": r["id"],
         },
     },
     "statutory_words": {
         "collection": "statutory_words",
         "batch_size": 20,
-        "text_fn": lambda r: f"{r['word']} — {r.get('definition','')[:200]}",
+        "text_fn": lambda r: f"{r['word']} — {r.get('definition','')[:200]} (context: {r.get('context','')[:100]})",
         "id_fn": lambda r: str(uuid.uuid5(uuid.NAMESPACE_DNS, f"sw_{r['id']}")),
         "query": """
             SELECT id, word, COALESCE(definition, '') as definition,
                    COALESCE(jurisdiction, '') as jurisdiction,
                    COALESCE(domain, '') as domain,
-                   COALESCE(statute_cite, '') as statute_cite
+                   COALESCE(statute_cite, '') as statute_cite,
+                   COALESCE(context, '') as context,
+                   COALESCE(rule_type, '') as rule_type,
+                   COALESCE(trigger_level, '') as trigger_level
             FROM statutory_words ORDER BY id
         """,
         "payload_fn": lambda r: {
             "word": r["word"], "definition": r["definition"][:300],
             "jurisdiction": r["jurisdiction"], "domain": r["domain"],
-            "statute_cite": r["statute_cite"], "pg_id": r["id"],
+            "statute_cite": r["statute_cite"], "context": r["context"][:200],
+            "rule_type": r["rule_type"], "trigger_level": r["trigger_level"],
+            "pg_id": r["id"],
         },
     },
 }
