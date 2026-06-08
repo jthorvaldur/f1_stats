@@ -195,7 +195,7 @@
 <!-- Section 2: Current Entropy Calculation -->
 <div class="section section-divider">
   <h2>2026 Championship Entropy</h2>
-  <p class="section-sub">After Round 5</p>
+  <p class="section-sub">After Round 6</p>
   <div class="grid grid-3">
     <div class="card">
       <div class="card-title">Shannon Entropy (H)</div>
@@ -263,7 +263,7 @@
 <!-- Section 4: Round-by-Round Entropy -->
 <div class="section section-divider">
   <h2>2026 Round-by-Round Entropy</h2>
-  <p class="section-sub">How championship uncertainty has evolved through the first 5 races</p>
+  <p class="section-sub">How championship uncertainty has evolved through the first 6 races</p>
   <div class="card">
     <div class="chart-container" style="height: 400px;">
       <canvas id="roundChart"></canvas>
@@ -312,7 +312,7 @@
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-06-01 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-06-08 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -339,8 +339,8 @@ function hMax(n) {
 // DATA: Current standings (injected from Jinja2)
 // ============================================================
 const currentStandings = [
-  {name:'Antonelli', team:'Mercedes', color:'#00d2be', pts:131, teamCss:'team-mercedes'},  {name:'Russell', team:'Mercedes', color:'#00d2be', pts:88, teamCss:'team-mercedes'},  {name:'Leclerc', team:'Ferrari', color:'#dc143c', pts:75, teamCss:'team-ferrari'},  {name:'Hamilton', team:'Ferrari', color:'#dc143c', pts:72, teamCss:'team-ferrari'},  {name:'Norris', team:'McLaren', color:'#ff8700', pts:58, teamCss:'team-mclaren'},  {name:'Piastri', team:'McLaren', color:'#ff8700', pts:48, teamCss:'team-mclaren'},  {name:'Verstappen', team:'Red Bull', color:'#3671C6', pts:43, teamCss:'team-redbull'},  {name:'Gasly', team:'Alpine F1 Team', color:'#0090ff', pts:20, teamCss:'team-alpine'},  {name:'Bearman', team:'Haas F1 Team', color:'#b6babd', pts:18, teamCss:'team-haas'},  {name:'Lawson', team:'RB F1 Team', color:'#6692ff', pts:16, teamCss:'team-rb'},  {name:'Colapinto', team:'Alpine F1 Team', color:'#0090ff', pts:15, teamCss:'team-alpine'},  {name:'Hadjar', team:'Red Bull', color:'#3671C6', pts:14, teamCss:'team-redbull'},  {name:'Sainz', team:'Williams', color:'#64c4ff', pts:6, teamCss:'team-williams'},  {name:'Lindblad', team:'RB F1 Team', color:'#6692ff', pts:5, teamCss:'team-rb'},  {name:'Bortoleto', team:'Audi', color:'#00e701', pts:2, teamCss:'team-audi'},  {name:'Ocon', team:'Haas F1 Team', color:'#b6babd', pts:1, teamCss:'team-haas'},  {name:'Albon', team:'Williams', color:'#64c4ff', pts:1, teamCss:'team-williams'},  {name:'Hülkenberg', team:'Audi', color:'#00e701', pts:0, teamCss:'team-audi'},  {name:'Bottas', team:'Cadillac F1 Team', color:'#c0c0c0', pts:0, teamCss:'team-cadillac'},  {name:'Pérez', team:'Cadillac F1 Team', color:'#c0c0c0', pts:0, teamCss:'team-cadillac'},  {name:'Stroll', team:'Aston Martin', color:'#006f62', pts:0, teamCss:'team-aston'},  {name:'Alonso', team:'Aston Martin', color:'#006f62', pts:0, teamCss:'team-aston'}];
-const currentRound = 5;
+  {name:'Antonelli', team:'Mercedes', color:'#00d2be', pts:156, teamCss:'team-mercedes'},  {name:'Hamilton', team:'Ferrari', color:'#dc143c', pts:90, teamCss:'team-ferrari'},  {name:'Russell', team:'Mercedes', color:'#00d2be', pts:88, teamCss:'team-mercedes'},  {name:'Leclerc', team:'Ferrari', color:'#dc143c', pts:75, teamCss:'team-ferrari'},  {name:'Piastri', team:'McLaren', color:'#ff8700', pts:60, teamCss:'team-mclaren'},  {name:'Norris', team:'McLaren', color:'#ff8700', pts:58, teamCss:'team-mclaren'},  {name:'Verstappen', team:'Red Bull', color:'#3671C6', pts:43, teamCss:'team-redbull'},  {name:'Hadjar', team:'Red Bull', color:'#3671C6', pts:29, teamCss:'team-redbull'},  {name:'Lawson', team:'RB F1 Team', color:'#6692ff', pts:26, teamCss:'team-rb'},  {name:'Gasly', team:'Alpine F1 Team', color:'#0090ff', pts:26, teamCss:'team-alpine'},  {name:'Bearman', team:'Haas F1 Team', color:'#b6babd', pts:18, teamCss:'team-haas'},  {name:'Colapinto', team:'Alpine F1 Team', color:'#0090ff', pts:15, teamCss:'team-alpine'},  {name:'Lindblad', team:'RB F1 Team', color:'#6692ff', pts:13, teamCss:'team-rb'},  {name:'Sainz', team:'Williams', color:'#64c4ff', pts:6, teamCss:'team-williams'},  {name:'Albon', team:'Williams', color:'#64c4ff', pts:5, teamCss:'team-williams'},  {name:'Ocon', team:'Haas F1 Team', color:'#b6babd', pts:3, teamCss:'team-haas'},  {name:'Bortoleto', team:'Audi', color:'#00e701', pts:2, teamCss:'team-audi'},  {name:'Alonso', team:'Aston Martin', color:'#006f62', pts:1, teamCss:'team-aston'},  {name:'Hülkenberg', team:'Audi', color:'#00e701', pts:0, teamCss:'team-audi'},  {name:'Bottas', team:'Cadillac F1 Team', color:'#c0c0c0', pts:0, teamCss:'team-cadillac'},  {name:'Pérez', team:'Cadillac F1 Team', color:'#c0c0c0', pts:0, teamCss:'team-cadillac'},  {name:'Stroll', team:'Aston Martin', color:'#006f62', pts:0, teamCss:'team-aston'}];
+const currentRound = 6;
 const currentYear = 2026;
 
 // Build cumulative points per round from injected data

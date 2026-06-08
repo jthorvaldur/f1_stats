@@ -82,7 +82,7 @@
 
 <div class="section">
   <h2>Championship Battle</h2>
-  <p class="section-sub">Cumulative driver points — Rounds 1 through 5</p>
+  <p class="section-sub">Cumulative driver points — Rounds 1 through 6</p>
   <div class="card">
     <div class="chart-container">
       <canvas id="progressionChart"></canvas>
@@ -120,7 +120,16 @@
           <td>25</td>
           <td>25</td>
           <td>25</td>
-          <td style="font-weight:700;">131</td>
+          <td style="font-weight:700;">156</td>
+        </tr>
+        <tr>
+          <td class="driver-name" style="color:#dc143c;">Hamilton</td>
+          <td>12</td>
+          <td>15</td>
+          <td>8</td>
+          <td>8</td>
+          <td>18</td>
+          <td style="font-weight:700;">90</td>
         </tr>
         <tr>
           <td class="driver-name" style="color:#00d2be;">Russell</td>
@@ -141,13 +150,13 @@
           <td style="font-weight:700;">75</td>
         </tr>
         <tr>
-          <td class="driver-name" style="color:#dc143c;">Hamilton</td>
-          <td>12</td>
-          <td>15</td>
-          <td>8</td>
-          <td>8</td>
+          <td class="driver-name" style="color:#ff8700;">Piastri</td>
+          <td>—</td>
+          <td>—</td>
           <td>18</td>
-          <td style="font-weight:700;">72</td>
+          <td>15</td>
+          <td>0</td>
+          <td style="font-weight:700;">60</td>
         </tr>
         <tr>
           <td class="driver-name" style="color:#ff8700;">Norris</td>
@@ -159,15 +168,6 @@
           <td style="font-weight:700;">58</td>
         </tr>
         <tr>
-          <td class="driver-name" style="color:#ff8700;">Piastri</td>
-          <td>—</td>
-          <td>—</td>
-          <td>18</td>
-          <td>15</td>
-          <td>0</td>
-          <td style="font-weight:700;">48</td>
-        </tr>
-        <tr>
           <td class="driver-name" style="color:#3671C6;">Verstappen</td>
           <td>8</td>
           <td>—</td>
@@ -177,22 +177,13 @@
           <td style="font-weight:700;">43</td>
         </tr>
         <tr>
-          <td class="driver-name" style="color:#0090ff;">Gasly</td>
-          <td>1</td>
-          <td>8</td>
-          <td>6</td>
+          <td class="driver-name" style="color:#3671C6;">Hadjar</td>
           <td>—</td>
           <td>4</td>
-          <td style="font-weight:700;">20</td>
-        </tr>
-        <tr>
-          <td class="driver-name" style="color:#b6babd;">Bearman</td>
-          <td>6</td>
-          <td>10</td>
-          <td>—</td>
           <td>0</td>
-          <td>1</td>
-          <td style="font-weight:700;">18</td>
+          <td>—</td>
+          <td>10</td>
+          <td style="font-weight:700;">29</td>
         </tr>
         <tr>
           <td class="driver-name" style="color:#6692ff;">Lawson</td>
@@ -201,7 +192,16 @@
           <td>2</td>
           <td>—</td>
           <td>6</td>
-          <td style="font-weight:700;">16</td>
+          <td style="font-weight:700;">26</td>
+        </tr>
+        <tr>
+          <td class="driver-name" style="color:#0090ff;">Gasly</td>
+          <td>1</td>
+          <td>8</td>
+          <td>6</td>
+          <td>—</td>
+          <td>4</td>
+          <td style="font-weight:700;">26</td>
         </tr>
       </tbody>
     </table>
@@ -209,7 +209,7 @@
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-06-01 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-06-08 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -218,19 +218,19 @@
   const cumulativeData = {"George Russell": [25.0, 43.0, 55.0, 67.0], "Andrea Kimi Antonelli": [18.0, 43.0, 68.0, 93.0, 118.0], "Charles Leclerc": [15.0, 27.0, 42.0, 46.0, 58.0], "Lewis Hamilton": [12.0, 27.0, 35.0, 43.0, 61.0], "Lando Norris": [10.0, 10.0, 20.0, 38.0], "Max Verstappen": [8.0, 8.0, 12.0, 22.0, 37.0], "Oliver Bearman": [6.0, 16.0, 16.0, 16.0, 17.0], "Arvid Lindblad": [4.0, 4.0, 4.0, 4.0], "Gabriel Bortoleto": [2.0, 2.0, 2.0, 2.0], "Pierre Gasly": [1.0, 9.0, 15.0, 15.0, 19.0], "Esteban Ocon": [0.0, 0.0, 1.0, 1.0], "Alexander Albon": [0.0, 0.0, 0.0, 1.0], "Liam Lawson": [0.0, 6.0, 8.0, 8.0, 14.0], "Franco Colapinto": [0.0, 1.0, 1.0, 7.0, 15.0], "Carlos Sainz": [0.0, 2.0, 2.0, 4.0, 6.0], "Sergio P\u00e9rez": [0.0, 0.0, 0.0, 0.0], "Lance Stroll": [0.0, 0.0, 0.0, 0.0], "Fernando Alonso": [0.0, 0.0, 0.0, 0.0], "Valtteri Bottas": [0.0, 0.0, 0.0, 0.0], "Isack Hadjar": [0.0, 4.0, 4.0, 4.0, 14.0], "Oscar Piastri": [0.0, 0.0, 18.0, 33.0, 33.0], "Nico H\u00fclkenberg": [0.0, 0.0, 0.0, 0.0, 0.0]};
   const driversInfo = [
     {name:'Antonelli', color:'#00d2be', width:3},
-    {name:'Russell', color:'#00d2be', width:3, dash:[6,3]},
+    {name:'Hamilton', color:'#dc143c', width:3, dash:[6,3]},
+    {name:'Russell', color:'#00d2be', width:2},
     {name:'Leclerc', color:'#dc143c', width:2},
-    {name:'Hamilton', color:'#dc143c', width:2},
-    {name:'Norris', color:'#ff8700', width:2},
-    {name:'Piastri', color:'#ff8700', width:2, dash:[6,3]},
+    {name:'Piastri', color:'#ff8700', width:2},
+    {name:'Norris', color:'#ff8700', width:2, dash:[6,3]},
     {name:'Verstappen', color:'#3671C6', width:2},
-    {name:'Gasly', color:'#0090ff', width:1},
-    {name:'Bearman', color:'#b6babd', width:1},
+    {name:'Hadjar', color:'#3671C6', width:1},
     {name:'Lawson', color:'#6692ff', width:1},
+    {name:'Gasly', color:'#0090ff', width:1},
+    {name:'Bearman', color:'#b6babd', width:1, dash:[2,3]},
     {name:'Colapinto', color:'#0090ff', width:1, dash:[2,3]},
-    {name:'Hadjar', color:'#3671C6', width:1, dash:[2,3]},
-    {name:'Sainz', color:'#64c4ff', width:1, dash:[2,3]},
     {name:'Lindblad', color:'#6692ff', width:1, dash:[2,3]},
+    {name:'Sainz', color:'#64c4ff', width:1, dash:[2,3]},
   ];
 
   const constructorsInfo = [
@@ -243,12 +243,12 @@
     {name:'Haas F1 Team', color:'#b6babd', width:1.5},
     {name:'Williams', color:'#64c4ff', width:1},
     {name:'Audi', color:'#00e701', width:1, dash:[3,3]},
-    {name:'Cadillac F1 Team', color:'#c0c0c0', width:1, dash:[3,3]},
     {name:'Aston Martin', color:'#006f62', width:1, dash:[3,3]},
+    {name:'Cadillac F1 Team', color:'#c0c0c0', width:1, dash:[3,3]},
   ];
 
   const rounds = ['Start', 'R1\nAUS', 'R2\nCHI', 'R3\nJAP', 'R4\nMIA', 'R5\nCAN'];
-  const numRounds = 5;
+  const numRounds = 6;
 
   // Build driverData from cumulative points
   const driverData = driversInfo.map(function(d) {
@@ -272,6 +272,10 @@
         var dpts = cumulativeData['Antonelli'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
+      if ('Ferrari' === c.name || 'Ferrari' === c.name) {
+        var dpts = cumulativeData['Hamilton'];
+        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
+      }
       if ('Mercedes' === c.name || 'Mercedes' === c.name) {
         var dpts = cumulativeData['Russell'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
@@ -280,20 +284,24 @@
         var dpts = cumulativeData['Leclerc'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
-      if ('Ferrari' === c.name || 'Ferrari' === c.name) {
-        var dpts = cumulativeData['Hamilton'];
+      if ('McLaren' === c.name || 'McLaren' === c.name) {
+        var dpts = cumulativeData['Piastri'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('McLaren' === c.name || 'McLaren' === c.name) {
         var dpts = cumulativeData['Norris'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
-      if ('McLaren' === c.name || 'McLaren' === c.name) {
-        var dpts = cumulativeData['Piastri'];
+      if ('Red Bull' === c.name || 'Red Bull' === c.name) {
+        var dpts = cumulativeData['Verstappen'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('Red Bull' === c.name || 'Red Bull' === c.name) {
-        var dpts = cumulativeData['Verstappen'];
+        var dpts = cumulativeData['Hadjar'];
+        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
+      }
+      if ('RB F1 Team' === c.name || 'RB' === c.name) {
+        var dpts = cumulativeData['Lawson'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('Alpine F1 Team' === c.name || 'Alpine' === c.name) {
@@ -304,36 +312,32 @@
         var dpts = cumulativeData['Bearman'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
-      if ('RB F1 Team' === c.name || 'RB' === c.name) {
-        var dpts = cumulativeData['Lawson'];
-        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
-      }
       if ('Alpine F1 Team' === c.name || 'Alpine' === c.name) {
         var dpts = cumulativeData['Colapinto'];
-        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
-      }
-      if ('Red Bull' === c.name || 'Red Bull' === c.name) {
-        var dpts = cumulativeData['Hadjar'];
-        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
-      }
-      if ('Williams' === c.name || 'Williams' === c.name) {
-        var dpts = cumulativeData['Sainz'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('RB F1 Team' === c.name || 'RB' === c.name) {
         var dpts = cumulativeData['Lindblad'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
-      if ('Audi' === c.name || 'Audi' === c.name) {
-        var dpts = cumulativeData['Bortoleto'];
+      if ('Williams' === c.name || 'Williams' === c.name) {
+        var dpts = cumulativeData['Sainz'];
+        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
+      }
+      if ('Williams' === c.name || 'Williams' === c.name) {
+        var dpts = cumulativeData['Albon'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('Haas F1 Team' === c.name || 'Haas' === c.name) {
         var dpts = cumulativeData['Ocon'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
-      if ('Williams' === c.name || 'Williams' === c.name) {
-        var dpts = cumulativeData['Albon'];
+      if ('Audi' === c.name || 'Audi' === c.name) {
+        var dpts = cumulativeData['Bortoleto'];
+        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
+      }
+      if ('Aston Martin' === c.name || 'Aston Martin' === c.name) {
+        var dpts = cumulativeData['Alonso'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('Audi' === c.name || 'Audi' === c.name) {
@@ -350,10 +354,6 @@
       }
       if ('Aston Martin' === c.name || 'Aston Martin' === c.name) {
         var dpts = cumulativeData['Stroll'];
-        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
-      }
-      if ('Aston Martin' === c.name || 'Aston Martin' === c.name) {
-        var dpts = cumulativeData['Alonso'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       constructorCumulative[c.name].push(total);
