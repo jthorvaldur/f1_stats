@@ -1,7 +1,7 @@
 {
   "year": 2026,
-  "current_round": 9,
-  "generated": "2026-07-13",
+  "current_round": 10,
+  "generated": "2026-07-20",
   "drivers": [
     {
       "position": 1,
@@ -12,8 +12,8 @@
       "dob": "2006-08-25",
       "nationality": "Italian",
       "number": "12",
-      "points": 179.0,
-      "wins": 5,
+      "points": 204.0,
+      "wins": 6,
       "team": "Mercedes",
       "team_id": "mercedes",
       "team_hex": "#00d2be",
@@ -54,55 +54,6 @@
     },
     {
       "position": 2,
-      "name": "George Russell",
-      "given_name": "George",
-      "family_name": "Russell",
-      "code": "RUS",
-      "dob": "1998-02-15",
-      "nationality": "British",
-      "number": "63",
-      "points": 154.0,
-      "wins": 2,
-      "team": "Mercedes",
-      "team_id": "mercedes",
-      "team_hex": "#00d2be",
-      "team_css": "team-mercedes",
-      "team_display": "Mercedes",
-      "driver_id": "russell",
-      "age": 28,
-      "weight_kg": 70,
-      "height_cm": 185,
-      "bmi": 20.5,
-      "ballast": 7,
-      "debut_year": 2019,
-      "debut_age": 21,
-      "f1_seasons": 8,
-      "progress_pct": 86,
-      "profile": {
-        "archetype": "The Analyst",
-        "big5": {
-          "openness": 70,
-          "conscientiousness": 90,
-          "extraversion": 75,
-          "agreeableness": 55,
-          "neuroticism": 35
-        },
-        "driving_style": "Methodical, data-driven, technically exceptional. Maximizes every situation. Known for extracting pace from difficult positions and exceptional tire management.",
-        "risk_profile": "Strategic risk management. Picks battles carefully. Will sacrifice a position now to gain later. Occasionally overdrives when frustrated.",
-        "team_dynamics": "Natural team leader. Strong communicator, politically astute within the paddock. Handles being second driver with professional grace.",
-        "traits": {
-          "aggression": 55,
-          "consistency": 85,
-          "wet_ability": 75,
-          "tire_mgmt": 90,
-          "qualifying": 85,
-          "racecraft": 75
-        }
-      },
-      "team_budget_m": 135
-    },
-    {
-      "position": 3,
       "name": "Lewis Hamilton",
       "given_name": "Lewis",
       "family_name": "Hamilton",
@@ -110,7 +61,7 @@
       "dob": "1985-01-07",
       "nationality": "British",
       "number": "44",
-      "points": 147.0,
+      "points": 159.0,
       "wins": 1,
       "team": "Ferrari",
       "team_id": "ferrari",
@@ -126,7 +77,7 @@
       "debut_year": 2007,
       "debut_age": 22,
       "f1_seasons": 20,
-      "progress_pct": 82,
+      "progress_pct": 78,
       "profile": {
         "archetype": "The Legend",
         "big5": {
@@ -151,6 +102,55 @@
       "team_budget_m": 135
     },
     {
+      "position": 3,
+      "name": "George Russell",
+      "given_name": "George",
+      "family_name": "Russell",
+      "code": "RUS",
+      "dob": "1998-02-15",
+      "nationality": "British",
+      "number": "63",
+      "points": 154.0,
+      "wins": 2,
+      "team": "Mercedes",
+      "team_id": "mercedes",
+      "team_hex": "#00d2be",
+      "team_css": "team-mercedes",
+      "team_display": "Mercedes",
+      "driver_id": "russell",
+      "age": 28,
+      "weight_kg": 70,
+      "height_cm": 185,
+      "bmi": 20.5,
+      "ballast": 7,
+      "debut_year": 2019,
+      "debut_age": 21,
+      "f1_seasons": 8,
+      "progress_pct": 75,
+      "profile": {
+        "archetype": "The Analyst",
+        "big5": {
+          "openness": 70,
+          "conscientiousness": 90,
+          "extraversion": 75,
+          "agreeableness": 55,
+          "neuroticism": 35
+        },
+        "driving_style": "Methodical, data-driven, technically exceptional. Maximizes every situation. Known for extracting pace from difficult positions and exceptional tire management.",
+        "risk_profile": "Strategic risk management. Picks battles carefully. Will sacrifice a position now to gain later. Occasionally overdrives when frustrated.",
+        "team_dynamics": "Natural team leader. Strong communicator, politically astute within the paddock. Handles being second driver with professional grace.",
+        "traits": {
+          "aggression": 55,
+          "consistency": 85,
+          "wet_ability": 75,
+          "tire_mgmt": 90,
+          "qualifying": 85,
+          "racecraft": 75
+        }
+      },
+      "team_budget_m": 135
+    },
+    {
       "position": 4,
       "name": "Charles Leclerc",
       "given_name": "Charles",
@@ -159,7 +159,7 @@
       "dob": "1997-10-16",
       "nationality": "Monegasque",
       "number": "16",
-      "points": 108.0,
+      "points": 126.0,
       "wins": 1,
       "team": "Ferrari",
       "team_id": "ferrari",
@@ -175,7 +175,7 @@
       "debut_year": 2018,
       "debut_age": 20,
       "f1_seasons": 9,
-      "progress_pct": 60,
+      "progress_pct": 62,
       "profile": {
         "archetype": "The Romantic",
         "big5": {
@@ -208,7 +208,7 @@
       "dob": "1999-11-13",
       "nationality": "British",
       "number": "1",
-      "points": 97.0,
+      "points": 103.0,
       "wins": 0,
       "team": "McLaren",
       "team_id": "mclaren",
@@ -224,7 +224,7 @@
       "debut_year": 2019,
       "debut_age": 19,
       "f1_seasons": 8,
-      "progress_pct": 54,
+      "progress_pct": 50,
       "profile": {
         "archetype": "The Perfectionist",
         "big5": {
@@ -257,7 +257,7 @@
       "dob": "2001-04-06",
       "nationality": "Australian",
       "number": "81",
-      "points": 82.0,
+      "points": 92.0,
       "wins": 0,
       "team": "McLaren",
       "team_id": "mclaren",
@@ -273,7 +273,7 @@
       "debut_year": 2023,
       "debut_age": 21,
       "f1_seasons": 4,
-      "progress_pct": 46,
+      "progress_pct": 45,
       "profile": {
         "archetype": "The Ice Man",
         "big5": {
@@ -306,7 +306,7 @@
       "dob": "1997-09-30",
       "nationality": "Dutch",
       "number": "3",
-      "points": 76.0,
+      "points": 91.0,
       "wins": 0,
       "team": "Red Bull",
       "team_id": "red_bull",
@@ -322,7 +322,7 @@
       "debut_year": 2015,
       "debut_age": 17,
       "f1_seasons": 12,
-      "progress_pct": 42,
+      "progress_pct": 45,
       "profile": {
         "archetype": "The Apex Predator",
         "big5": {
@@ -355,7 +355,7 @@
       "dob": "2004-09-28",
       "nationality": "French",
       "number": "6",
-      "points": 52.0,
+      "points": 60.0,
       "wins": 0,
       "team": "Red Bull",
       "team_id": "red_bull",
@@ -420,7 +420,7 @@
       "debut_year": 2017,
       "debut_age": 21,
       "f1_seasons": 10,
-      "progress_pct": 23,
+      "progress_pct": 21,
       "profile": {
         "archetype": "The Survivor",
         "big5": {
@@ -469,7 +469,7 @@
       "debut_year": 2023,
       "debut_age": 21,
       "f1_seasons": 4,
-      "progress_pct": 22,
+      "progress_pct": 19,
       "profile": {
         "archetype": "The Dark Horse",
         "big5": {
@@ -502,7 +502,7 @@
       "dob": "2007-08-08",
       "nationality": "British",
       "number": "41",
-      "points": 20.0,
+      "points": 22.0,
       "wins": 0,
       "team": "RB F1 Team",
       "team_id": "rb",
@@ -544,55 +544,6 @@
     },
     {
       "position": 12,
-      "name": "Oliver Bearman",
-      "given_name": "Oliver",
-      "family_name": "Bearman",
-      "code": "BEA",
-      "dob": "2005-05-08",
-      "nationality": "British",
-      "number": "87",
-      "points": 18.0,
-      "wins": 0,
-      "team": "Haas F1 Team",
-      "team_id": "haas",
-      "team_hex": "#b6babd",
-      "team_css": "team-haas",
-      "team_display": "Haas",
-      "driver_id": "bearman",
-      "age": 20,
-      "weight_kg": 68,
-      "height_cm": 184,
-      "bmi": 20.1,
-      "ballast": 9,
-      "debut_year": 2024,
-      "debut_age": 18,
-      "f1_seasons": 3,
-      "progress_pct": 10,
-      "profile": {
-        "archetype": "The Grinder",
-        "big5": {
-          "openness": 65,
-          "conscientiousness": 85,
-          "extraversion": 50,
-          "agreeableness": 70,
-          "neuroticism": 35
-        },
-        "driving_style": "Dependable, mature beyond his years. Proved himself with exceptional substitute drives in 2024. Extracts maximum from midfield machinery. Strong race pace, improving qualifying.",
-        "risk_profile": "Conservative for his age. Understands that finishing is scoring. Builds confidence through consistent results rather than heroic moves.",
-        "team_dynamics": "Low-maintenance driver. Gives clear feedback, doesn't create drama. The kind of driver team principals love working with.",
-        "traits": {
-          "aggression": 50,
-          "consistency": 75,
-          "wet_ability": 65,
-          "tire_mgmt": 70,
-          "qualifying": 65,
-          "racecraft": 70
-        }
-      },
-      "team_budget_m": 115
-    },
-    {
-      "position": 13,
       "name": "Franco Colapinto",
       "given_name": "Franco",
       "family_name": "Colapinto",
@@ -600,7 +551,7 @@
       "dob": "2003-05-27",
       "nationality": "Argentine",
       "number": "43",
-      "points": 18.0,
+      "points": 19.0,
       "wins": 0,
       "team": "Alpine F1 Team",
       "team_id": "alpine",
@@ -616,7 +567,7 @@
       "debut_year": 2024,
       "debut_age": 20,
       "f1_seasons": 3,
-      "progress_pct": 10,
+      "progress_pct": 9,
       "profile": {
         "archetype": "The Showman",
         "big5": {
@@ -641,6 +592,55 @@
       "team_budget_m": 130
     },
     {
+      "position": 13,
+      "name": "Oliver Bearman",
+      "given_name": "Oliver",
+      "family_name": "Bearman",
+      "code": "BEA",
+      "dob": "2005-05-08",
+      "nationality": "British",
+      "number": "87",
+      "points": 18.0,
+      "wins": 0,
+      "team": "Haas F1 Team",
+      "team_id": "haas",
+      "team_hex": "#b6babd",
+      "team_css": "team-haas",
+      "team_display": "Haas",
+      "driver_id": "bearman",
+      "age": 20,
+      "weight_kg": 68,
+      "height_cm": 184,
+      "bmi": 20.1,
+      "ballast": 9,
+      "debut_year": 2024,
+      "debut_age": 18,
+      "f1_seasons": 3,
+      "progress_pct": 9,
+      "profile": {
+        "archetype": "The Grinder",
+        "big5": {
+          "openness": 65,
+          "conscientiousness": 85,
+          "extraversion": 50,
+          "agreeableness": 70,
+          "neuroticism": 35
+        },
+        "driving_style": "Dependable, mature beyond his years. Proved himself with exceptional substitute drives in 2024. Extracts maximum from midfield machinery. Strong race pace, improving qualifying.",
+        "risk_profile": "Conservative for his age. Understands that finishing is scoring. Builds confidence through consistent results rather than heroic moves.",
+        "team_dynamics": "Low-maintenance driver. Gives clear feedback, doesn't create drama. The kind of driver team principals love working with.",
+        "traits": {
+          "aggression": 50,
+          "consistency": 75,
+          "wet_ability": 65,
+          "tire_mgmt": 70,
+          "qualifying": 65,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 115
+    },
+    {
       "position": 14,
       "name": "Gabriel Bortoleto",
       "given_name": "Gabriel",
@@ -649,7 +649,7 @@
       "dob": "2004-10-14",
       "nationality": "Brazilian",
       "number": "5",
-      "points": 6.0,
+      "points": 10.0,
       "wins": 0,
       "team": "Audi",
       "team_id": "audi",
@@ -665,7 +665,7 @@
       "debut_year": 2025,
       "debut_age": 20,
       "f1_seasons": 2,
-      "progress_pct": 3,
+      "progress_pct": 5,
       "profile": {
         "archetype": "The Scholar",
         "big5": {
@@ -763,7 +763,7 @@
       "debut_year": 2019,
       "debut_age": 22,
       "f1_seasons": 8,
-      "progress_pct": 3,
+      "progress_pct": 2,
       "profile": {
         "archetype": "The Phoenix",
         "big5": {
@@ -812,7 +812,7 @@
       "debut_year": 2016,
       "debut_age": 19,
       "f1_seasons": 11,
-      "progress_pct": 2,
+      "progress_pct": 1,
       "profile": {
         "archetype": "The Contrarian",
         "big5": {
@@ -861,7 +861,7 @@
       "debut_year": 2001,
       "debut_age": 19,
       "f1_seasons": 26,
-      "progress_pct": 1,
+      "progress_pct": 0,
       "profile": {
         "archetype": "The Gladiator",
         "big5": {
@@ -1087,8 +1087,8 @@
       "position": 1,
       "name": "Mercedes",
       "team_id": "mercedes",
-      "points": 333.0,
-      "wins": 7,
+      "points": 358.0,
+      "wins": 8,
       "team_hex": "#00d2be",
       "team_css": "team-mercedes",
       "team_display": "Mercedes",
@@ -1098,30 +1098,30 @@
       "budget_m": 135,
       "staff": 1000,
       "factory": "Brackley, UK",
-      "pts_per_million": 2.47
+      "pts_per_million": 2.65
     },
     {
       "position": 2,
       "name": "Ferrari",
       "team_id": "ferrari",
-      "points": 255.0,
+      "points": 285.0,
       "wins": 2,
       "team_hex": "#dc143c",
       "team_css": "team-ferrari",
       "team_display": "Ferrari",
       "car_weight": 770,
       "car_over": 2,
-      "progress_pct": 77,
+      "progress_pct": 80,
       "budget_m": 135,
       "staff": 1100,
       "factory": "Maranello, Italy",
-      "pts_per_million": 1.89
+      "pts_per_million": 2.11
     },
     {
       "position": 3,
       "name": "McLaren",
       "team_id": "mclaren",
-      "points": 179.0,
+      "points": 195.0,
       "wins": 0,
       "team_hex": "#ff8700",
       "team_css": "team-mclaren",
@@ -1132,58 +1132,58 @@
       "budget_m": 135,
       "staff": 900,
       "factory": "Woking, UK",
-      "pts_per_million": 1.33
+      "pts_per_million": 1.44
     },
     {
       "position": 4,
       "name": "Red Bull",
       "team_id": "red_bull",
-      "points": 128.0,
+      "points": 151.0,
       "wins": 0,
       "team_hex": "#3671C6",
       "team_css": "team-redbull",
       "team_display": "Red Bull",
       "car_weight": 778,
       "car_over": 10,
-      "progress_pct": 38,
+      "progress_pct": 42,
       "budget_m": 135,
       "staff": 950,
       "factory": "Milton Keynes, UK",
-      "pts_per_million": 0.95
+      "pts_per_million": 1.12
     },
     {
       "position": 5,
       "name": "Alpine F1 Team",
       "team_id": "alpine",
-      "points": 60.0,
+      "points": 61.0,
       "wins": 0,
       "team_hex": "#0090ff",
       "team_css": "team-alpine",
       "team_display": "Alpine",
       "car_weight": 773,
       "car_over": 5,
-      "progress_pct": 18,
+      "progress_pct": 17,
       "budget_m": 130,
       "staff": 800,
       "factory": "Enstone/Viry, UK/France",
-      "pts_per_million": 0.46
+      "pts_per_million": 0.47
     },
     {
       "position": 6,
       "name": "RB F1 Team",
       "team_id": "rb",
-      "points": 59.0,
+      "points": 61.0,
       "wins": 0,
       "team_hex": "#6692ff",
       "team_css": "team-rb",
       "team_display": "RB",
       "car_weight": 775,
       "car_over": 7,
-      "progress_pct": 18,
+      "progress_pct": 17,
       "budget_m": 125,
       "staff": 700,
       "factory": "Faenza, Italy",
-      "pts_per_million": 0.47
+      "pts_per_million": 0.49
     },
     {
       "position": 7,
@@ -1223,18 +1223,18 @@
       "position": 9,
       "name": "Audi",
       "team_id": "audi",
-      "points": 6.0,
+      "points": 10.0,
       "wins": 0,
       "team_hex": "#00e701",
       "team_css": "team-audi",
       "team_display": "Audi",
       "car_weight": 776,
       "car_over": 8,
-      "progress_pct": 2,
+      "progress_pct": 3,
       "budget_m": 130,
       "staff": 600,
       "factory": "Hinwil, Switzerland",
-      "pts_per_million": 0.05
+      "pts_per_million": 0.08
     },
     {
       "position": 10,

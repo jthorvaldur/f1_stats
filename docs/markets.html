@@ -65,7 +65,7 @@
   @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .hero { padding: 40px 16px 24px; } .section { padding: 24px 16px; } }
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Article","headline":"F1 2026 — Prediction Markets and Edge Detection","description":"Model vs Polymarket odds comparison. Edge detection, Kelly criterion sizing, and expected value analysis for F1 2026.","author":{"@type":"Person","name":"Joel Thorarinson","url":"https://jthorvaldur.github.io"},"dateModified":"2026-07-13","url":"https://jthorvaldur.github.io/f1_stats/markets.html"}
+{"@context":"https://schema.org","@type":"Article","headline":"F1 2026 — Prediction Markets and Edge Detection","description":"Model vs Polymarket odds comparison. Edge detection, Kelly criterion sizing, and expected value analysis for F1 2026.","author":{"@type":"Person","name":"Joel Thorarinson","url":"https://jthorvaldur.github.io"},"dateModified":"2026-07-20","url":"https://jthorvaldur.github.io/f1_stats/markets.html"}
 </script>
 </head>
 <body>
@@ -83,8 +83,8 @@
 
 <!-- ── Next Race ──────────────────────────────── -->
 <div class="section">
-  <h2>Next Race: Belgian Grand Prix</h2>
-  <p class="section-sub">Round 10 &middot; 2026-07-19 &middot; Circuit de Spa-Francorchamps, Spa</p>
+  <h2>Next Race: Hungarian Grand Prix</h2>
+  <p class="section-sub">Round 11 &middot; 2026-07-26 &middot; Hungaroring, Budapest</p>
 
   <div class="grid grid-4" id="raceStats">
     <div class="card">
@@ -117,7 +117,7 @@
   </div>
 
   <div class="card">
-    <div class="card-title">Edge Detection Table — Belgian Grand Prix</div>
+    <div class="card-title">Edge Detection Table — Hungarian Grand Prix</div>
     <table>
       <thead>
         <tr><th>Driver</th><th>Model %</th><th>Market %</th><th>Edge</th><th>EV/$1</th><th>Kelly %</th><th>Signal</th></tr>
@@ -184,7 +184,7 @@
     <div class="card">
       <div class="card-title">Model Limitations</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        Our model uses current-season form only (9 races). It does not account for circuit-specific performance, weather, car upgrades, or team orders. The market aggregates thousands of informed opinions. Treat edge signals as research starting points, not trading recommendations.
+        Our model uses current-season form only (10 races). It does not account for circuit-specific performance, weather, car upgrades, or team orders. The market aggregates thousands of informed opinions. Treat edge signals as research starting points, not trading recommendations.
       </div>
     </div>
     <div class="card">
@@ -197,30 +197,30 @@
 </div>
 
 <div class="callout callout-amber">
-  <strong>Disclaimer:</strong> This is an analytical comparison between a statistical model and prediction market prices. It is not financial advice. Prediction markets involve real money and risk. The model's edge estimates are based on 9 races of data — a small sample. Past edge does not predict future edge.
+  <strong>Disclaimer:</strong> This is an analytical comparison between a statistical model and prediction market prices. It is not financial advice. Prediction markets involve real money and risk. The model's edge estimates are based on 10 races of data — a small sample. Past edge does not predict future edge.
 </div>
 
 <footer>
-  Model: f1stats form/momentum/consistency &middot; Market: <a href="https://polymarket.com/predictions/formula1">Polymarket</a> &middot; Generated 2026-07-13 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Model: f1stats form/momentum/consistency &middot; Market: <a href="https://polymarket.com/predictions/formula1">Polymarket</a> &middot; Generated 2026-07-20 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
 (function() {
   const drivers = [
-    {name:'Antonelli', fullName:'Andrea Kimi Antonelli', pts:179, wins:5, team:'Mercedes', color:'#00d2be', pos:1},
-    {name:'Russell', fullName:'George Russell', pts:154, wins:2, team:'Mercedes', color:'#00d2be', pos:2},
-    {name:'Hamilton', fullName:'Lewis Hamilton', pts:147, wins:1, team:'Ferrari', color:'#dc143c', pos:3},
-    {name:'Leclerc', fullName:'Charles Leclerc', pts:108, wins:1, team:'Ferrari', color:'#dc143c', pos:4},
-    {name:'Norris', fullName:'Lando Norris', pts:97, wins:0, team:'McLaren', color:'#ff8700', pos:5},
-    {name:'Piastri', fullName:'Oscar Piastri', pts:82, wins:0, team:'McLaren', color:'#ff8700', pos:6},
-    {name:'Verstappen', fullName:'Max Verstappen', pts:76, wins:0, team:'Red Bull', color:'#3671C6', pos:7},
-    {name:'Hadjar', fullName:'Isack Hadjar', pts:52, wins:0, team:'Red Bull', color:'#3671C6', pos:8},
+    {name:'Antonelli', fullName:'Andrea Kimi Antonelli', pts:204, wins:6, team:'Mercedes', color:'#00d2be', pos:1},
+    {name:'Hamilton', fullName:'Lewis Hamilton', pts:159, wins:1, team:'Ferrari', color:'#dc143c', pos:2},
+    {name:'Russell', fullName:'George Russell', pts:154, wins:2, team:'Mercedes', color:'#00d2be', pos:3},
+    {name:'Leclerc', fullName:'Charles Leclerc', pts:126, wins:1, team:'Ferrari', color:'#dc143c', pos:4},
+    {name:'Norris', fullName:'Lando Norris', pts:103, wins:0, team:'McLaren', color:'#ff8700', pos:5},
+    {name:'Piastri', fullName:'Oscar Piastri', pts:92, wins:0, team:'McLaren', color:'#ff8700', pos:6},
+    {name:'Verstappen', fullName:'Max Verstappen', pts:91, wins:0, team:'Red Bull', color:'#3671C6', pos:7},
+    {name:'Hadjar', fullName:'Isack Hadjar', pts:60, wins:0, team:'Red Bull', color:'#3671C6', pos:8},
     {name:'Gasly', fullName:'Pierre Gasly', pts:42, wins:0, team:'Alpine', color:'#0090ff', pos:9},
     {name:'Lawson', fullName:'Liam Lawson', pts:39, wins:0, team:'RB', color:'#6692ff', pos:10},
-    {name:'Lindblad', fullName:'Arvid Lindblad', pts:20, wins:0, team:'RB', color:'#6692ff', pos:11},
-    {name:'Bearman', fullName:'Oliver Bearman', pts:18, wins:0, team:'Haas', color:'#b6babd', pos:12},
-    {name:'Colapinto', fullName:'Franco Colapinto', pts:18, wins:0, team:'Alpine', color:'#0090ff', pos:13},
-    {name:'Bortoleto', fullName:'Gabriel Bortoleto', pts:6, wins:0, team:'Audi', color:'#00e701', pos:14},
+    {name:'Lindblad', fullName:'Arvid Lindblad', pts:22, wins:0, team:'RB', color:'#6692ff', pos:11},
+    {name:'Colapinto', fullName:'Franco Colapinto', pts:19, wins:0, team:'Alpine', color:'#0090ff', pos:12},
+    {name:'Bearman', fullName:'Oliver Bearman', pts:18, wins:0, team:'Haas', color:'#b6babd', pos:13},
+    {name:'Bortoleto', fullName:'Gabriel Bortoleto', pts:10, wins:0, team:'Audi', color:'#00e701', pos:14},
     {name:'Sainz', fullName:'Carlos Sainz', pts:6, wins:0, team:'Williams', color:'#64c4ff', pos:15},
     {name:'Albon', fullName:'Alexander Albon', pts:5, wins:0, team:'Williams', color:'#64c4ff', pos:16},
     {name:'Ocon', fullName:'Esteban Ocon', pts:3, wins:0, team:'Haas', color:'#b6babd', pos:17},
@@ -232,8 +232,8 @@
   ];
 
   const raceOdds = [];
-  const wdcOdds = [{"driver": "Kimi Antonelli", "market_prob": 0.5935, "volume": "3692749.1959799835"}, {"driver": "George Russell", "market_prob": 0.195, "volume": "2398813.26243499"}, {"driver": "Lewis Hamilton", "market_prob": 0.1325, "volume": "4992107.288313928"}, {"driver": "Charles Leclerc", "market_prob": 0.0215, "volume": "4080292.500888014"}, {"driver": "Max Verstappen", "market_prob": 0.0125, "volume": "2986471.8471929934"}, {"driver": "Lando Norris", "market_prob": 0.0065, "volume": "2866716.332280003"}, {"driver": "Oscar Piastri", "market_prob": 0.0035, "volume": "2992955.9373620073"}, {"driver": "Fernando Alonso", "market_prob": 0.0015, "volume": "8940511.203374578"}, {"driver": "Nico H\u00fclkenberg", "market_prob": 0.0015, "volume": "8400426.717715373"}, {"driver": "Liam Lawson", "market_prob": 0.0015, "volume": "10655723.726793095"}, {"driver": "Arvid Lindblad", "market_prob": 0.0015, "volume": "11914764.982626237"}, {"driver": "Alexander Albon", "market_prob": 0.0015, "volume": "11800399.677011931"}, {"driver": "Valtteri Bottas", "market_prob": 0.0015, "volume": "12151195.513809621"}, {"driver": "Sergio P\u00e9rez", "market_prob": 0.0015, "volume": "11721821.184410254"}];
-  const currentRound = 9;
+  const wdcOdds = [{"driver": "Kimi Antonelli", "market_prob": 0.74, "volume": "3776947.017153989"}, {"driver": "Lewis Hamilton", "market_prob": 0.1005, "volume": "5056608.960275929"}, {"driver": "George Russell", "market_prob": 0.085, "volume": "2458148.414071991"}, {"driver": "Charles Leclerc", "market_prob": 0.0315, "volume": "5047953.018670017"}, {"driver": "Max Verstappen", "market_prob": 0.0245, "volume": "5728525.693726968"}, {"driver": "Lando Norris", "market_prob": 0.0195, "volume": "6494532.132324974"}, {"driver": "Oscar Piastri", "market_prob": 0.0095, "volume": "6004341.713140018"}, {"driver": "Esteban Ocon", "market_prob": 0.0015, "volume": "9375392.62302741"}];
+  const currentRound = 10;
   const totalRounds = 24;
 
   // ── Model probabilities (same as prediction.html) ──────
