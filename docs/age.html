@@ -115,7 +115,7 @@
 
 <div class="section">
   <h2>Grid Statistics</h2>
-  <p class="section-sub">Summary metrics for the 22-driver 2026 grid</p>
+  <p class="section-sub">Summary metrics for the 22-driver 2026 grid. Age statistics use the 22 drivers with known ages.</p>
   <div class="grid grid-4">
     <div class="card">
       <div class="card-title">Mean Age</div>
@@ -391,7 +391,7 @@
 
 <div class="section section-divider">
   <h2>Debut Age Distribution</h2>
-  <p class="section-sub">How old were current 2026 drivers when they entered F1?</p>
+  <p class="section-sub">How old were current 2026 drivers when they entered F1? Based on 22 drivers with known debut ages; unknown values are excluded from statistics.</p>
   <div class="card">
     <div class="chart-container">
       <canvas id="debutChart"></canvas>
@@ -423,13 +423,13 @@
     <div class="card">
       <div class="card-title">Generational Shift</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        The 2026 grid features a 26-year age span between Lindblad (18) and Alonso (44).
+The 2026 grid features a 26-year age span between Lindblad (18) and Alonso (44).
 3 drivers aged 20 or under race alongside 2 drivers over 40.      </div>
     </div>
     <div class="card">
       <div class="card-title">Youth Cohort</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        The under-25 cohort includes 8 drivers (36% of the grid). Peak performance typically clusters around age 26-28 where 8 drivers currently compete.
+The cohort aged 25 or younger includes 8 drivers (36% of drivers with known ages). 8 drivers are aged 26-30.
       </div>
     </div>
     <div class="card">
@@ -442,7 +442,7 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
     <div class="card">
       <div class="card-title">Debut Trends</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        13 of 22 drivers (59%) debuted at age 20 or younger, reflecting the post-2015 trend of younger entries driven by junior development programs.
+13 of 22 drivers with known debut ages (59%) debuted at age 20 or younger.
       </div>
     </div>
   </div>
@@ -456,33 +456,34 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
 (function() {
   // Build age data from Jinja-injected driver list
   const allDrivers = [
-    {name:'Lindblad', age:18, debutAge:18, seasons:1},
-    {name:'Antonelli', age:19, debutAge:18, seasons:2},
-    {name:'Bearman', age:20, debutAge:18, seasons:3},
-    {name:'Hadjar', age:21, debutAge:20, seasons:2},
-    {name:'Bortoleto', age:21, debutAge:20, seasons:2},
-    {name:'Colapinto', age:22, debutAge:20, seasons:3},
-    {name:'Piastri', age:24, debutAge:21, seasons:4},
-    {name:'Lawson', age:24, debutAge:21, seasons:4},
-    {name:'Norris', age:26, debutAge:19, seasons:8},
-    {name:'Stroll', age:27, debutAge:18, seasons:10},
-    {name:'Russell', age:28, debutAge:21, seasons:8},
-    {name:'Leclerc', age:28, debutAge:20, seasons:9},
-    {name:'Verstappen', age:28, debutAge:17, seasons:12},
-    {name:'Albon', age:29, debutAge:22, seasons:8},
-    {name:'Ocon', age:29, debutAge:19, seasons:11},
-    {name:'Gasly', age:30, debutAge:21, seasons:10},
-    {name:'Sainz', age:31, debutAge:20, seasons:12},
-    {name:'Bottas', age:36, debutAge:23, seasons:14},
-    {name:'Pérez', age:36, debutAge:21, seasons:16},
-    {name:'Hülkenberg', age:38, debutAge:22, seasons:17},
-    {name:'Hamilton', age:41, debutAge:22, seasons:20},
-    {name:'Alonso', age:44, debutAge:19, seasons:26},
+    {name:"Antonelli", age:19, debutAge:18, seasons:2},
+    {name:"Hamilton", age:41, debutAge:22, seasons:20},
+    {name:"Russell", age:28, debutAge:21, seasons:8},
+    {name:"Leclerc", age:28, debutAge:20, seasons:9},
+    {name:"Norris", age:26, debutAge:19, seasons:8},
+    {name:"Verstappen", age:28, debutAge:17, seasons:12},
+    {name:"Piastri", age:24, debutAge:21, seasons:4},
+    {name:"Hadjar", age:21, debutAge:20, seasons:2},
+    {name:"Lawson", age:24, debutAge:21, seasons:4},
+    {name:"Gasly", age:30, debutAge:21, seasons:10},
+    {name:"Lindblad", age:18, debutAge:18, seasons:1},
+    {name:"Colapinto", age:22, debutAge:20, seasons:3},
+    {name:"Bearman", age:20, debutAge:18, seasons:3},
+    {name:"Bortoleto", age:21, debutAge:20, seasons:2},
+    {name:"Sainz", age:31, debutAge:20, seasons:12},
+    {name:"Albon", age:29, debutAge:22, seasons:8},
+    {name:"Ocon", age:29, debutAge:19, seasons:11},
+    {name:"H\u00fclkenberg", age:38, debutAge:22, seasons:17},
+    {name:"Alonso", age:44, debutAge:19, seasons:26},
+    {name:"Stroll", age:27, debutAge:18, seasons:10},
+    {name:"Bottas", age:36, debutAge:23, seasons:14},
+    {name:"P\u00e9rez", age:36, debutAge:21, seasons:16},
   ];
 
   // Aggregate age distribution
   const ageCounts = {};
   allDrivers.forEach(d => {
+    if (!Number.isFinite(d.age)) return;
     if (!ageCounts[d.age]) ageCounts[d.age] = {age: d.age, count: 0, drivers: []};
     ageCounts[d.age].count++;
     ageCounts[d.age].drivers.push(d.name);
@@ -492,6 +493,7 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
   // Aggregate debut age distribution
   const debutCounts = {};
   allDrivers.forEach(d => {
+    if (!Number.isFinite(d.debutAge)) return;
     if (!debutCounts[d.debutAge]) debutCounts[d.debutAge] = {age: d.debutAge, count: 0, drivers: []};
     debutCounts[d.debutAge].count++;
     debutCounts[d.debutAge].drivers.push(d.name);
@@ -499,16 +501,16 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
   const debutData = Object.values(debutCounts).sort((a, b) => a.age - b.age);
 
   // Compute and display stats
-  const ages = allDrivers.map(d => d.age).sort((a, b) => a - b);
-  const meanAge = (ages.reduce((s, v) => s + v, 0) / ages.length).toFixed(1);
-  const medianAge = ages.length % 2 === 0
+  const ages = allDrivers.map(d => d.age).filter(Number.isFinite).sort((a, b) => a - b);
+  const meanAge = ages.length ? (ages.reduce((s, v) => s + v, 0) / ages.length).toFixed(1) : '—';
+  const medianAge = !ages.length ? null : ages.length % 2 === 0
     ? ((ages[ages.length/2 - 1] + ages[ages.length/2]) / 2)
     : ages[Math.floor(ages.length/2)];
   document.getElementById('stat-mean-age').textContent = meanAge;
-  document.getElementById('stat-median-age').textContent = medianAge % 1 === 0 ? medianAge : medianAge.toFixed(1);
+  document.getElementById('stat-median-age').textContent = medianAge === null ? '—' : medianAge % 1 === 0 ? medianAge : medianAge.toFixed(1);
 
-  const debutAges = allDrivers.map(d => d.debutAge).sort((a, b) => a - b);
-  const meanDebut = (debutAges.reduce((s, v) => s + v, 0) / debutAges.length).toFixed(1);
+  const debutAges = allDrivers.map(d => d.debutAge).filter(Number.isFinite);
+  const meanDebut = debutAges.length ? (debutAges.reduce((s, v) => s + v, 0) / debutAges.length).toFixed(1) : '—';
   document.getElementById('stat-mean-debut').textContent = meanDebut;
 
   function drawAgeChart() {
@@ -529,6 +531,8 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
     const chartH = h - pad.top - pad.bottom;
 
     ctx.clearRect(0, 0, w, h);
+
+    if (!ageData.length) return;
 
     const maxCount = Math.max(...ageData.map(d => d.count));
     const barWidth = Math.min(chartW / ageData.length - 4, 36);
@@ -614,6 +618,8 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
     const chartH = h - pad.top - pad.bottom;
 
     ctx.clearRect(0, 0, w, h);
+
+    if (!debutData.length) return;
 
     const maxCount = Math.max(...debutData.map(d => d.count));
     const barWidth = Math.min(chartW / debutData.length - 8, 60);

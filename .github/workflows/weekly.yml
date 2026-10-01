@@ -7,9 +7,15 @@ on:
 
 permissions:
   contents: write
+  pages: write
+
+concurrency:
+  group: weekly-f1-regeneration
+  cancel-in-progress: false
 
 jobs:
   regenerate:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,10 +29,20 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --locked
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run regression tests
+        run: bash scripts/test.sh
 
       - name: Regenerate pages
-        run: uv run f1stats generate
+        run: uv run --locked f1stats generate
+
+      - name: Validate generated pages
+        run: uv run --locked python scripts/check_pages.py
 
       - name: Commit and push
         run: |
@@ -36,6 +52,13 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: weekly F1 stats regeneration (Round $(date +%V))"
+            git commit -m "chore: weekly F1 stats regeneration ($(date -u +%F))"
             git push
           fi
+
+      # GITHUB_TOKEN pushes do not trigger Pages builds. Request one explicitly,
+      # including on no-change runs so a previous failed build can be retried.
+      - name: Request GitHub Pages build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
