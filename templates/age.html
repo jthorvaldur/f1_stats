@@ -93,13 +93,16 @@
   <div class="tagline">Age analysis of the {{ data.year }} F1 grid. Ages calculated at season start (Round 1, {{ data.season_start }}). Includes debut age analysis showing how old each driver was when they first raced in F1.</div>
 </div>
 
-{% set drivers_by_age = data.drivers|sort(attribute='age') %}
+{% set drivers_by_age = data.drivers|rejectattr('age', 'none')|sort(attribute='age')|list %}
+{% set by_debut = data.drivers|rejectattr('debut_age', 'none')|sort(attribute='debut_age')|list %}
+{% set unknown_debut = data.drivers|selectattr('debut_age', 'none')|list %}
+{% set by_seasons = data.drivers|rejectattr('f1_seasons', 'none')|sort(attribute='f1_seasons', reverse=True)|list %}
 {% set youngest = drivers_by_age|first %}
 {% set oldest = drivers_by_age|last %}
 
 <div class="section">
   <h2>Grid Statistics</h2>
-  <p class="section-sub">Summary metrics for the {{ data.drivers|length }}-driver {{ data.year }} grid</p>
+  <p class="section-sub">Summary metrics for the {{ data.drivers|length }}-driver {{ data.year }} grid. Age statistics use the {{ drivers_by_age|length }} drivers with known ages.</p>
   <div class="grid grid-4">
     <div class="card">
       <div class="card-title">Mean Age</div>
@@ -113,13 +116,17 @@
     </div>
     <div class="card">
       <div class="card-title">Youngest</div>
+      {% if youngest %}
       <div class="stat-sm" style="color:#bb9af7;">{{ youngest.family_name }}</div>
       <div class="stat-label">{{ youngest.age }} years old (b. {{ youngest.dob[:4] }})</div>
+      {% else %}<div class="stat-sm">Not available</div>{% endif %}
     </div>
     <div class="card">
       <div class="card-title">Oldest</div>
+      {% if oldest %}
       <div class="stat-sm" style="color:#d29922;">{{ oldest.family_name }}</div>
       <div class="stat-label">{{ oldest.age }} years old (b. {{ oldest.dob[:4] }})</div>
+      {% else %}<div class="stat-sm">Not available</div>{% endif %}
     </div>
   </div>
 </div>
@@ -138,11 +145,11 @@
   <h2>Generational Breakdown</h2>
   <p class="section-sub">Drivers grouped by career stage</p>
   <div class="gen-grid">
-    {% set gen_next = data.drivers|selectattr('age', 'le', 20)|sort(attribute='age')|list %}
-    {% set young_guns = data.drivers|selectattr('age', 'ge', 21)|selectattr('age', 'le', 25)|sort(attribute='age')|list %}
-    {% set prime = data.drivers|selectattr('age', 'ge', 26)|selectattr('age', 'le', 30)|sort(attribute='age')|list %}
-    {% set veterans = data.drivers|selectattr('age', 'ge', 31)|selectattr('age', 'le', 40)|sort(attribute='age')|list %}
-    {% set legends = data.drivers|selectattr('age', 'ge', 41)|sort(attribute='age')|list %}
+    {% set gen_next = drivers_by_age|selectattr('age', 'le', 20)|sort(attribute='age')|list %}
+    {% set young_guns = drivers_by_age|selectattr('age', 'ge', 21)|selectattr('age', 'le', 25)|sort(attribute='age')|list %}
+    {% set prime = drivers_by_age|selectattr('age', 'ge', 26)|selectattr('age', 'le', 30)|sort(attribute='age')|list %}
+    {% set veterans = drivers_by_age|selectattr('age', 'ge', 31)|selectattr('age', 'le', 40)|sort(attribute='age')|list %}
+    {% set legends = drivers_by_age|selectattr('age', 'ge', 41)|sort(attribute='age')|list %}
     {% if gen_next %}
     <div class="gen-card" style="border-left-color:#bb9af7;">
       <div class="gen-title" style="color:#bb9af7;">Gen Next (18-20) — {{ gen_next|length }} driver{{ 's' if gen_next|length != 1 }}</div>
@@ -195,15 +202,15 @@
         <tr><th>Driver</th><th>Team</th><th>DOB</th><th>Current Age</th><th>Debut Year</th><th>Debut Age</th><th>F1 Seasons</th></tr>
       </thead>
       <tbody>
-        {% for d in data.drivers|sort(attribute='debut_age') %}
+        {% for d in by_debut + unknown_debut %}
         <tr>
           <td class="driver-name">{{ d.name }}</td>
           <td class="{{ d.team_css }}">{{ d.team_display }}</td>
-          <td>{{ d.dob }}</td>
-          <td>{{ d.age }}</td>
-          <td>{{ d.debut_year }}</td>
-          <td{% if d.debut_age <= 18 %} style="color:#bb9af7;font-weight:700;"{% endif %}>{{ d.debut_age }}</td>
-          <td>{{ d.f1_seasons }}</td>
+          <td>{{ d.dob or 'Unknown' }}</td>
+          <td>{{ d.age if d.age is not none else 'Unknown' }}</td>
+          <td>{{ d.debut_year if d.debut_year is not none else 'Unknown' }}</td>
+          <td{% if d.debut_age is not none and d.debut_age <= 18 %} style="color:#bb9af7;font-weight:700;"{% endif %}>{{ d.debut_age if d.debut_age is not none else 'Unknown' }}</td>
+          <td>{{ d.f1_seasons if d.f1_seasons is not none else 'Unknown' }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -213,7 +220,7 @@
 
 <div class="section section-divider">
   <h2>Debut Age Distribution</h2>
-  <p class="section-sub">How old were current {{ data.year }} drivers when they entered F1?</p>
+  <p class="section-sub">How old were current {{ data.year }} drivers when they entered F1? Based on {{ by_debut|length }} drivers with known debut ages; unknown values are excluded from statistics.</p>
   <div class="card">
     <div class="chart-container">
       <canvas id="debutChart"></canvas>
@@ -227,17 +234,19 @@
     </div>
     <div class="card">
       <div class="card-title">Youngest Debutant</div>
-      {% set by_debut = data.drivers|sort(attribute='debut_age') %}
       {% set youngest_debut = by_debut|first %}
+      {% if youngest_debut %}
       <div class="stat-sm" style="color:#bb9af7;">{{ youngest_debut.family_name }}</div>
       <div class="stat-label">{{ youngest_debut.debut_age }} years old ({{ youngest_debut.debut_year }})</div>
+      {% else %}<div class="stat-sm">Not available</div>{% endif %}
     </div>
     <div class="card">
       <div class="card-title">Most Experienced</div>
-      {% set by_seasons = data.drivers|sort(attribute='f1_seasons', reverse=True) %}
       {% set most_exp = by_seasons|first %}
+      {% if most_exp %}
       <div class="stat-sm" style="color:#d29922;">{{ most_exp.family_name }}</div>
       <div class="stat-label">{{ most_exp.f1_seasons }} seasons in F1 ({{ most_exp.debut_year }}-{{ data.year }})</div>
+      {% else %}<div class="stat-sm">Not available</div>{% endif %}
     </div>
   </div>
 </div>
@@ -249,7 +258,8 @@
     <div class="card">
       <div class="card-title">Generational Shift</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        The {{ data.year }} grid features a {{ oldest.age - youngest.age }}-year age span between {{ youngest.family_name }} ({{ youngest.age }}) and {{ oldest.family_name }} ({{ oldest.age }}).
+        {% if drivers_by_age %}The {{ data.year }} grid features a {{ oldest.age - youngest.age }}-year age span between {{ youngest.family_name }} ({{ youngest.age }}) and {{ oldest.family_name }} ({{ oldest.age }}).
+        {% else %}Driver ages are not available yet.{% endif %}
         {% if gen_next|length > 0 %}{{ gen_next|length }} driver{{ 's' if gen_next|length != 1 }} aged 20 or under race{{ '' if gen_next|length != 1 else 's' }} alongside {% endif %}
         {% if legends|length > 0 %}{{ legends|length }} driver{{ 's' if legends|length != 1 }} over 40.{% endif %}
       </div>
@@ -257,14 +267,15 @@
     <div class="card">
       <div class="card-title">Youth Cohort</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        {% set under_25 = data.drivers|selectattr('age', 'le', 25)|list %}
-        The under-25 cohort includes {{ under_25|length }} drivers ({{ ((under_25|length / data.drivers|length) * 100)|round|int }}% of the grid). Peak performance typically clusters around age 26-28 where {{ prime|length }} drivers currently compete.
+        {% set under_25 = drivers_by_age|selectattr('age', 'le', 25)|list %}
+        {% if drivers_by_age %}The cohort aged 25 or younger includes {{ under_25|length }} drivers ({{ ((under_25|length / drivers_by_age|length) * 100)|round|int }}% of drivers with known ages). {{ prime|length }} drivers are aged 26-30.
+        {% else %}Driver ages are not available yet.{% endif %}
       </div>
     </div>
     <div class="card">
       <div class="card-title">New Entrants</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        {% set rookies = data.drivers|selectattr('f1_seasons', 'le', 2)|sort(attribute='f1_seasons')|list %}
+        {% set rookies = by_seasons|selectattr('f1_seasons', 'le', 2)|sort(attribute='f1_seasons')|list %}
         {{ rookies|length }} driver{{ 's' if rookies|length != 1 }} {{ 'are' if rookies|length != 1 else 'is' }} in {{ 'their' if rookies|length != 1 else 'their' }} first or second season:
         {% for d in rookies %}{{ d.family_name }} ({{ d.f1_seasons }} season{{ 's' if d.f1_seasons != 1 }}){% if not loop.last %}, {% endif %}{% endfor %}.
       </div>
@@ -272,8 +283,9 @@
     <div class="card">
       <div class="card-title">Debut Trends</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-        {% set early_debut = data.drivers|selectattr('debut_age', 'le', 20)|list %}
-        {{ early_debut|length }} of {{ data.drivers|length }} drivers ({{ ((early_debut|length / data.drivers|length) * 100)|round|int }}%) debuted at age 20 or younger, reflecting the post-2015 trend of younger entries driven by junior development programs.
+        {% set early_debut = by_debut|selectattr('debut_age', 'le', 20)|list %}
+        {% if by_debut %}{{ early_debut|length }} of {{ by_debut|length }} drivers with known debut ages ({{ ((early_debut|length / by_debut|length) * 100)|round|int }}%) debuted at age 20 or younger.
+        {% else %}Debut ages are not available yet.{% endif %}
       </div>
     </div>
   </div>
@@ -287,14 +299,15 @@
 (function() {
   // Build age data from Jinja-injected driver list
   const allDrivers = [
-    {% for d in data.drivers|sort(attribute='age') %}
-    {name:'{{ d.family_name }}', age:{{ d.age }}, debutAge:{{ d.debut_age }}, seasons:{{ d.f1_seasons }}},
+    {% for d in data.drivers %}
+    {name:{{ d.family_name|tojson }}, age:{{ d.age|tojson }}, debutAge:{{ d.debut_age|tojson }}, seasons:{{ d.f1_seasons|tojson }}},
     {% endfor %}
   ];
 
   // Aggregate age distribution
   const ageCounts = {};
   allDrivers.forEach(d => {
+    if (!Number.isFinite(d.age)) return;
     if (!ageCounts[d.age]) ageCounts[d.age] = {age: d.age, count: 0, drivers: []};
     ageCounts[d.age].count++;
     ageCounts[d.age].drivers.push(d.name);
@@ -304,6 +317,7 @@
   // Aggregate debut age distribution
   const debutCounts = {};
   allDrivers.forEach(d => {
+    if (!Number.isFinite(d.debutAge)) return;
     if (!debutCounts[d.debutAge]) debutCounts[d.debutAge] = {age: d.debutAge, count: 0, drivers: []};
     debutCounts[d.debutAge].count++;
     debutCounts[d.debutAge].drivers.push(d.name);
@@ -311,16 +325,16 @@
   const debutData = Object.values(debutCounts).sort((a, b) => a.age - b.age);
 
   // Compute and display stats
-  const ages = allDrivers.map(d => d.age).sort((a, b) => a - b);
-  const meanAge = (ages.reduce((s, v) => s + v, 0) / ages.length).toFixed(1);
-  const medianAge = ages.length % 2 === 0
+  const ages = allDrivers.map(d => d.age).filter(Number.isFinite).sort((a, b) => a - b);
+  const meanAge = ages.length ? (ages.reduce((s, v) => s + v, 0) / ages.length).toFixed(1) : '—';
+  const medianAge = !ages.length ? null : ages.length % 2 === 0
     ? ((ages[ages.length/2 - 1] + ages[ages.length/2]) / 2)
     : ages[Math.floor(ages.length/2)];
   document.getElementById('stat-mean-age').textContent = meanAge;
-  document.getElementById('stat-median-age').textContent = medianAge % 1 === 0 ? medianAge : medianAge.toFixed(1);
+  document.getElementById('stat-median-age').textContent = medianAge === null ? '—' : medianAge % 1 === 0 ? medianAge : medianAge.toFixed(1);
 
-  const debutAges = allDrivers.map(d => d.debutAge).sort((a, b) => a - b);
-  const meanDebut = (debutAges.reduce((s, v) => s + v, 0) / debutAges.length).toFixed(1);
+  const debutAges = allDrivers.map(d => d.debutAge).filter(Number.isFinite);
+  const meanDebut = debutAges.length ? (debutAges.reduce((s, v) => s + v, 0) / debutAges.length).toFixed(1) : '—';
   document.getElementById('stat-mean-debut').textContent = meanDebut;
 
   function drawAgeChart() {
@@ -341,6 +355,8 @@
     const chartH = h - pad.top - pad.bottom;
 
     ctx.clearRect(0, 0, w, h);
+
+    if (!ageData.length) return;
 
     const maxCount = Math.max(...ageData.map(d => d.count));
     const barWidth = Math.min(chartW / ageData.length - 4, 36);
@@ -426,6 +442,8 @@
     const chartH = h - pad.top - pad.bottom;
 
     ctx.clearRect(0, 0, w, h);
+
+    if (!debutData.length) return;
 
     const maxCount = Math.max(...debutData.map(d => d.count));
     const barWidth = Math.min(chartW / debutData.length - 8, 60);
