@@ -169,7 +169,7 @@
   }
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Article","headline":"F1 2026 — Driver Psychological Profiles","description":"Big Five personality assessment, driving style archetypes, trait radar charts, and team dynamics for every driver on the 2026 F1 grid.","author":{"@type":"Person","name":"Joel Thorarinson","url":"https://jthorvaldur.github.io"},"dateModified":"2026-08-17","url":"https://jthorvaldur.github.io/f1_stats/profiles.html"}
+{"@context":"https://schema.org","@type":"Article","headline":"F1 2026 — Driver Psychological Profiles","description":"Big Five personality assessment, driving style archetypes, trait radar charts, and team dynamics for every driver on the 2026 F1 grid.","author":{"@type":"Person","name":"Joel Thorarinson","url":"https://jthorvaldur.github.io"},"dateModified":"2026-10-01","url":"https://jthorvaldur.github.io/f1_stats/profiles.html"}
 </script>
 </head>
 <body>
@@ -182,14 +182,14 @@
     <span class="badge badge-purple">22 Profiles</span>
     <span class="badge badge-blue">Big Five OCEAN</span>
     <span class="badge badge-amber">6-Axis Trait Radar</span>
-    <span class="badge badge-green">11 Races Observed</span>
+    <span class="badge badge-green">15 Races Observed</span>
   </div>
 </div>
 
 <!-- Grid radar overlay -->
 <div class="section">
   <h2>Grid Trait Overlay</h2>
-  <p class="section-sub">All 22 profiled drivers on a single radar chart &mdash; reveals clustering and outliers across 6 driving traits</p>
+  <p class="section-sub">All 21 profiled drivers on a single radar chart &mdash; reveals clustering and outliers across 6 driving traits</p>
   <div class="chart-container">
     <canvas id="grid-radar"></canvas>
   </div>
@@ -227,7 +227,7 @@
       <div class="profile-header">
         <span class="driver-name" style="color:##00d2be;">Andrea Kimi Antonelli</span>
         <span class="archetype-badge">The Prodigy</span>
-        <span style="font-size:11px;color:#8b949e;">Mercedes &middot; 219 pts</span>
+        <span style="font-size:11px;color:#8b949e;">Mercedes &middot; 302 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-antonelli" width="200" height="200"></canvas>
@@ -278,66 +278,11 @@
         Thrives as lead driver. Respectful of Russell but clearly the faster driver from race one. No ego conflicts — focused inward.
       </div>
     </div>
-    <div class="profile-card" id="profile-hamilton">
-      <div class="profile-header">
-        <span class="driver-name" style="color:##dc143c;">Lewis Hamilton</span>
-        <span class="archetype-badge">The Legend</span>
-        <span style="font-size:11px;color:#8b949e;">Ferrari &middot; 169 pts</span>
-      </div>
-      <div class="profile-charts">
-        <canvas id="radar-hamilton" width="200" height="200"></canvas>
-        <div class="big5-bars">
-          <div class="big5-row">
-            <span class="big5-label">Openness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:75%;background:#58a6ff;"></div>
-            </div>
-            <span class="big5-val">75</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Conscientiousness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:80%;background:#3fb950;"></div>
-            </div>
-            <span class="big5-val">80</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Extraversion</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:65%;background:#d29922;"></div>
-            </div>
-            <span class="big5-val">65</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Agreeableness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:60%;background:#bb9af7;"></div>
-            </div>
-            <span class="big5-val">60</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Neuroticism</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:40%;background:#f85149;"></div>
-            </div>
-            <span class="big5-val">40</span>
-          </div>
-        </div>
-      </div>
-      <div class="profile-text">
-        <strong>Driving Style</strong>
-        Adaptive genius. Has reinvented his driving style multiple times across eras. Exceptional in the wet, legendary overtaker, supreme tire management. In his 20th season — reflexes marginally slower but racecraft unmatched.
-        <strong>Risk Profile</strong>
-        Mature risk assessment from 20 years of experience. Knows when to push and when to bank points. Rarely makes unforced errors at this stage.
-        <strong>Team Dynamics</strong>
-        The mentoring phase. At Ferrari to win a championship with the Scuderia — the last great challenge. Relationship with Leclerc is respectful but competitive.
-      </div>
-    </div>
     <div class="profile-card" id="profile-russell">
       <div class="profile-header">
         <span class="driver-name" style="color:##00d2be;">George Russell</span>
         <span class="archetype-badge">The Analyst</span>
-        <span style="font-size:11px;color:#8b949e;">Mercedes &middot; 160 pts</span>
+        <span style="font-size:11px;color:#8b949e;">Mercedes &middot; 236 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-russell" width="200" height="200"></canvas>
@@ -388,66 +333,66 @@
         Natural team leader. Strong communicator, politically astute within the paddock. Handles being second driver with professional grace.
       </div>
     </div>
-    <div class="profile-card" id="profile-leclerc">
+    <div class="profile-card" id="profile-hamilton">
       <div class="profile-header">
-        <span class="driver-name" style="color:##dc143c;">Charles Leclerc</span>
-        <span class="archetype-badge">The Romantic</span>
-        <span style="font-size:11px;color:#8b949e;">Ferrari &middot; 138 pts</span>
+        <span class="driver-name" style="color:##dc143c;">Lewis Hamilton</span>
+        <span class="archetype-badge">The Legend</span>
+        <span style="font-size:11px;color:#8b949e;">Ferrari &middot; 199 pts</span>
       </div>
       <div class="profile-charts">
-        <canvas id="radar-leclerc" width="200" height="200"></canvas>
+        <canvas id="radar-hamilton" width="200" height="200"></canvas>
         <div class="big5-bars">
           <div class="big5-row">
             <span class="big5-label">Openness</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:90%;background:#58a6ff;"></div>
+              <div class="big5-bar-fill" style="width:75%;background:#58a6ff;"></div>
             </div>
-            <span class="big5-val">90</span>
+            <span class="big5-val">75</span>
           </div>
           <div class="big5-row">
             <span class="big5-label">Conscientiousness</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:65%;background:#3fb950;"></div>
+              <div class="big5-bar-fill" style="width:80%;background:#3fb950;"></div>
             </div>
-            <span class="big5-val">65</span>
+            <span class="big5-val">80</span>
           </div>
           <div class="big5-row">
             <span class="big5-label">Extraversion</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:55%;background:#d29922;"></div>
+              <div class="big5-bar-fill" style="width:65%;background:#d29922;"></div>
             </div>
-            <span class="big5-val">55</span>
+            <span class="big5-val">65</span>
           </div>
           <div class="big5-row">
             <span class="big5-label">Agreeableness</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:70%;background:#bb9af7;"></div>
+              <div class="big5-bar-fill" style="width:60%;background:#bb9af7;"></div>
             </div>
-            <span class="big5-val">70</span>
+            <span class="big5-val">60</span>
           </div>
           <div class="big5-row">
             <span class="big5-label">Neuroticism</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:50%;background:#f85149;"></div>
+              <div class="big5-bar-fill" style="width:40%;background:#f85149;"></div>
             </div>
-            <span class="big5-val">50</span>
+            <span class="big5-val">40</span>
           </div>
         </div>
       </div>
       <div class="profile-text">
         <strong>Driving Style</strong>
-        Emotional, raw pace in qualifying. Beautiful one-lap speed but historically prone to strategic missteps and team miscommunication. The artist who can produce moments of brilliance.
+        Adaptive genius. Has reinvented his driving style multiple times across eras. Exceptional in the wet, legendary overtaker, supreme tire management. In his 20th season — reflexes marginally slower but racecraft unmatched.
         <strong>Risk Profile</strong>
-        High-risk, high-reward. Will attempt overtakes others wouldn't. Occasionally costly — Imola 2022, France 2022. But the upside is electric.
+        Mature risk assessment from 20 years of experience. Knows when to push and when to bank points. Rarely makes unforced errors at this stage.
         <strong>Team Dynamics</strong>
-        Comfortable as team leader at Ferrari. Deep emotional bond with the team and Maranello. Can be frustrated by team strategy calls.
+        The mentoring phase. At Ferrari to win a championship with the Scuderia — the last great challenge. Relationship with Leclerc is respectful but competitive.
       </div>
     </div>
     <div class="profile-card" id="profile-norris">
       <div class="profile-header">
         <span class="driver-name" style="color:##ff8700;">Lando Norris</span>
         <span class="archetype-badge">The Perfectionist</span>
-        <span style="font-size:11px;color:#8b949e;">McLaren &middot; 128 pts</span>
+        <span style="font-size:11px;color:#8b949e;">McLaren &middot; 186 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-norris" width="200" height="200"></canvas>
@@ -498,66 +443,66 @@
         Strong partnership with McLaren. Loyal, well-integrated. Constructive feedback loop with engineers. Healthy competition with Piastri.
       </div>
     </div>
-    <div class="profile-card" id="profile-max_verstappen">
+    <div class="profile-card" id="profile-leclerc">
       <div class="profile-header">
-        <span class="driver-name" style="color:##3671C6;">Max Verstappen</span>
-        <span class="archetype-badge">The Apex Predator</span>
-        <span style="font-size:11px;color:#8b949e;">Red Bull &middot; 109 pts</span>
+        <span class="driver-name" style="color:##dc143c;">Charles Leclerc</span>
+        <span class="archetype-badge">The Romantic</span>
+        <span style="font-size:11px;color:#8b949e;">Ferrari &middot; 179 pts</span>
       </div>
       <div class="profile-charts">
-        <canvas id="radar-max_verstappen" width="200" height="200"></canvas>
+        <canvas id="radar-leclerc" width="200" height="200"></canvas>
         <div class="big5-bars">
           <div class="big5-row">
             <span class="big5-label">Openness</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:60%;background:#58a6ff;"></div>
+              <div class="big5-bar-fill" style="width:90%;background:#58a6ff;"></div>
             </div>
-            <span class="big5-val">60</span>
+            <span class="big5-val">90</span>
           </div>
           <div class="big5-row">
             <span class="big5-label">Conscientiousness</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:75%;background:#3fb950;"></div>
+              <div class="big5-bar-fill" style="width:65%;background:#3fb950;"></div>
             </div>
-            <span class="big5-val">75</span>
+            <span class="big5-val">65</span>
           </div>
           <div class="big5-row">
             <span class="big5-label">Extraversion</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:45%;background:#d29922;"></div>
+              <div class="big5-bar-fill" style="width:55%;background:#d29922;"></div>
             </div>
-            <span class="big5-val">45</span>
+            <span class="big5-val">55</span>
           </div>
           <div class="big5-row">
             <span class="big5-label">Agreeableness</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:30%;background:#bb9af7;"></div>
+              <div class="big5-bar-fill" style="width:70%;background:#bb9af7;"></div>
             </div>
-            <span class="big5-val">30</span>
+            <span class="big5-val">70</span>
           </div>
           <div class="big5-row">
             <span class="big5-label">Neuroticism</span>
             <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:25%;background:#f85149;"></div>
+              <div class="big5-bar-fill" style="width:50%;background:#f85149;"></div>
             </div>
-            <span class="big5-val">25</span>
+            <span class="big5-val">50</span>
           </div>
         </div>
       </div>
       <div class="profile-text">
         <strong>Driving Style</strong>
-        Aggressive, uncompromising, supernaturally fast. Brakes later, turns in harder, and exits faster than anyone. In a lesser car in 2026, the raw speed is still visible but results don't follow.
+        Emotional, raw pace in qualifying. Beautiful one-lap speed but historically prone to strategic missteps and team miscommunication. The artist who can produce moments of brilliance.
         <strong>Risk Profile</strong>
-        Famously aggressive in wheel-to-wheel combat. 'I'm not here to finish second.' Will push the rules to their absolute limit. The stewards know him by name.
+        High-risk, high-reward. Will attempt overtakes others wouldn't. Occasionally costly — Imola 2022, France 2022. But the upside is electric.
         <strong>Team Dynamics</strong>
-        Demands the team build around him. In 2026, Red Bull's car isn't competitive enough — this creates visible frustration. Loyalty to Red Bull is being tested.
+        Comfortable as team leader at Ferrari. Deep emotional bond with the team and Maranello. Can be frustrated by team strategy calls.
       </div>
     </div>
     <div class="profile-card" id="profile-piastri">
       <div class="profile-header">
         <span class="driver-name" style="color:##ff8700;">Oscar Piastri</span>
         <span class="archetype-badge">The Ice Man</span>
-        <span style="font-size:11px;color:#8b949e;">McLaren &middot; 92 pts</span>
+        <span style="font-size:11px;color:#8b949e;">McLaren &middot; 120 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-piastri" width="200" height="200"></canvas>
@@ -612,7 +557,7 @@
       <div class="profile-header">
         <span class="driver-name" style="color:##3671C6;">Isack Hadjar</span>
         <span class="archetype-badge">The Calculator</span>
-        <span style="font-size:11px;color:#8b949e;">Red Bull &middot; 68 pts</span>
+        <span style="font-size:11px;color:#8b949e;">Red Bull &middot; 86 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-hadjar" width="200" height="200"></canvas>
@@ -667,7 +612,7 @@
       <div class="profile-header">
         <span class="driver-name" style="color:##6692ff;">Liam Lawson</span>
         <span class="archetype-badge">The Dark Horse</span>
-        <span style="font-size:11px;color:#8b949e;">RB &middot; 43 pts</span>
+        <span style="font-size:11px;color:#8b949e;">RB &middot; 59 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-lawson" width="200" height="200"></canvas>
@@ -722,7 +667,7 @@
       <div class="profile-header">
         <span class="driver-name" style="color:##0090ff;">Pierre Gasly</span>
         <span class="archetype-badge">The Survivor</span>
-        <span style="font-size:11px;color:#8b949e;">Alpine &middot; 42 pts</span>
+        <span style="font-size:11px;color:#8b949e;">Alpine &middot; 41 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-gasly" width="200" height="200"></canvas>
@@ -777,7 +722,7 @@
       <div class="profile-header">
         <span class="driver-name" style="color:##6692ff;">Arvid Lindblad</span>
         <span class="archetype-badge">The Rookie</span>
-        <span style="font-size:11px;color:#8b949e;">RB &middot; 23 pts</span>
+        <span style="font-size:11px;color:#8b949e;">RB &middot; 37 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-arvid_lindblad" width="200" height="200"></canvas>
@@ -832,7 +777,7 @@
       <div class="profile-header">
         <span class="driver-name" style="color:##0090ff;">Franco Colapinto</span>
         <span class="archetype-badge">The Showman</span>
-        <span style="font-size:11px;color:#8b949e;">Alpine &middot; 19 pts</span>
+        <span style="font-size:11px;color:#8b949e;">Alpine &middot; 27 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-colapinto" width="200" height="200"></canvas>
@@ -887,7 +832,7 @@
       <div class="profile-header">
         <span class="driver-name" style="color:##b6babd;">Oliver Bearman</span>
         <span class="archetype-badge">The Grinder</span>
-        <span style="font-size:11px;color:#8b949e;">Haas &middot; 18 pts</span>
+        <span style="font-size:11px;color:#8b949e;">Haas &middot; 20 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-bearman" width="200" height="200"></canvas>
@@ -993,11 +938,121 @@
         Good relationship with Hulkenberg as experienced teammate. Brazilian passion contained by German-Swiss team culture at Audi.
       </div>
     </div>
+    <div class="profile-card" id="profile-hulkenberg">
+      <div class="profile-header">
+        <span class="driver-name" style="color:##00e701;">Nico Hülkenberg</span>
+        <span class="archetype-badge">The Nearly Man</span>
+        <span style="font-size:11px;color:#8b949e;">Audi &middot; 7 pts</span>
+      </div>
+      <div class="profile-charts">
+        <canvas id="radar-hulkenberg" width="200" height="200"></canvas>
+        <div class="big5-bars">
+          <div class="big5-row">
+            <span class="big5-label">Openness</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:55%;background:#58a6ff;"></div>
+            </div>
+            <span class="big5-val">55</span>
+          </div>
+          <div class="big5-row">
+            <span class="big5-label">Conscientiousness</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:85%;background:#3fb950;"></div>
+            </div>
+            <span class="big5-val">85</span>
+          </div>
+          <div class="big5-row">
+            <span class="big5-label">Extraversion</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:55%;background:#d29922;"></div>
+            </div>
+            <span class="big5-val">55</span>
+          </div>
+          <div class="big5-row">
+            <span class="big5-label">Agreeableness</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:50%;background:#bb9af7;"></div>
+            </div>
+            <span class="big5-val">50</span>
+          </div>
+          <div class="big5-row">
+            <span class="big5-label">Neuroticism</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:40%;background:#f85149;"></div>
+            </div>
+            <span class="big5-val">40</span>
+          </div>
+        </div>
+      </div>
+      <div class="profile-text">
+        <strong>Driving Style</strong>
+        Experienced, consistent, technically strong. The record holder for most starts without a podium (now broken). Excellent in qualifying, sometimes fades in races. Brings invaluable experience to a new team.
+        <strong>Risk Profile</strong>
+        Low risk, high consistency. In 2026 with Audi, his job is to provide a baseline and develop the car rather than take heroic risks.
+        <strong>Team Dynamics</strong>
+        The veteran anchor. Provides the stability a new manufacturer needs. Professional, no drama, delivers clear data.
+      </div>
+    </div>
+    <div class="profile-card" id="profile-ocon">
+      <div class="profile-header">
+        <span class="driver-name" style="color:##b6babd;">Esteban Ocon</span>
+        <span class="archetype-badge">The Contrarian</span>
+        <span style="font-size:11px;color:#8b949e;">Haas &middot; 7 pts</span>
+      </div>
+      <div class="profile-charts">
+        <canvas id="radar-ocon" width="200" height="200"></canvas>
+        <div class="big5-bars">
+          <div class="big5-row">
+            <span class="big5-label">Openness</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:50%;background:#58a6ff;"></div>
+            </div>
+            <span class="big5-val">50</span>
+          </div>
+          <div class="big5-row">
+            <span class="big5-label">Conscientiousness</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:70%;background:#3fb950;"></div>
+            </div>
+            <span class="big5-val">70</span>
+          </div>
+          <div class="big5-row">
+            <span class="big5-label">Extraversion</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:40%;background:#d29922;"></div>
+            </div>
+            <span class="big5-val">40</span>
+          </div>
+          <div class="big5-row">
+            <span class="big5-label">Agreeableness</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:35%;background:#bb9af7;"></div>
+            </div>
+            <span class="big5-val">35</span>
+          </div>
+          <div class="big5-row">
+            <span class="big5-label">Neuroticism</span>
+            <div class="big5-bar-bg">
+              <div class="big5-bar-fill" style="width:55%;background:#f85149;"></div>
+            </div>
+            <span class="big5-val">55</span>
+          </div>
+        </div>
+      </div>
+      <div class="profile-text">
+        <strong>Driving Style</strong>
+        Defensive master. Exceptional at holding position against faster cars. Strong in the wet. Can produce stunning results (Hungary 2021 win) when everything aligns.
+        <strong>Risk Profile</strong>
+        Defensive driving occasionally tips into over-aggression. History of teammate conflicts (Perez, Gasly, Alonso). Guards his position fiercely.
+        <strong>Team Dynamics</strong>
+        Complex history with teammates. At Haas for a fresh start. Works best with clear team hierarchy and defined roles.
+      </div>
+    </div>
     <div class="profile-card" id="profile-sainz">
       <div class="profile-header">
         <span class="driver-name" style="color:##64c4ff;">Carlos Sainz</span>
         <span class="archetype-badge">The Warrior</span>
-        <span style="font-size:11px;color:#8b949e;">Williams &middot; 6 pts</span>
+        <span style="font-size:11px;color:#8b949e;">Williams &middot; 7 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-sainz" width="200" height="200"></canvas>
@@ -1103,121 +1158,11 @@
         Beloved by mechanics and engineers. Positive energy, constructive feedback. The emotional heart of Williams. Strong relationship with Sainz as co-leader.
       </div>
     </div>
-    <div class="profile-card" id="profile-ocon">
-      <div class="profile-header">
-        <span class="driver-name" style="color:##b6babd;">Esteban Ocon</span>
-        <span class="archetype-badge">The Contrarian</span>
-        <span style="font-size:11px;color:#8b949e;">Haas &middot; 3 pts</span>
-      </div>
-      <div class="profile-charts">
-        <canvas id="radar-ocon" width="200" height="200"></canvas>
-        <div class="big5-bars">
-          <div class="big5-row">
-            <span class="big5-label">Openness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:50%;background:#58a6ff;"></div>
-            </div>
-            <span class="big5-val">50</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Conscientiousness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:70%;background:#3fb950;"></div>
-            </div>
-            <span class="big5-val">70</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Extraversion</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:40%;background:#d29922;"></div>
-            </div>
-            <span class="big5-val">40</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Agreeableness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:35%;background:#bb9af7;"></div>
-            </div>
-            <span class="big5-val">35</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Neuroticism</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:55%;background:#f85149;"></div>
-            </div>
-            <span class="big5-val">55</span>
-          </div>
-        </div>
-      </div>
-      <div class="profile-text">
-        <strong>Driving Style</strong>
-        Defensive master. Exceptional at holding position against faster cars. Strong in the wet. Can produce stunning results (Hungary 2021 win) when everything aligns.
-        <strong>Risk Profile</strong>
-        Defensive driving occasionally tips into over-aggression. History of teammate conflicts (Perez, Gasly, Alonso). Guards his position fiercely.
-        <strong>Team Dynamics</strong>
-        Complex history with teammates. At Haas for a fresh start. Works best with clear team hierarchy and defined roles.
-      </div>
-    </div>
-    <div class="profile-card" id="profile-hulkenberg">
-      <div class="profile-header">
-        <span class="driver-name" style="color:##00e701;">Nico Hülkenberg</span>
-        <span class="archetype-badge">The Nearly Man</span>
-        <span style="font-size:11px;color:#8b949e;">Audi &middot; 2 pts</span>
-      </div>
-      <div class="profile-charts">
-        <canvas id="radar-hulkenberg" width="200" height="200"></canvas>
-        <div class="big5-bars">
-          <div class="big5-row">
-            <span class="big5-label">Openness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:55%;background:#58a6ff;"></div>
-            </div>
-            <span class="big5-val">55</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Conscientiousness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:85%;background:#3fb950;"></div>
-            </div>
-            <span class="big5-val">85</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Extraversion</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:55%;background:#d29922;"></div>
-            </div>
-            <span class="big5-val">55</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Agreeableness</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:50%;background:#bb9af7;"></div>
-            </div>
-            <span class="big5-val">50</span>
-          </div>
-          <div class="big5-row">
-            <span class="big5-label">Neuroticism</span>
-            <div class="big5-bar-bg">
-              <div class="big5-bar-fill" style="width:40%;background:#f85149;"></div>
-            </div>
-            <span class="big5-val">40</span>
-          </div>
-        </div>
-      </div>
-      <div class="profile-text">
-        <strong>Driving Style</strong>
-        Experienced, consistent, technically strong. The record holder for most starts without a podium (now broken). Excellent in qualifying, sometimes fades in races. Brings invaluable experience to a new team.
-        <strong>Risk Profile</strong>
-        Low risk, high consistency. In 2026 with Audi, his job is to provide a baseline and develop the car rather than take heroic risks.
-        <strong>Team Dynamics</strong>
-        The veteran anchor. Provides the stability a new manufacturer needs. Professional, no drama, delivers clear data.
-      </div>
-    </div>
     <div class="profile-card" id="profile-alonso">
       <div class="profile-header">
         <span class="driver-name" style="color:##006f62;">Fernando Alonso</span>
         <span class="archetype-badge">The Gladiator</span>
-        <span style="font-size:11px;color:#8b949e;">Aston Martin &middot; 1 pts</span>
+        <span style="font-size:11px;color:#8b949e;">Aston Martin &middot; 3 pts</span>
       </div>
       <div class="profile-charts">
         <canvas id="radar-alonso" width="200" height="200"></canvas>
@@ -1467,14 +1412,14 @@
     </p>
     <p>
       All profiles should be read as analytical interpretations, not definitive psychological evaluations.
-      The data is filtered through 11 races of the 2026 season with historical
+      The data is filtered through 15 races of the 2026 season with historical
       context from prior seasons where applicable.
     </p>
   </div>
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-08-17 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-10-01 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -1486,7 +1431,7 @@ const DRIVERS = [
     familyName: 'Antonelli',
     team: 'Mercedes',
     teamColor: '#00d2be',
-    points: 219.0,
+    points: 302.0,
     archetype: 'The Prodigy',
     traits: {
       aggression: 65,
@@ -1504,35 +1449,12 @@ const DRIVERS = [
       neuroticism: 30
     }
   },  {
-    id: 'hamilton',
-    name: 'Lewis Hamilton',
-    familyName: 'Hamilton',
-    team: 'Ferrari',
-    teamColor: '#dc143c',
-    points: 169.0,
-    archetype: 'The Legend',
-    traits: {
-      aggression: 60,
-      consistency: 80,
-      wet_ability: 95,
-      tire_mgmt: 95,
-      qualifying: 80,
-      racecraft: 95
-    },
-    big5: {
-      openness: 75,
-      conscientiousness: 80,
-      extraversion: 65,
-      agreeableness: 60,
-      neuroticism: 40
-    }
-  },  {
     id: 'russell',
     name: 'George Russell',
     familyName: 'Russell',
     team: 'Mercedes',
     teamColor: '#00d2be',
-    points: 160.0,
+    points: 236.0,
     archetype: 'The Analyst',
     traits: {
       aggression: 55,
@@ -1550,27 +1472,27 @@ const DRIVERS = [
       neuroticism: 35
     }
   },  {
-    id: 'leclerc',
-    name: 'Charles Leclerc',
-    familyName: 'Leclerc',
+    id: 'hamilton',
+    name: 'Lewis Hamilton',
+    familyName: 'Hamilton',
     team: 'Ferrari',
     teamColor: '#dc143c',
-    points: 138.0,
-    archetype: 'The Romantic',
+    points: 199.0,
+    archetype: 'The Legend',
     traits: {
-      aggression: 75,
-      consistency: 65,
-      wet_ability: 70,
-      tire_mgmt: 65,
-      qualifying: 95,
-      racecraft: 70
+      aggression: 60,
+      consistency: 80,
+      wet_ability: 95,
+      tire_mgmt: 95,
+      qualifying: 80,
+      racecraft: 95
     },
     big5: {
-      openness: 90,
-      conscientiousness: 65,
-      extraversion: 55,
-      agreeableness: 70,
-      neuroticism: 50
+      openness: 75,
+      conscientiousness: 80,
+      extraversion: 65,
+      agreeableness: 60,
+      neuroticism: 40
     }
   },  {
     id: 'norris',
@@ -1578,7 +1500,7 @@ const DRIVERS = [
     familyName: 'Norris',
     team: 'McLaren',
     teamColor: '#ff8700',
-    points: 128.0,
+    points: 186.0,
     archetype: 'The Perfectionist',
     traits: {
       aggression: 50,
@@ -1596,27 +1518,27 @@ const DRIVERS = [
       neuroticism: 55
     }
   },  {
-    id: 'max_verstappen',
-    name: 'Max Verstappen',
-    familyName: 'Verstappen',
-    team: 'Red Bull',
-    teamColor: '#3671C6',
-    points: 109.0,
-    archetype: 'The Apex Predator',
+    id: 'leclerc',
+    name: 'Charles Leclerc',
+    familyName: 'Leclerc',
+    team: 'Ferrari',
+    teamColor: '#dc143c',
+    points: 179.0,
+    archetype: 'The Romantic',
     traits: {
-      aggression: 95,
-      consistency: 80,
-      wet_ability: 90,
-      tire_mgmt: 75,
-      qualifying: 90,
-      racecraft: 90
+      aggression: 75,
+      consistency: 65,
+      wet_ability: 70,
+      tire_mgmt: 65,
+      qualifying: 95,
+      racecraft: 70
     },
     big5: {
-      openness: 60,
-      conscientiousness: 75,
-      extraversion: 45,
-      agreeableness: 30,
-      neuroticism: 25
+      openness: 90,
+      conscientiousness: 65,
+      extraversion: 55,
+      agreeableness: 70,
+      neuroticism: 50
     }
   },  {
     id: 'piastri',
@@ -1624,7 +1546,7 @@ const DRIVERS = [
     familyName: 'Piastri',
     team: 'McLaren',
     teamColor: '#ff8700',
-    points: 92.0,
+    points: 120.0,
     archetype: 'The Ice Man',
     traits: {
       aggression: 45,
@@ -1647,7 +1569,7 @@ const DRIVERS = [
     familyName: 'Hadjar',
     team: 'Red Bull',
     teamColor: '#3671C6',
-    points: 68.0,
+    points: 86.0,
     archetype: 'The Calculator',
     traits: {
       aggression: 40,
@@ -1670,7 +1592,7 @@ const DRIVERS = [
     familyName: 'Lawson',
     team: 'RB',
     teamColor: '#6692ff',
-    points: 43.0,
+    points: 59.0,
     archetype: 'The Dark Horse',
     traits: {
       aggression: 75,
@@ -1693,7 +1615,7 @@ const DRIVERS = [
     familyName: 'Gasly',
     team: 'Alpine',
     teamColor: '#0090ff',
-    points: 42.0,
+    points: 41.0,
     archetype: 'The Survivor',
     traits: {
       aggression: 60,
@@ -1716,7 +1638,7 @@ const DRIVERS = [
     familyName: 'Lindblad',
     team: 'RB',
     teamColor: '#6692ff',
-    points: 23.0,
+    points: 37.0,
     archetype: 'The Rookie',
     traits: {
       aggression: 55,
@@ -1739,7 +1661,7 @@ const DRIVERS = [
     familyName: 'Colapinto',
     team: 'Alpine',
     teamColor: '#0090ff',
-    points: 19.0,
+    points: 27.0,
     archetype: 'The Showman',
     traits: {
       aggression: 80,
@@ -1762,7 +1684,7 @@ const DRIVERS = [
     familyName: 'Bearman',
     team: 'Haas',
     teamColor: '#b6babd',
-    points: 18.0,
+    points: 20.0,
     archetype: 'The Grinder',
     traits: {
       aggression: 50,
@@ -1803,12 +1725,58 @@ const DRIVERS = [
       neuroticism: 35
     }
   },  {
+    id: 'hulkenberg',
+    name: 'Nico Hülkenberg',
+    familyName: 'Hülkenberg',
+    team: 'Audi',
+    teamColor: '#00e701',
+    points: 7.0,
+    archetype: 'The Nearly Man',
+    traits: {
+      aggression: 45,
+      consistency: 75,
+      wet_ability: 70,
+      tire_mgmt: 70,
+      qualifying: 80,
+      racecraft: 60
+    },
+    big5: {
+      openness: 55,
+      conscientiousness: 85,
+      extraversion: 55,
+      agreeableness: 50,
+      neuroticism: 40
+    }
+  },  {
+    id: 'ocon',
+    name: 'Esteban Ocon',
+    familyName: 'Ocon',
+    team: 'Haas',
+    teamColor: '#b6babd',
+    points: 7.0,
+    archetype: 'The Contrarian',
+    traits: {
+      aggression: 65,
+      consistency: 65,
+      wet_ability: 75,
+      tire_mgmt: 70,
+      qualifying: 65,
+      racecraft: 65
+    },
+    big5: {
+      openness: 50,
+      conscientiousness: 70,
+      extraversion: 40,
+      agreeableness: 35,
+      neuroticism: 55
+    }
+  },  {
     id: 'sainz',
     name: 'Carlos Sainz',
     familyName: 'Sainz',
     team: 'Williams',
     teamColor: '#64c4ff',
-    points: 6.0,
+    points: 7.0,
     archetype: 'The Warrior',
     traits: {
       aggression: 70,
@@ -1849,58 +1817,12 @@ const DRIVERS = [
       neuroticism: 35
     }
   },  {
-    id: 'ocon',
-    name: 'Esteban Ocon',
-    familyName: 'Ocon',
-    team: 'Haas',
-    teamColor: '#b6babd',
-    points: 3.0,
-    archetype: 'The Contrarian',
-    traits: {
-      aggression: 65,
-      consistency: 65,
-      wet_ability: 75,
-      tire_mgmt: 70,
-      qualifying: 65,
-      racecraft: 65
-    },
-    big5: {
-      openness: 50,
-      conscientiousness: 70,
-      extraversion: 40,
-      agreeableness: 35,
-      neuroticism: 55
-    }
-  },  {
-    id: 'hulkenberg',
-    name: 'Nico Hülkenberg',
-    familyName: 'Hülkenberg',
-    team: 'Audi',
-    teamColor: '#00e701',
-    points: 2.0,
-    archetype: 'The Nearly Man',
-    traits: {
-      aggression: 45,
-      consistency: 75,
-      wet_ability: 70,
-      tire_mgmt: 70,
-      qualifying: 80,
-      racecraft: 60
-    },
-    big5: {
-      openness: 55,
-      conscientiousness: 85,
-      extraversion: 55,
-      agreeableness: 50,
-      neuroticism: 40
-    }
-  },  {
     id: 'alonso',
     name: 'Fernando Alonso',
     familyName: 'Alonso',
     team: 'Aston Martin',
     teamColor: '#006f62',
-    points: 1.0,
+    points: 3.0,
     archetype: 'The Gladiator',
     traits: {
       aggression: 75,
