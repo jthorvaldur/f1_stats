@@ -1,7 +1,7 @@
 {
   "year": 2026,
-  "current_round": 15,
-  "generated": "2026-10-01",
+  "current_round": 16,
+  "generated": "2026-10-05",
   "drivers": [
     {
       "position": 1,
@@ -12,7 +12,7 @@
       "dob": "2006-08-25",
       "nationality": "Italian",
       "number": "12",
-      "points": 302.0,
+      "points": 320.0,
       "wins": 8,
       "team": "Mercedes",
       "team_id": "mercedes",
@@ -77,7 +77,7 @@
       "debut_year": 2019,
       "debut_age": 21,
       "f1_seasons": 8,
-      "progress_pct": 78,
+      "progress_pct": 74,
       "profile": {
         "archetype": "The Analyst",
         "big5": {
@@ -110,7 +110,7 @@
       "dob": "1985-01-07",
       "nationality": "British",
       "number": "44",
-      "points": 199.0,
+      "points": 214.0,
       "wins": 1,
       "team": "Ferrari",
       "team_id": "ferrari",
@@ -126,7 +126,7 @@
       "debut_year": 2007,
       "debut_age": 22,
       "f1_seasons": 20,
-      "progress_pct": 66,
+      "progress_pct": 67,
       "profile": {
         "archetype": "The Legend",
         "big5": {
@@ -152,55 +152,6 @@
     },
     {
       "position": 4,
-      "name": "Lando Norris",
-      "given_name": "Lando",
-      "family_name": "Norris",
-      "code": "NOR",
-      "dob": "1999-11-13",
-      "nationality": "British",
-      "number": "1",
-      "points": 186.0,
-      "wins": 2,
-      "team": "McLaren",
-      "team_id": "mclaren",
-      "team_hex": "#ff8700",
-      "team_css": "team-mclaren",
-      "team_display": "McLaren",
-      "driver_id": "norris",
-      "age": 26,
-      "weight_kg": 68,
-      "height_cm": 170,
-      "bmi": 23.5,
-      "ballast": 9,
-      "debut_year": 2019,
-      "debut_age": 19,
-      "f1_seasons": 8,
-      "progress_pct": 62,
-      "profile": {
-        "archetype": "The Perfectionist",
-        "big5": {
-          "openness": 80,
-          "conscientiousness": 85,
-          "extraversion": 70,
-          "agreeableness": 75,
-          "neuroticism": 55
-        },
-        "driving_style": "Technically gifted with exceptional smoothness. Manages tires brilliantly and excels in changing conditions. Has overcome early-career tendency to crack under championship pressure.",
-        "risk_profile": "Conservative in wheel-to-wheel but fast in clear air. The 2025 championship showed he can handle pressure. Start-line performance historically weak but improving.",
-        "team_dynamics": "Strong partnership with McLaren. Loyal, well-integrated. Constructive feedback loop with engineers. Healthy competition with Piastri.",
-        "traits": {
-          "aggression": 50,
-          "consistency": 85,
-          "wet_ability": 85,
-          "tire_mgmt": 90,
-          "qualifying": 85,
-          "racecraft": 70
-        }
-      },
-      "team_budget_m": 135
-    },
-    {
-      "position": 5,
       "name": "Charles Leclerc",
       "given_name": "Charles",
       "family_name": "Leclerc",
@@ -208,7 +159,7 @@
       "dob": "1997-10-16",
       "nationality": "Monegasque",
       "number": "16",
-      "points": 179.0,
+      "points": 191.0,
       "wins": 1,
       "team": "Ferrari",
       "team_id": "ferrari",
@@ -224,7 +175,7 @@
       "debut_year": 2018,
       "debut_age": 20,
       "f1_seasons": 9,
-      "progress_pct": 59,
+      "progress_pct": 60,
       "profile": {
         "archetype": "The Romantic",
         "big5": {
@@ -249,6 +200,55 @@
       "team_budget_m": 135
     },
     {
+      "position": 5,
+      "name": "Lando Norris",
+      "given_name": "Lando",
+      "family_name": "Norris",
+      "code": "NOR",
+      "dob": "1999-11-13",
+      "nationality": "British",
+      "number": "1",
+      "points": 188.0,
+      "wins": 2,
+      "team": "McLaren",
+      "team_id": "mclaren",
+      "team_hex": "#ff8700",
+      "team_css": "team-mclaren",
+      "team_display": "McLaren",
+      "driver_id": "norris",
+      "age": 26,
+      "weight_kg": 68,
+      "height_cm": 170,
+      "bmi": 23.5,
+      "ballast": 9,
+      "debut_year": 2019,
+      "debut_age": 19,
+      "f1_seasons": 8,
+      "progress_pct": 59,
+      "profile": {
+        "archetype": "The Perfectionist",
+        "big5": {
+          "openness": 80,
+          "conscientiousness": 85,
+          "extraversion": 70,
+          "agreeableness": 75,
+          "neuroticism": 55
+        },
+        "driving_style": "Technically gifted with exceptional smoothness. Manages tires brilliantly and excels in changing conditions. Has overcome early-career tendency to crack under championship pressure.",
+        "risk_profile": "Conservative in wheel-to-wheel but fast in clear air. The 2025 championship showed he can handle pressure. Start-line performance historically weak but improving.",
+        "team_dynamics": "Strong partnership with McLaren. Loyal, well-integrated. Constructive feedback loop with engineers. Healthy competition with Piastri.",
+        "traits": {
+          "aggression": 50,
+          "consistency": 85,
+          "wet_ability": 85,
+          "tire_mgmt": 90,
+          "qualifying": 85,
+          "racecraft": 70
+        }
+      },
+      "team_budget_m": 135
+    },
+    {
       "position": 6,
       "name": "Max Verstappen",
       "given_name": "Max",
@@ -257,8 +257,8 @@
       "dob": "1997-09-30",
       "nationality": "Dutch",
       "number": "3",
-      "points": 163.0,
-      "wins": 0,
+      "points": 188.0,
+      "wins": 1,
       "team": "Red Bull",
       "team_id": "red_bull",
       "team_hex": "#3671C6",
@@ -273,7 +273,7 @@
       "debut_year": null,
       "debut_age": null,
       "f1_seasons": null,
-      "progress_pct": 54,
+      "progress_pct": 59,
       "profile": {},
       "team_budget_m": 135
     },
@@ -286,7 +286,7 @@
       "dob": "2001-04-06",
       "nationality": "Australian",
       "number": "81",
-      "points": 120.0,
+      "points": 128.0,
       "wins": 0,
       "team": "McLaren",
       "team_id": "mclaren",
@@ -335,7 +335,7 @@
       "dob": "2004-09-28",
       "nationality": "French",
       "number": "6",
-      "points": 86.0,
+      "points": 96.0,
       "wins": 0,
       "team": "Red Bull",
       "team_id": "red_bull",
@@ -351,7 +351,7 @@
       "debut_year": 2025,
       "debut_age": 20,
       "f1_seasons": 2,
-      "progress_pct": 28,
+      "progress_pct": 30,
       "profile": {
         "archetype": "The Calculator",
         "big5": {
@@ -384,7 +384,7 @@
       "dob": "2002-02-11",
       "nationality": "New Zealander",
       "number": "30",
-      "points": 59.0,
+      "points": 65.0,
       "wins": 0,
       "team": "RB F1 Team",
       "team_id": "rb",
@@ -449,7 +449,7 @@
       "debut_year": 2017,
       "debut_age": 21,
       "f1_seasons": 10,
-      "progress_pct": 14,
+      "progress_pct": 13,
       "profile": {
         "archetype": "The Survivor",
         "big5": {
@@ -482,7 +482,7 @@
       "dob": "2007-08-08",
       "nationality": "British",
       "number": "41",
-      "points": 37.0,
+      "points": 38.0,
       "wins": 0,
       "team": "RB F1 Team",
       "team_id": "rb",
@@ -547,7 +547,7 @@
       "debut_year": 2024,
       "debut_age": 20,
       "f1_seasons": 3,
-      "progress_pct": 9,
+      "progress_pct": 8,
       "profile": {
         "archetype": "The Showman",
         "big5": {
@@ -596,7 +596,7 @@
       "debut_year": 2024,
       "debut_age": 18,
       "f1_seasons": 3,
-      "progress_pct": 7,
+      "progress_pct": 6,
       "profile": {
         "archetype": "The Grinder",
         "big5": {
@@ -769,6 +769,55 @@
     },
     {
       "position": 17,
+      "name": "Fernando Alonso",
+      "given_name": "Fernando",
+      "family_name": "Alonso",
+      "code": "ALO",
+      "dob": "1981-07-29",
+      "nationality": "Spanish",
+      "number": "14",
+      "points": 7.0,
+      "wins": 0,
+      "team": "Aston Martin",
+      "team_id": "aston_martin",
+      "team_hex": "#006f62",
+      "team_css": "team-aston",
+      "team_display": "Aston Martin",
+      "driver_id": "alonso",
+      "age": 44,
+      "weight_kg": 68,
+      "height_cm": 171,
+      "bmi": 23.3,
+      "ballast": 9,
+      "debut_year": 2001,
+      "debut_age": 19,
+      "f1_seasons": 26,
+      "progress_pct": 2,
+      "profile": {
+        "archetype": "The Gladiator",
+        "big5": {
+          "openness": 65,
+          "conscientiousness": 90,
+          "extraversion": 55,
+          "agreeableness": 30,
+          "neuroticism": 35
+        },
+        "driving_style": "The most complete driver in F1 history by many accounts. Adapts to any car, any condition. In his 23rd season, still extracting the maximum. His car control in the wet remains supernatural. The 2024-2025 decline is real but the baseline was so high.",
+        "risk_profile": "Fiercely competitive. Will fight for 15th like it's a race win. Has mellowed slightly with age but the fire still burns. Political operator \u2014 uses media pressure strategically.",
+        "team_dynamics": "Demands respect and resources. Has outlasted multiple teammates and team principals. At Aston Martin for the long-shot championship run that hasn't materialized.",
+        "traits": {
+          "aggression": 75,
+          "consistency": 70,
+          "wet_ability": 90,
+          "tire_mgmt": 80,
+          "qualifying": 75,
+          "racecraft": 95
+        }
+      },
+      "team_budget_m": 135
+    },
+    {
+      "position": 18,
       "name": "Carlos Sainz",
       "given_name": "Carlos",
       "family_name": "Sainz",
@@ -817,7 +866,7 @@
       "team_budget_m": 120
     },
     {
-      "position": 18,
+      "position": 19,
       "name": "Alexander Albon",
       "given_name": "Alexander",
       "family_name": "Albon",
@@ -864,55 +913,6 @@
         }
       },
       "team_budget_m": 120
-    },
-    {
-      "position": 19,
-      "name": "Fernando Alonso",
-      "given_name": "Fernando",
-      "family_name": "Alonso",
-      "code": "ALO",
-      "dob": "1981-07-29",
-      "nationality": "Spanish",
-      "number": "14",
-      "points": 3.0,
-      "wins": 0,
-      "team": "Aston Martin",
-      "team_id": "aston_martin",
-      "team_hex": "#006f62",
-      "team_css": "team-aston",
-      "team_display": "Aston Martin",
-      "driver_id": "alonso",
-      "age": 44,
-      "weight_kg": 68,
-      "height_cm": 171,
-      "bmi": 23.3,
-      "ballast": 9,
-      "debut_year": 2001,
-      "debut_age": 19,
-      "f1_seasons": 26,
-      "progress_pct": 1,
-      "profile": {
-        "archetype": "The Gladiator",
-        "big5": {
-          "openness": 65,
-          "conscientiousness": 90,
-          "extraversion": 55,
-          "agreeableness": 30,
-          "neuroticism": 35
-        },
-        "driving_style": "The most complete driver in F1 history by many accounts. Adapts to any car, any condition. In his 23rd season, still extracting the maximum. His car control in the wet remains supernatural. The 2024-2025 decline is real but the baseline was so high.",
-        "risk_profile": "Fiercely competitive. Will fight for 15th like it's a race win. Has mellowed slightly with age but the fire still burns. Political operator \u2014 uses media pressure strategically.",
-        "team_dynamics": "Demands respect and resources. Has outlasted multiple teammates and team principals. At Aston Martin for the long-shot championship run that hasn't materialized.",
-        "traits": {
-          "aggression": 75,
-          "consistency": 70,
-          "wet_ability": 90,
-          "tire_mgmt": 80,
-          "qualifying": 75,
-          "racecraft": 95
-        }
-      },
-      "team_budget_m": 135
     },
     {
       "position": 20,
@@ -1096,7 +1096,7 @@
       "position": 1,
       "name": "Mercedes",
       "team_id": "mercedes",
-      "points": 538.0,
+      "points": 556.0,
       "wins": 11,
       "team_hex": "#00d2be",
       "team_css": "team-mercedes",
@@ -1107,30 +1107,30 @@
       "budget_m": 135,
       "staff": 1000,
       "factory": "Brackley, UK",
-      "pts_per_million": 3.99
+      "pts_per_million": 4.12
     },
     {
       "position": 2,
       "name": "Ferrari",
       "team_id": "ferrari",
-      "points": 378.0,
+      "points": 405.0,
       "wins": 2,
       "team_hex": "#dc143c",
       "team_css": "team-ferrari",
       "team_display": "Ferrari",
       "car_weight": 770,
       "car_over": 2,
-      "progress_pct": 70,
+      "progress_pct": 73,
       "budget_m": 135,
       "staff": 1100,
       "factory": "Maranello, Italy",
-      "pts_per_million": 2.8
+      "pts_per_million": 3.0
     },
     {
       "position": 3,
       "name": "McLaren",
       "team_id": "mclaren",
-      "points": 306.0,
+      "points": 316.0,
       "wins": 2,
       "team_hex": "#ff8700",
       "team_css": "team-mclaren",
@@ -1141,41 +1141,41 @@
       "budget_m": 135,
       "staff": 900,
       "factory": "Woking, UK",
-      "pts_per_million": 2.27
+      "pts_per_million": 2.34
     },
     {
       "position": 4,
       "name": "Red Bull",
       "team_id": "red_bull",
-      "points": 263.0,
-      "wins": 0,
+      "points": 298.0,
+      "wins": 1,
       "team_hex": "#3671C6",
       "team_css": "team-redbull",
       "team_display": "Red Bull",
       "car_weight": 778,
       "car_over": 10,
-      "progress_pct": 49,
+      "progress_pct": 54,
       "budget_m": 135,
       "staff": 950,
       "factory": "Milton Keynes, UK",
-      "pts_per_million": 1.95
+      "pts_per_million": 2.21
     },
     {
       "position": 5,
       "name": "RB F1 Team",
       "team_id": "rb",
-      "points": 83.0,
+      "points": 90.0,
       "wins": 0,
       "team_hex": "#6692ff",
       "team_css": "team-rb",
       "team_display": "RB",
       "car_weight": 775,
       "car_over": 7,
-      "progress_pct": 15,
+      "progress_pct": 16,
       "budget_m": 125,
       "staff": 700,
       "factory": "Faenza, Italy",
-      "pts_per_million": 0.66
+      "pts_per_million": 0.72
     },
     {
       "position": 6,
@@ -1188,7 +1188,7 @@
       "team_display": "Alpine",
       "car_weight": 773,
       "car_over": 5,
-      "progress_pct": 13,
+      "progress_pct": 12,
       "budget_m": 130,
       "staff": 800,
       "factory": "Enstone/Viry, UK/France",
@@ -1249,7 +1249,7 @@
       "position": 10,
       "name": "Aston Martin",
       "team_id": "aston_martin",
-      "points": 3.0,
+      "points": 7.0,
       "wins": 0,
       "team_hex": "#006f62",
       "team_css": "team-aston",
@@ -1260,7 +1260,7 @@
       "budget_m": 135,
       "staff": 850,
       "factory": "Silverstone, UK",
-      "pts_per_million": 0.02
+      "pts_per_million": 0.05
     },
     {
       "position": 11,
