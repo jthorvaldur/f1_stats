@@ -110,7 +110,7 @@
   <div class="badges">
     <span class="badge badge-blue">Pairwise Elo</span>
     <span class="badge badge-amber">K-factor 4</span>
-    <span class="badge badge-green">17 Races Processed</span>
+    <span class="badge badge-green">18 Races Processed</span>
     <span class="badge badge-purple">DNF-Neutral</span>
   </div>
 </div>
@@ -118,14 +118,14 @@
 <!-- Stats cards -->
 <div class="section">
   <h2>Key Metrics</h2>
-  <p class="section-sub">Headline figures from the Elo model after Round 17</p>
+  <p class="section-sub">Headline figures from the Elo model after Round 18</p>
   <div class="grid grid-3" id="stats-cards"></div>
 </div>
 
 <!-- Bar chart: final Elo ratings -->
 <div class="section section-divider">
   <h2>Final Elo Ratings</h2>
-  <p class="section-sub">Horizontal bar chart after Round 17 — sorted highest to lowest, colored by team</p>
+  <p class="section-sub">Horizontal bar chart after Round 18 — sorted highest to lowest, colored by team</p>
   <div class="chart-container">
     <canvas id="bar-chart"></canvas>
   </div>
@@ -134,7 +134,7 @@
 <!-- Line chart: round-by-round progression -->
 <div class="section section-divider">
   <h2>Elo Progression</h2>
-  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through 17 races</p>
+  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through 18 races</p>
   <div class="chart-container">
     <canvas id="line-chart"></canvas>
   </div>
@@ -292,7 +292,7 @@ const RACES = [
     'Antonelli',    'Norris',    'Piastri',    'Russell',    'Verstappen',    'Hamilton',    'Colapinto',    'Leclerc',    'Sainz',    'Albon',    'Bearman',    'Bortoleto',    'Ocon',    'Lindblad',    'Alonso',    'Pérez',    'Stroll',    'Bottas'  ]},  { label: 'R5 Canadian Grand Prix', finishers: [
     'Antonelli',    'Hamilton',    'Verstappen',    'Leclerc',    'Hadjar',    'Colapinto',    'Lawson',    'Gasly',    'Sainz',    'Bearman',    'Piastri',    'Hülkenberg'  ]}];
 
-const currentRound = 17;
+const currentRound = 18;
 
 // ── Elo computation ─────────────────────────────────────────────────────
 const K = 4;
@@ -616,10 +616,10 @@ teamOrder.push('Mercedes');
 teamColorMap['Mercedes'] = '#00d2be';
 teamOrder.push('Ferrari');
 teamColorMap['Ferrari'] = '#dc143c';
-teamOrder.push('McLaren');
-teamColorMap['McLaren'] = '#ff8700';
 teamOrder.push('Red Bull');
 teamColorMap['Red Bull'] = '#3671C6';
+teamOrder.push('McLaren');
+teamColorMap['McLaren'] = '#ff8700';
 teamOrder.push('RB F1 Team');
 teamColorMap['RB F1 Team'] = '#6692ff';
 teamOrder.push('Alpine F1 Team');
