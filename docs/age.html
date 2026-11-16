@@ -63,8 +63,8 @@
   .driver-name { color: #f0f6fc; font-weight: 600; }
   .team-mercedes { color: #00d2be; }
   .team-redbull { color: #3671C6; }
-  .team-ferrari { color: #dc143c; }
   .team-mercedes { color: #00d2be; }
+  .team-ferrari { color: #dc143c; }
   .team-ferrari { color: #dc143c; }
   .team-mclaren { color: #ff8700; }
   .team-mclaren { color: #ff8700; }
@@ -81,10 +81,11 @@
   .team-williams { color: #64c4ff; }
   .team-williams { color: #64c4ff; }
   .team-rb { color: #6692ff; }
+  .team-haas { color: #b6babd; }
   .team-aston { color: #006f62; }
   .team-cadillac { color: #c0c0c0; }
-  .team-haas { color: #b6babd; }
   .team-cadillac { color: #c0c0c0; }
+  .team-haas { color: #b6babd; }
 
   .chart-container { position: relative; width: 100%; height: 320px; margin: 16px 0; }
   canvas { width: 100%; height: 100%; }
@@ -117,7 +118,7 @@
 
 <div class="section">
   <h2>Grid Statistics</h2>
-  <p class="section-sub">Summary metrics for the 24-driver 2026 grid. Age statistics use the 24 drivers with known ages.</p>
+  <p class="section-sub">Summary metrics for the 25-driver 2026 grid. Age statistics use the 25 drivers with known ages.</p>
   <div class="grid grid-4">
     <div class="card">
       <div class="card-title">Mean Age</div>
@@ -157,8 +158,8 @@
   <p class="section-sub">Drivers grouped by career stage</p>
   <div class="gen-grid">
     <div class="gen-card" style="border-left-color:#bb9af7;">
-      <div class="gen-title" style="color:#bb9af7;">Gen Next (18-20) — 3 drivers</div>
-      <div class="gen-drivers">Lindblad (18), Antonelli (19), Bearman (20)</div>
+      <div class="gen-title" style="color:#bb9af7;">Gen Next (18-20) — 4 drivers</div>
+      <div class="gen-drivers">Lindblad (18), Antonelli (19), Bearman (20), Camara (20)</div>
     </div>
     <div class="gen-card" style="border-left-color:#58a6ff;">
       <div class="gen-title" style="color:#58a6ff;">Young Guns (21-25) — 6 drivers</div>
@@ -387,6 +388,15 @@
           <td>Unknown</td>
         </tr>
         <tr>
+          <td class="driver-name">Ryo Hirakawa</td>
+          <td class="team-haas">Haas</td>
+          <td>1994-03-07</td>
+          <td>32</td>
+          <td>Unknown</td>
+          <td>Unknown</td>
+          <td>Unknown</td>
+        </tr>
+        <tr>
           <td class="driver-name">Lance Stroll</td>
           <td class="team-aston">Aston Martin</td>
           <td>1998-10-29</td>
@@ -396,10 +406,10 @@
           <td>Unknown</td>
         </tr>
         <tr>
-          <td class="driver-name">Ryo Hirakawa</td>
+          <td class="driver-name">Rafael Camara</td>
           <td class="team-haas">Haas</td>
-          <td>1994-03-07</td>
-          <td>32</td>
+          <td>2005-05-05</td>
+          <td>20</td>
           <td>Unknown</td>
           <td>Unknown</td>
           <td>Unknown</td>
@@ -444,12 +454,12 @@
       <div class="card-title">Generational Shift</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
 The 2026 grid features a 26-year age span between Lindblad (18) and Alonso (44).
-3 drivers aged 20 or under race alongside 2 drivers over 40.      </div>
+4 drivers aged 20 or under race alongside 2 drivers over 40.      </div>
     </div>
     <div class="card">
       <div class="card-title">Youth Cohort</div>
       <div style="font-size:12px;color:#c9d1d9;line-height:1.7;">
-The cohort aged 25 or younger includes 9 drivers (38% of drivers with known ages). 8 drivers are aged 26-30.
+The cohort aged 25 or younger includes 10 drivers (40% of drivers with known ages). 8 drivers are aged 26-30.
       </div>
     </div>
     <div class="card">
@@ -469,7 +479,7 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-11-02 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-11-16 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -478,8 +488,8 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
   const allDrivers = [
     {name:"Antonelli", age:19, debutAge:18, seasons:2},
     {name:"Verstappen", age:28, debutAge:null, seasons:null},
-    {name:"Hamilton", age:41, debutAge:22, seasons:20},
     {name:"Russell", age:28, debutAge:21, seasons:8},
+    {name:"Hamilton", age:41, debutAge:22, seasons:20},
     {name:"Leclerc", age:28, debutAge:20, seasons:9},
     {name:"Norris", age:26, debutAge:19, seasons:8},
     {name:"Piastri", age:24, debutAge:21, seasons:4},
@@ -489,17 +499,18 @@ Lindblad (1 season), Antonelli (2 seasons), Hadjar (2 seasons), Bortoleto (2 sea
     {name:"Lindblad", age:18, debutAge:18, seasons:1},
     {name:"Colapinto", age:22, debutAge:20, seasons:3},
     {name:"Bearman", age:20, debutAge:18, seasons:3},
-    {name:"H\u00fclkenberg", age:38, debutAge:22, seasons:17},
     {name:"Bortoleto", age:21, debutAge:20, seasons:2},
+    {name:"H\u00fclkenberg", age:38, debutAge:22, seasons:17},
     {name:"Ocon", age:29, debutAge:19, seasons:11},
     {name:"Alonso", age:44, debutAge:19, seasons:26},
     {name:"Sainz", age:31, debutAge:20, seasons:12},
     {name:"Albon", age:29, debutAge:22, seasons:8},
     {name:"Tsunoda", age:25, debutAge:null, seasons:null},
+    {name:"Hirakawa", age:32, debutAge:null, seasons:null},
     {name:"Stroll", age:27, debutAge:null, seasons:null},
     {name:"Bottas", age:36, debutAge:23, seasons:14},
-    {name:"Hirakawa", age:32, debutAge:null, seasons:null},
     {name:"P\u00e9rez", age:36, debutAge:21, seasons:16},
+    {name:"Camara", age:20, debutAge:null, seasons:null},
   ];
 
   // Aggregate age distribution
