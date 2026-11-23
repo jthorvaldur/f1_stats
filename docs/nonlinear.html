@@ -127,16 +127,16 @@
 <!-- Stats Cards -->
 <div class="section">
   <h2>Concentration Metrics</h2>
-  <p class="section-sub">2026 season after Round 20</p>
+  <p class="section-sub">2026 season after Round 21</p>
   <div class="grid grid-4">
     <div class="card">
       <div class="card-title">Gini Coefficient</div>
-      <div class="stat" id="giniStat">0.6572</div>
+      <div class="stat" id="giniStat">0.6548</div>
       <div class="stat-label">0 = perfect equality, 1 = total concentration</div>
     </div>
     <div class="card">
       <div class="card-title">HHI</div>
-      <div class="stat" id="hhiStat">0.1080</div>
+      <div class="stat" id="hhiStat">0.1070</div>
       <div class="stat-label">Herfindahl-Hirschman Index of market share</div>
     </div>
     <div class="card">
@@ -260,7 +260,7 @@
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-11-16 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-11-23 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -270,13 +270,13 @@
   // ============================================================
   // DATA (injected from Jinja2)
   // ============================================================
-  var currentGini = 0.6572;
-  var currentHHI = 0.108;
+  var currentGini = 0.6548;
+  var currentHHI = 0.107;
   var currentYear = 2026;
-  var currentRound = 20;
+  var currentRound = 21;
 
   var drivers = [
-    { name: 'Andrea Kimi Antonelli', familyName: 'Antonelli', pts: 390, color: '#00d2be', teamCss: 'team-mercedes', team: 'Mercedes' },    { name: 'Max Verstappen', familyName: 'Verstappen', pts: 279, color: '#3671C6', teamCss: 'team-redbull', team: 'Red Bull' },    { name: 'George Russell', familyName: 'Russell', pts: 262, color: '#00d2be', teamCss: 'team-mercedes', team: 'Mercedes' },    { name: 'Lewis Hamilton', familyName: 'Hamilton', pts: 261, color: '#dc143c', teamCss: 'team-ferrari', team: 'Ferrari' },    { name: 'Charles Leclerc', familyName: 'Leclerc', pts: 249, color: '#dc143c', teamCss: 'team-ferrari', team: 'Ferrari' },    { name: 'Lando Norris', familyName: 'Norris', pts: 246, color: '#ff8700', teamCss: 'team-mclaren', team: 'McLaren' },    { name: 'Oscar Piastri', familyName: 'Piastri', pts: 152, color: '#ff8700', teamCss: 'team-mclaren', team: 'McLaren' },    { name: 'Isack Hadjar', familyName: 'Hadjar', pts: 122, color: '#3671C6', teamCss: 'team-redbull', team: 'Red Bull' },    { name: 'Liam Lawson', familyName: 'Lawson', pts: 89, color: '#6692ff', teamCss: 'team-rb', team: 'RB' },    { name: 'Pierre Gasly', familyName: 'Gasly', pts: 42, color: '#0090ff', teamCss: 'team-alpine', team: 'Alpine' },    { name: 'Arvid Lindblad', familyName: 'Lindblad', pts: 38, color: '#6692ff', teamCss: 'team-rb', team: 'RB' },    { name: 'Franco Colapinto', familyName: 'Colapinto', pts: 27, color: '#0090ff', teamCss: 'team-alpine', team: 'Alpine' },    { name: 'Oliver Bearman', familyName: 'Bearman', pts: 23, color: '#b6babd', teamCss: 'team-haas', team: 'Haas' },    { name: 'Gabriel Bortoleto', familyName: 'Bortoleto', pts: 14, color: '#00e701', teamCss: 'team-audi', team: 'Audi' },    { name: 'Nico Hülkenberg', familyName: 'Hülkenberg', pts: 14, color: '#00e701', teamCss: 'team-audi', team: 'Audi' },    { name: 'Esteban Ocon', familyName: 'Ocon', pts: 7, color: '#b6babd', teamCss: 'team-haas', team: 'Haas' },    { name: 'Fernando Alonso', familyName: 'Alonso', pts: 7, color: '#006f62', teamCss: 'team-aston', team: 'Aston Martin' },    { name: 'Carlos Sainz', familyName: 'Sainz', pts: 7, color: '#64c4ff', teamCss: 'team-williams', team: 'Williams' },    { name: 'Alexander Albon', familyName: 'Albon', pts: 5, color: '#64c4ff', teamCss: 'team-williams', team: 'Williams' },    { name: 'Yuki Tsunoda', familyName: 'Tsunoda', pts: 1, color: '#6692ff', teamCss: 'team-rb', team: 'RB' },    { name: 'Ryo Hirakawa', familyName: 'Hirakawa', pts: 1, color: '#b6babd', teamCss: 'team-haas', team: 'Haas' },    { name: 'Lance Stroll', familyName: 'Stroll', pts: 0, color: '#006f62', teamCss: 'team-aston', team: 'Aston Martin' },    { name: 'Valtteri Bottas', familyName: 'Bottas', pts: 0, color: '#c0c0c0', teamCss: 'team-cadillac', team: 'Cadillac' },    { name: 'Sergio Pérez', familyName: 'Pérez', pts: 0, color: '#c0c0c0', teamCss: 'team-cadillac', team: 'Cadillac' },    { name: 'Rafael Camara', familyName: 'Camara', pts: 0, color: '#b6babd', teamCss: 'team-haas', team: 'Haas' }  ];
+    { name: 'Andrea Kimi Antonelli', familyName: 'Antonelli', pts: 402, color: '#00d2be', teamCss: 'team-mercedes', team: 'Mercedes' },    { name: 'Max Verstappen', familyName: 'Verstappen', pts: 304, color: '#3671C6', teamCss: 'team-redbull', team: 'Red Bull' },    { name: 'Lewis Hamilton', familyName: 'Hamilton', pts: 267, color: '#dc143c', teamCss: 'team-ferrari', team: 'Ferrari' },    { name: 'George Russell', familyName: 'Russell', pts: 264, color: '#00d2be', teamCss: 'team-mercedes', team: 'Mercedes' },    { name: 'Lando Norris', familyName: 'Norris', pts: 264, color: '#ff8700', teamCss: 'team-mclaren', team: 'McLaren' },    { name: 'Charles Leclerc', familyName: 'Leclerc', pts: 250, color: '#dc143c', teamCss: 'team-ferrari', team: 'Ferrari' },    { name: 'Oscar Piastri', familyName: 'Piastri', pts: 167, color: '#ff8700', teamCss: 'team-mclaren', team: 'McLaren' },    { name: 'Isack Hadjar', familyName: 'Hadjar', pts: 122, color: '#3671C6', teamCss: 'team-redbull', team: 'Red Bull' },    { name: 'Liam Lawson', familyName: 'Lawson', pts: 89, color: '#6692ff', teamCss: 'team-rb', team: 'RB' },    { name: 'Pierre Gasly', familyName: 'Gasly', pts: 52, color: '#0090ff', teamCss: 'team-alpine', team: 'Alpine' },    { name: 'Arvid Lindblad', familyName: 'Lindblad', pts: 38, color: '#6692ff', teamCss: 'team-rb', team: 'RB' },    { name: 'Franco Colapinto', familyName: 'Colapinto', pts: 35, color: '#0090ff', teamCss: 'team-alpine', team: 'Alpine' },    { name: 'Oliver Bearman', familyName: 'Bearman', pts: 23, color: '#b6babd', teamCss: 'team-haas', team: 'Haas' },    { name: 'Gabriel Bortoleto', familyName: 'Bortoleto', pts: 14, color: '#00e701', teamCss: 'team-audi', team: 'Audi' },    { name: 'Nico Hülkenberg', familyName: 'Hülkenberg', pts: 14, color: '#00e701', teamCss: 'team-audi', team: 'Audi' },    { name: 'Carlos Sainz', familyName: 'Sainz', pts: 11, color: '#64c4ff', teamCss: 'team-williams', team: 'Williams' },    { name: 'Esteban Ocon', familyName: 'Ocon', pts: 7, color: '#b6babd', teamCss: 'team-haas', team: 'Haas' },    { name: 'Fernando Alonso', familyName: 'Alonso', pts: 7, color: '#006f62', teamCss: 'team-aston', team: 'Aston Martin' },    { name: 'Alexander Albon', familyName: 'Albon', pts: 5, color: '#64c4ff', teamCss: 'team-williams', team: 'Williams' },    { name: 'Yuki Tsunoda', familyName: 'Tsunoda', pts: 1, color: '#6692ff', teamCss: 'team-rb', team: 'RB' },    { name: 'Ryo Hirakawa', familyName: 'Hirakawa', pts: 1, color: '#b6babd', teamCss: 'team-haas', team: 'Haas' },    { name: 'Lance Stroll', familyName: 'Stroll', pts: 0, color: '#006f62', teamCss: 'team-aston', team: 'Aston Martin' },    { name: 'Valtteri Bottas', familyName: 'Bottas', pts: 0, color: '#c0c0c0', teamCss: 'team-cadillac', team: 'Cadillac' },    { name: 'Sergio Pérez', familyName: 'Pérez', pts: 0, color: '#c0c0c0', teamCss: 'team-cadillac', team: 'Cadillac' },    { name: 'Rafael Camara', familyName: 'Camara', pts: 0, color: '#b6babd', teamCss: 'team-haas', team: 'Haas' }  ];
 
   var historical = {
     '2010': {

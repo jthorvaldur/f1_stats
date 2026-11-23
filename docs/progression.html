@@ -82,7 +82,7 @@
 
 <div class="section">
   <h2>Championship Battle</h2>
-  <p class="section-sub">Cumulative driver points — Rounds 1 through 20</p>
+  <p class="section-sub">Cumulative driver points — Rounds 1 through 21</p>
   <div class="card">
     <div class="chart-container">
       <canvas id="progressionChart"></canvas>
@@ -120,7 +120,7 @@
           <td>25</td>
           <td>25</td>
           <td>25</td>
-          <td style="font-weight:700;">390</td>
+          <td style="font-weight:700;">402</td>
         </tr>
         <tr>
           <td class="driver-name" style="color:#3671C6;">Verstappen</td>
@@ -129,16 +129,7 @@
           <td>4</td>
           <td>10</td>
           <td>15</td>
-          <td style="font-weight:700;">279</td>
-        </tr>
-        <tr>
-          <td class="driver-name" style="color:#00d2be;">Russell</td>
-          <td>25</td>
-          <td>18</td>
-          <td>12</td>
-          <td>12</td>
-          <td>—</td>
-          <td style="font-weight:700;">262</td>
+          <td style="font-weight:700;">304</td>
         </tr>
         <tr>
           <td class="driver-name" style="color:#dc143c;">Hamilton</td>
@@ -147,16 +138,16 @@
           <td>8</td>
           <td>8</td>
           <td>18</td>
-          <td style="font-weight:700;">261</td>
+          <td style="font-weight:700;">267</td>
         </tr>
         <tr>
-          <td class="driver-name" style="color:#dc143c;">Leclerc</td>
-          <td>15</td>
+          <td class="driver-name" style="color:#00d2be;">Russell</td>
+          <td>25</td>
+          <td>18</td>
           <td>12</td>
-          <td>15</td>
-          <td>4</td>
           <td>12</td>
-          <td style="font-weight:700;">249</td>
+          <td>—</td>
+          <td style="font-weight:700;">264</td>
         </tr>
         <tr>
           <td class="driver-name" style="color:#ff8700;">Norris</td>
@@ -165,7 +156,16 @@
           <td>10</td>
           <td>18</td>
           <td>—</td>
-          <td style="font-weight:700;">246</td>
+          <td style="font-weight:700;">264</td>
+        </tr>
+        <tr>
+          <td class="driver-name" style="color:#dc143c;">Leclerc</td>
+          <td>15</td>
+          <td>12</td>
+          <td>15</td>
+          <td>4</td>
+          <td>12</td>
+          <td style="font-weight:700;">250</td>
         </tr>
         <tr>
           <td class="driver-name" style="color:#ff8700;">Piastri</td>
@@ -174,7 +174,7 @@
           <td>18</td>
           <td>15</td>
           <td>0</td>
-          <td style="font-weight:700;">152</td>
+          <td style="font-weight:700;">167</td>
         </tr>
         <tr>
           <td class="driver-name" style="color:#3671C6;">Hadjar</td>
@@ -201,7 +201,7 @@
           <td>6</td>
           <td>—</td>
           <td>4</td>
-          <td style="font-weight:700;">42</td>
+          <td style="font-weight:700;">52</td>
         </tr>
       </tbody>
     </table>
@@ -209,7 +209,7 @@
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-11-16 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-11-23 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -219,10 +219,10 @@
   const driversInfo = [
     {name:'Antonelli', color:'#00d2be', width:3},
     {name:'Verstappen', color:'#3671C6', width:3, dash:[6,3]},
-    {name:'Russell', color:'#00d2be', width:2},
     {name:'Hamilton', color:'#dc143c', width:2},
-    {name:'Leclerc', color:'#dc143c', width:2},
-    {name:'Norris', color:'#ff8700', width:2, dash:[6,3]},
+    {name:'Russell', color:'#00d2be', width:2},
+    {name:'Norris', color:'#ff8700', width:2},
+    {name:'Leclerc', color:'#dc143c', width:2, dash:[6,3]},
     {name:'Piastri', color:'#ff8700', width:2},
     {name:'Hadjar', color:'#3671C6', width:1},
     {name:'Lawson', color:'#6692ff', width:1},
@@ -248,7 +248,7 @@
   ];
 
   const rounds = ['Start', 'R1\nAUS', 'R2\nCHI', 'R3\nJAP', 'R4\nMIA', 'R5\nCAN'];
-  const numRounds = 20;
+  const numRounds = 21;
 
   // Build driverData from cumulative points
   const driverData = driversInfo.map(function(d) {
@@ -276,20 +276,20 @@
         var dpts = cumulativeData['Verstappen'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
-      if ('Mercedes' === c.name || 'Mercedes' === c.name) {
-        var dpts = cumulativeData['Russell'];
-        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
-      }
       if ('Ferrari' === c.name || 'Ferrari' === c.name) {
         var dpts = cumulativeData['Hamilton'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
-      if ('Ferrari' === c.name || 'Ferrari' === c.name) {
-        var dpts = cumulativeData['Leclerc'];
+      if ('Mercedes' === c.name || 'Mercedes' === c.name) {
+        var dpts = cumulativeData['Russell'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('McLaren' === c.name || 'McLaren' === c.name) {
         var dpts = cumulativeData['Norris'];
+        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
+      }
+      if ('Ferrari' === c.name || 'Ferrari' === c.name) {
+        var dpts = cumulativeData['Leclerc'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('McLaren' === c.name || 'McLaren' === c.name) {
@@ -328,16 +328,16 @@
         var dpts = cumulativeData['Hülkenberg'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
+      if ('Williams' === c.name || 'Williams' === c.name) {
+        var dpts = cumulativeData['Sainz'];
+        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
+      }
       if ('Haas F1 Team' === c.name || 'Haas' === c.name) {
         var dpts = cumulativeData['Ocon'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('Aston Martin' === c.name || 'Aston Martin' === c.name) {
         var dpts = cumulativeData['Alonso'];
-        if (dpts && dpts[ri] !== undefined) total += dpts[ri];
-      }
-      if ('Williams' === c.name || 'Williams' === c.name) {
-        var dpts = cumulativeData['Sainz'];
         if (dpts && dpts[ri] !== undefined) total += dpts[ri];
       }
       if ('Williams' === c.name || 'Williams' === c.name) {

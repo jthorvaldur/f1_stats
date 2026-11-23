@@ -110,7 +110,7 @@
   <div class="badges">
     <span class="badge badge-blue">Pairwise Elo</span>
     <span class="badge badge-amber">K-factor 4</span>
-    <span class="badge badge-green">20 Races Processed</span>
+    <span class="badge badge-green">21 Races Processed</span>
     <span class="badge badge-purple">DNF-Neutral</span>
   </div>
 </div>
@@ -118,14 +118,14 @@
 <!-- Stats cards -->
 <div class="section">
   <h2>Key Metrics</h2>
-  <p class="section-sub">Headline figures from the Elo model after Round 20</p>
+  <p class="section-sub">Headline figures from the Elo model after Round 21</p>
   <div class="grid grid-3" id="stats-cards"></div>
 </div>
 
 <!-- Bar chart: final Elo ratings -->
 <div class="section section-divider">
   <h2>Final Elo Ratings</h2>
-  <p class="section-sub">Horizontal bar chart after Round 20 — sorted highest to lowest, colored by team</p>
+  <p class="section-sub">Horizontal bar chart after Round 21 — sorted highest to lowest, colored by team</p>
   <div class="chart-container">
     <canvas id="bar-chart"></canvas>
   </div>
@@ -134,7 +134,7 @@
 <!-- Line chart: round-by-round progression -->
 <div class="section section-divider">
   <h2>Elo Progression</h2>
-  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through 20 races</p>
+  <p class="section-sub">Round-by-round Elo movement from baseline 1500 through 21 races</p>
   <div class="chart-container">
     <canvas id="line-chart"></canvas>
   </div>
@@ -241,14 +241,14 @@ TEAMS['Antonelli'] = { team: 'Mercedes', color: '#00d2be' };
 DRIVER_LIST.push('Antonelli');
 TEAMS['Verstappen'] = { team: 'Red Bull', color: '#3671C6' };
 DRIVER_LIST.push('Verstappen');
-TEAMS['Russell'] = { team: 'Mercedes', color: '#00d2be' };
-DRIVER_LIST.push('Russell');
 TEAMS['Hamilton'] = { team: 'Ferrari', color: '#dc143c' };
 DRIVER_LIST.push('Hamilton');
-TEAMS['Leclerc'] = { team: 'Ferrari', color: '#dc143c' };
-DRIVER_LIST.push('Leclerc');
+TEAMS['Russell'] = { team: 'Mercedes', color: '#00d2be' };
+DRIVER_LIST.push('Russell');
 TEAMS['Norris'] = { team: 'McLaren', color: '#ff8700' };
 DRIVER_LIST.push('Norris');
+TEAMS['Leclerc'] = { team: 'Ferrari', color: '#dc143c' };
+DRIVER_LIST.push('Leclerc');
 TEAMS['Piastri'] = { team: 'McLaren', color: '#ff8700' };
 DRIVER_LIST.push('Piastri');
 TEAMS['Hadjar'] = { team: 'Red Bull', color: '#3671C6' };
@@ -267,12 +267,12 @@ TEAMS['Bortoleto'] = { team: 'Audi', color: '#00e701' };
 DRIVER_LIST.push('Bortoleto');
 TEAMS['Hülkenberg'] = { team: 'Audi', color: '#00e701' };
 DRIVER_LIST.push('Hülkenberg');
+TEAMS['Sainz'] = { team: 'Williams', color: '#64c4ff' };
+DRIVER_LIST.push('Sainz');
 TEAMS['Ocon'] = { team: 'Haas F1 Team', color: '#b6babd' };
 DRIVER_LIST.push('Ocon');
 TEAMS['Alonso'] = { team: 'Aston Martin', color: '#006f62' };
 DRIVER_LIST.push('Alonso');
-TEAMS['Sainz'] = { team: 'Williams', color: '#64c4ff' };
-DRIVER_LIST.push('Sainz');
 TEAMS['Albon'] = { team: 'Williams', color: '#64c4ff' };
 DRIVER_LIST.push('Albon');
 TEAMS['Tsunoda'] = { team: 'RB F1 Team', color: '#6692ff' };
@@ -296,7 +296,7 @@ const RACES = [
     'Antonelli',    'Norris',    'Piastri',    'Russell',    'Verstappen',    'Hamilton',    'Colapinto',    'Leclerc',    'Sainz',    'Albon',    'Bearman',    'Bortoleto',    'Ocon',    'Lindblad',    'Alonso',    'Pérez',    'Stroll',    'Bottas'  ]},  { label: 'R5 Canadian Grand Prix', finishers: [
     'Antonelli',    'Hamilton',    'Verstappen',    'Leclerc',    'Hadjar',    'Colapinto',    'Lawson',    'Gasly',    'Sainz',    'Bearman',    'Piastri',    'Hülkenberg'  ]}];
 
-const currentRound = 20;
+const currentRound = 21;
 
 // ── Elo computation ─────────────────────────────────────────────────────
 const K = 4;

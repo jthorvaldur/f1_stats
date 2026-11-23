@@ -159,7 +159,7 @@
   <div class="tagline">How circuit characteristics shape team and driver performance across the 2026 season. Power circuits, downforce tracks, and street fights.</div>
   <div class="badges">
     <span class="badge badge-green">23 Circuits Classified</span>
-    <span class="badge badge-blue">20 Races Complete</span>
+    <span class="badge badge-blue">21 Races Complete</span>
     <span class="badge badge-amber">3 Track Types</span>
     <span class="badge badge-purple">Early-Season Indicators</span>
   </div>
@@ -224,11 +224,6 @@
 </div>
 
 <!-- Upcoming calendar analysis -->
-<div class="section section-divider">
-  <h2>Next Race Analysis</h2>
-  <p class="section-sub">Predicted team form based on circuit DNA</p>
-  <div class="next-race-box" id="next-race-section"></div>
-</div>
 
 <!-- Caveat -->
 <div class="section section-divider">
@@ -236,7 +231,7 @@
   <p class="section-sub">Interpreting early-season data</p>
   <div class="methodology">
     <p>
-      <strong>With only 20 races and 3 track types, statistical power is limited.</strong>
+      <strong>With only 21 races and 3 track types, statistical power is limited.</strong>
       Some track types may have only 1-2 data points. All findings here are framed as
       <strong>early indicators</strong>, not conclusions. Patterns may invert as the season progresses
       and more circuits are visited.
@@ -256,7 +251,7 @@
 </div>
 
 <footer>
-  Data: Jolpica/Ergast F1 API &middot; Generated 2026-11-16 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
+  Data: Jolpica/Ergast F1 API &middot; Generated 2026-11-23 &middot; <a href="https://github.com/jthorvaldur/f1_stats">Source</a>
 </footer>
 
 <script>
@@ -1306,22 +1301,22 @@ const CONSTRUCTORS = [
     teamId: 'mercedes',
     name: 'Mercedes',
     color: '#00d2be',
-    points: 652.0
+    points: 666.0
   },  {
     teamId: 'ferrari',
     name: 'Ferrari',
     color: '#dc143c',
-    points: 510.0
+    points: 517.0
   },  {
     teamId: 'red_bull',
     name: 'Red Bull',
     color: '#3671C6',
-    points: 415.0
+    points: 440.0
   },  {
     teamId: 'mclaren',
     name: 'McLaren',
     color: '#ff8700',
-    points: 398.0
+    points: 431.0
   },  {
     teamId: 'rb',
     name: 'RB',
@@ -1331,7 +1326,7 @@ const CONSTRUCTORS = [
     teamId: 'alpine',
     name: 'Alpine',
     color: '#0090ff',
-    points: 69.0
+    points: 87.0
   },  {
     teamId: 'haas',
     name: 'Haas',
@@ -1346,7 +1341,7 @@ const CONSTRUCTORS = [
     teamId: 'williams',
     name: 'Williams',
     color: '#64c4ff',
-    points: 12.0
+    points: 16.0
   },  {
     teamId: 'aston_martin',
     name: 'Aston Martin',
@@ -1359,13 +1354,7 @@ const CONSTRUCTORS = [
     points: 0.0
   }];
 
-const NEXT_RACE = {
-  name: 'Las Vegas Grand Prix',
-  circuit: 'Las Vegas Strip Street Circuit',
-  circuitId: 'vegas',
-  date: '2026-11-22',
-  round: 21
-};
+const NEXT_RACE = null;
 
 const TYPE_COLORS = {
   'permanent': '#3fb950',
@@ -1687,87 +1676,6 @@ window.addEventListener('resize', drawTeamTypeChart);
 })();
 
 // ── Next race analysis ──────────────────────────────────────────────────
-(function buildNextRace() {
-  if (!NEXT_RACE || !NEXT_RACE.name) return;
-  const section = document.getElementById('next-race-section');
-  const ct = NEXT_RACE.circuitId ? (CIRCUIT_TYPES[NEXT_RACE.circuitId] || null) : null;
-
-  // Try to find circuit type by name if circuitId didn't match
-  let circuitData = ct;
-  if (!circuitData) {
-    const name = (NEXT_RACE.circuit || NEXT_RACE.name || '').toLowerCase();
-    for (const [cid, cdata] of Object.entries(CIRCUIT_TYPES)) {
-      const parts = cid.replace(/_/g, ' ');
-      if (name.includes(parts) || name.includes(cid)) {
-        circuitData = cdata;
-        break;
-      }
-      const idParts = cid.split('_');
-      if (idParts.some(p => p.length > 3 && name.includes(p))) {
-        circuitData = cdata;
-        break;
-      }
-    }
-  }
-
-  if (!circuitData) {
-    section.innerHTML = `
-      <div style="font-size:14px;color:#f0f6fc;font-weight:600;margin-bottom:8px;">R${NEXT_RACE.round}: ${NEXT_RACE.name}</div>
-      <div style="font-size:12px;color:#8b949e;">Circuit classification not available. No team prediction possible.</div>
-    `;
-    return;
-  }
-
-  const trackTypes = ['permanent', 'street', 'street-park'];
-  const typeBadge = `<span class="type-badge ${TYPE_CSS[circuitData.type] || ''}">${circuitData.type}</span>`;
-
-  // Find teams that performed best on this track type
-  const teamAvg = {};
-  RACES.forEach(race => {
-    const rct = findCircuitType(race);
-    if (!rct || rct.type !== circuitData.type) return;
-    race.results.forEach(r => {
-      if (!teamAvg[r.teamId]) teamAvg[r.teamId] = { total: 0, count: 0, color: r.teamColor, team: r.team };
-      teamAvg[r.teamId].total += r.points;
-    });
-    const seen = new Set();
-    race.results.forEach(r => {
-      if (!seen.has(r.teamId)) {
-        seen.add(r.teamId);
-        teamAvg[r.teamId].count++;
-      }
-    });
-  });
-
-  const ranked = Object.entries(teamAvg)
-    .map(([tid, d]) => ({ teamId: tid, avg: d.count > 0 ? d.total / d.count : 0, ...d }))
-    .sort((a, b) => b.avg - a.avg)
-    .slice(0, 5);
-
-  const favoritesHtml = ranked.length > 0
-    ? ranked.map((t, i) => `<span style="color:${t.color};font-weight:${i === 0 ? '700' : '400'};">${t.team} (${t.avg.toFixed(1)} avg pts)</span>`).join(' &middot; ')
-    : '<span style="color:#8b949e;">No data for this track type yet</span>';
-
-  section.innerHTML = `
-    <div style="font-size:16px;color:#f0f6fc;font-weight:600;margin-bottom:4px;">R${NEXT_RACE.round}: ${NEXT_RACE.name}</div>
-    <div style="font-size:12px;color:#8b949e;margin-bottom:12px;">${NEXT_RACE.date || ''} &middot; ${NEXT_RACE.circuit || ''}</div>
-    <div style="margin-bottom:12px;">
-      ${typeBadge}
-      <span style="font-size:11px;color:#8b949e;margin-left:8px;">
-        Power ${(circuitData.power * 100).toFixed(0)}% &middot;
-        Downforce ${(circuitData.downforce * 100).toFixed(0)}% &middot;
-        Overtaking ${(circuitData.overtaking * 100).toFixed(0)}%
-      </span>
-    </div>
-    <div style="font-size:12px;color:#8b949e;margin-bottom:6px;">
-      <strong style="color:#c9d1d9;">Favored teams (based on ${circuitData.type} track history):</strong>
-    </div>
-    <div style="font-size:12px;line-height:2;">${favoritesHtml}</div>
-    <div class="callout callout-amber" style="margin-top:16px;">
-      Prediction based on ${Object.values(teamAvg).reduce((s, t) => Math.max(s, t.count), 0)} ${circuitData.type} race(s) this season. Treat as directional only.
-    </div>
-  `;
-})();
 </script>
 </body>
 </html>
